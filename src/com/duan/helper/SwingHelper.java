@@ -1,11 +1,16 @@
 package com.duan.helper;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class SwingHelper 
 {
@@ -38,6 +43,34 @@ public class SwingHelper
 	{
 		int status = JOptionPane.showConfirmDialog(comp, content, title, JOptionPane.YES_NO_OPTION);
 		return (status == JOptionPane.YES_OPTION) ? true : false;
+	}
+	
+	public static void changeBackground(Component comp, Color color)
+	{
+		comp.setBackground(color);
+	}
+	
+	public static void setTextBelowIconButton(JButton btn)
+	{
+		btn.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btn.setHorizontalTextPosition(SwingConstants.CENTER);
+	}
+	
+	public static boolean showConfirm(Component comp, String msg)
+	{
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int status = JOptionPane.showConfirmDialog(comp, msg, "Thông Báo", JOptionPane.YES_NO_OPTION);
+		if (status == JOptionPane.YES_OPTION)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	
