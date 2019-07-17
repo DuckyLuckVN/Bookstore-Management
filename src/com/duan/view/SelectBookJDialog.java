@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class SelectBookJDialog extends JDialog {
 
@@ -26,7 +27,6 @@ public class SelectBookJDialog extends JDialog {
 	private JTable tblUser;
 	private JLabel lblTmTheoTn;
 	private JTextField textField;
-	private JButton btnTm;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -53,7 +53,7 @@ public class SelectBookJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 668, 311);
+		setBounds(100, 100, 451, 311);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -61,16 +61,31 @@ public class SelectBookJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		
 		tblUser = new JTable();
-		tblUser.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TIÊU ĐỀ", "THỂ LOẠI", "TÁC GIẢ", "SỐ TRANG", "GIÁ BÁN", "NHÀ XUẤT BẢN", "NĂM XUẤT BẢN"}) 
+		tblUser.setModel(new DefaultTableModel(null,new String[] {"CHỌN", "MÃ", "TIÊU ĐỀ", "GIÁ BÁN"}) 
 		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+			//Ghi đè lại hàm getColumnClass để cột đầu tiên ở dạng boolean (checkbox)
+			@Override
+			public Class<?> getColumnClass(int columnIndex) 
+			{
+				//columnIndex = 0 -> cột chọn
+				if (columnIndex == 0)
+				{
+					return boolean.class;
+				}
+				return super.getColumnClass(columnIndex);
+			}
+
+			public boolean isCellEditable(int row, int column) 
+			{
+				//Cho phép cột đầu tiên được edit
+				if (column == 0)
+					return true;
+				return false;
 			}
 		});
-		tblUser.getColumnModel().getColumn(0).setResizable(false);
+		tblUser.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+		tblUser.getColumnModel().getColumn(0).setPreferredWidth(0);
+		tblUser.getColumnModel().getColumn(1).setPreferredWidth(10);
 		scrollPane.setViewportView(tblUser);
 		
 		lblTmTheoTn = new JLabel("Tìm theo tên:");
@@ -78,18 +93,15 @@ public class SelectBookJDialog extends JDialog {
 		
 		textField = new JTextField();
 		textField.setColumns(10);
-		
-		btnTm = new JButton("Tìm");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(lblTmTheoTn)
 					.addGap(10)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 181, GroupLayout.PREFERRED_SIZE)
-					.addGap(10)
-					.addComponent(btnTm, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE))
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE)
+					.addComponent(textField, GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+					.addContainerGap())
+				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -97,10 +109,9 @@ public class SelectBookJDialog extends JDialog {
 					.addGap(6)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblTmTheoTn, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnTm, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+					.addGap(12)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
 					.addGap(1))
 		);
 		contentPane.setLayout(gl_contentPane);

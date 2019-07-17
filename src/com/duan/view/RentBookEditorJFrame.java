@@ -18,6 +18,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class RentBookEditorJFrame extends JFrame {
 
@@ -28,11 +31,11 @@ public class RentBookEditorJFrame extends JFrame {
 	private JTextField txtEmail;
 	private JTextField txtSDT;
 	private JTextField txtNgaySinh;
-	private JTextField txtTenSach;
-	private JTextField txtSoLuong;
 
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
+	private JTextField txtQuyn;
+	private JTable tblBook;
 
 	public static void main(String[] args) 
 	{
@@ -67,16 +70,16 @@ public class RentBookEditorJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 447, 426);
+		setBounds(100, 100, 447, 538);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNgiThu = new JLabel("Tài khoảng thuê:");
-		lblNgiThu.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNgiThu.setBounds(10, 11, 104, 26);
-		contentPane.add(lblNgiThu);
+		JLabel lblTKThue = new JLabel("Tài khoảng thuê:");
+		lblTKThue.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTKThue.setBounds(10, 11, 104, 26);
+		contentPane.add(lblTKThue);
 		
 		txtTaiKhoang = new JTextField();
 		txtTaiKhoang.setEditable(false);
@@ -93,10 +96,10 @@ public class RentBookEditorJFrame extends JFrame {
 		btnSelectUser.setBounds(348, 13, 89, 209);
 		contentPane.add(btnSelectUser);
 		
-		JLabel lblNewLabel = new JLabel("Họ:");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel.setBounds(10, 48, 104, 26);
-		contentPane.add(lblNewLabel);
+		JLabel lblHo = new JLabel("Họ:");
+		lblHo.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblHo.setBounds(10, 48, 104, 26);
+		contentPane.add(lblHo);
 		
 		txtHo = new JTextField();
 		txtHo.setEditable(false);
@@ -126,10 +129,10 @@ public class RentBookEditorJFrame extends JFrame {
 		label.setBounds(10, 122, 104, 26);
 		contentPane.add(label);
 		
-		JLabel lblSinThoi = new JLabel("Số điện thoại:");
-		lblSinThoi.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSinThoi.setBounds(10, 159, 104, 26);
-		contentPane.add(lblSinThoi);
+		JLabel lblSoDT = new JLabel("Số điện thoại:");
+		lblSoDT.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblSoDT.setBounds(10, 159, 104, 26);
+		contentPane.add(lblSoDT);
 		
 		txtSDT = new JTextField();
 		txtSDT.setEditable(false);
@@ -148,16 +151,10 @@ public class RentBookEditorJFrame extends JFrame {
 		lblNgySinh.setBounds(10, 196, 104, 26);
 		contentPane.add(lblNgySinh);
 		
-		JLabel lblSchChoThu = new JLabel("Sách cho thuê:");
-		lblSchChoThu.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSchChoThu.setBounds(10, 233, 104, 26);
-		contentPane.add(lblSchChoThu);
-		
-		txtTenSach = new JTextField();
-		txtTenSach.setEditable(false);
-		txtTenSach.setColumns(10);
-		txtTenSach.setBounds(124, 233, 214, 26);
-		contentPane.add(txtTenSach);
+		JLabel lblSachChoThue = new JLabel("Sách cho thuê:");
+		lblSachChoThue.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblSachChoThue.setBounds(10, 233, 104, 26);
+		contentPane.add(lblSachChoThue);
 		
 		JButton btnSelectBook = new JButton("Chọn sách");
 		btnSelectBook.addActionListener(new ActionListener() {
@@ -165,33 +162,63 @@ public class RentBookEditorJFrame extends JFrame {
 				showSelectBook();
 			}
 		});
-		btnSelectBook.setBounds(348, 233, 87, 63);
+		btnSelectBook.setBounds(249, 233, 89, 26);
 		contentPane.add(btnSelectBook);
 		
-		JLabel lblSLng = new JLabel("Số lượng:");
-		lblSLng.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSLng.setBounds(10, 270, 104, 26);
-		contentPane.add(lblSLng);
-		
-		txtSoLuong = new JTextField();
-		txtSoLuong.setEditable(false);
-		txtSoLuong.setColumns(10);
-		txtSoLuong.setBounds(124, 270, 214, 26);
-		contentPane.add(txtSoLuong);
-		
 		JButton btnConfirm = new JButton("Xác nhận");
-		btnConfirm.setBounds(124, 350, 214, 36);
+		btnConfirm.setBounds(10, 462, 427, 36);
 		contentPane.add(btnConfirm);
 		
-		JLabel lblTnhTrng = new JLabel("Tình trạng:");
-		lblTnhTrng.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblTnhTrng.setBounds(10, 307, 104, 26);
-		contentPane.add(lblTnhTrng);
+		JLabel lblTinhTrang = new JLabel("Tình trạng:");
+		lblTinhTrang.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTinhTrang.setBounds(10, 419, 68, 26);
+		contentPane.add(lblTinhTrang);
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách", "Mất sách"}));
-		comboBox.setBounds(124, 307, 214, 26);
+		comboBox.setBounds(88, 419, 214, 26);
 		contentPane.add(comboBox);
+		
+		txtQuyn = new JTextField();
+		txtQuyn.setText("0 Quyển");
+		txtQuyn.setEditable(false);
+		txtQuyn.setColumns(10);
+		txtQuyn.setBounds(124, 233, 115, 26);
+		contentPane.add(txtQuyn);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 270, 421, 138);
+		contentPane.add(scrollPane);
+		
+		tblBook = new JTable();
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "XÓA"}) {
+			
+			//Column = 4 -> cột "XÓA"
+			public boolean isCellEditable(int row, int column) {
+				if (column == 4 || column == 3)
+				{
+					return true;
+				}
+				
+				return false;
+			}
+			
+			//Trả về dạng checkbox với cột thứ 4 ("XÓA")
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				if (columnIndex == 4)
+				{
+					return boolean.class;
+				}
+				return super.getColumnClass(columnIndex);
+			}
+		});
+		tblBook.getColumnModel().getColumn(2).setResizable(false);
+		scrollPane.setViewportView(tblBook);
+		
+		JButton btnDeleteBook = new JButton("Xóa sách");
+		btnDeleteBook.setBounds(348, 233, 89, 26);
+		contentPane.add(btnDeleteBook);
 	}
 	
 	public void showSelectUser()

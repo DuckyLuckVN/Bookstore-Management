@@ -4,24 +4,26 @@ package com.duan.model;
 import java.util.Date;
 
 
-public class User 
+public class Admin 
 {
     private int id;
     private String username;
     private String password;
     private String fullname;
-    private Date dateOfBirth;
     private String email;
     private String phoneNumber;
+    private int role;
+    private Date createdDate;
 
-    public User(int id, String username, String password, String fullname, Date dateOfBirth, String email, String phoneNumber) {
+    public Admin(int id, String username, String password, String fullname, String email, String phoneNumber, int role, Date createdDate) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.fullname = fullname;
-        this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.createdDate = createdDate;
     }
 
     public int getId() {
@@ -56,14 +58,6 @@ public class User
         this.fullname = fullname;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -78,6 +72,22 @@ public class User
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
     
     

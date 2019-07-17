@@ -24,7 +24,6 @@ public class SelectUserJDialog extends JDialog {
 	private JTable tblUser;
 	private JLabel lblTmTheoTn;
 	private JTextField textField;
-	private JButton btnTm;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -52,18 +51,18 @@ public class SelectUserJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 656, 299);
+		setBounds(100, 100, 377, 299);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 48, 642, 218);
+		scrollPane.setBounds(5, 48, 356, 218);
 		contentPane.add(scrollPane);
 		
 		tblUser = new JTable();
-		tblUser.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TÀI KHOẢNG", "TÊN", "HỌ", "NGÀY SINH", "EMAIL", "SỐ ĐIỆN THOẠI"}) 
+		tblUser.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TÀI KHOẢNG", "HỌ TÊN"}) 
 		{
 			boolean[] columnEditables = new boolean[] {
 				false
@@ -75,19 +74,15 @@ public class SelectUserJDialog extends JDialog {
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
 		
-		lblTmTheoTn = new JLabel("Tìm theo tên:");
+		lblTmTheoTn = new JLabel("Tìm kiếm:");
 		lblTmTheoTn.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblTmTheoTn.setBounds(5, 11, 83, 26);
+		lblTmTheoTn.setBounds(5, 11, 59, 26);
 		contentPane.add(lblTmTheoTn);
 		
 		textField = new JTextField();
-		textField.setBounds(98, 11, 181, 26);
+		textField.setBounds(74, 11, 287, 26);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		
-		btnTm = new JButton("Tìm");
-		btnTm.setBounds(289, 11, 56, 26);
-		contentPane.add(btnTm);
 	}
 
 }

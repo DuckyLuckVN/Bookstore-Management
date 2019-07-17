@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.print.attribute.standard.SheetCollate;
@@ -55,7 +56,6 @@ public class BookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JButton btnFind;
 	private JTable tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
@@ -69,6 +69,8 @@ public class BookJFrame extends JFrame {
 	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
 	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame(this);
 	private JButton btnDetail;
+	private JLabel lblTmKim;
+	private JTextField textField;
 
 	public static void main(String[] args) 
 	{
@@ -135,13 +137,6 @@ public class BookJFrame extends JFrame {
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
-		btnFind = new JButton("Tìm kiếm");
-		btnFind.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showFindBook();
-			}
-		});
-		
 		btnDetail = new JButton("Xem chi tiết");
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -152,10 +147,6 @@ public class BookJFrame extends JFrame {
 		btnDetail.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
 		btnDetail.setFont(new Font("Tahoma", Font.BOLD, 12));
 		pnlController.add(btnDetail);
-		SwingHelper.setTextBelowIconButton(btnFind);
-		btnFind.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnFind.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_view_file_50px_1.png")));
-		pnlController.add(btnFind);
 		
 		btnAdd = new JButton("Thêm mới");
 		btnAdd.addActionListener(new ActionListener() {
@@ -188,7 +179,6 @@ public class BookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		
 		pnlSelect = new JPanel();
 		
@@ -197,33 +187,47 @@ public class BookJFrame extends JFrame {
 		pnlTime.setBackground(SystemColor.menu);
 		
 		JLabel lblNewLabel = new JLabel("QUẢN LÝ KHO SÁCH");
-		lblNewLabel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		lblNewLabel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lblTmKim = new JLabel("Tìm kiếm:");
+		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+		textField = new JTextField();
+		textField.setColumns(10);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(3)
-							.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 795, Short.MAX_VALUE))
-						.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
+							.addContainerGap()
+							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+							.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(pnlController, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlTime, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
+				.addComponent(lblNewLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 974, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-							.addGap(9)
-							.addComponent(scrollPane))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
+						.addComponent(pnlController, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
@@ -266,17 +270,12 @@ public class BookJFrame extends JFrame {
 		tblBook.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblBook);
 		contentPane.setLayout(gl_contentPane);
-		setLocationRelativeTo(getOwner());
+		//setLocationRelativeTo(getOwner());
 	}
 	
 	public void showInsertBook()
 	{
 		inserBookJFrame.setVisible(true);
-	}
-	
-	public void showFindBook()
-	{
-		findBookJDialog.setVisible(true);
 	}
 	
 	public void showBookDetail()

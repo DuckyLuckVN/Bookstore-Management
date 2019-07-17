@@ -50,7 +50,7 @@ public class JDBCHelper
 	 * Input: Nhận vào câu lệnh SQL và các đối số của câu SQL nếu có.
 	 * Output: Trả về đối tượng ResultSet chứa thông tin về dữ liệu vừa select
 	 */
-	public static ResultSet excuteQuery(String sql, Object...obj) throws SQLException
+	public static ResultSet executeQuery(String sql, Object...obj) throws SQLException
 	{
 		PreparedStatement st = createPreparedStatement(sql, obj);
 		ResultSet rs = st.executeQuery();

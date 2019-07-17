@@ -34,7 +34,7 @@ public class SwingHelper
 		ImageIcon img = (ImageIcon) label.getIcon();
 		int height = (int) label.getPreferredSize().getHeight();
 		int width = (int) label.getPreferredSize().getWidth();
-		System.out.println(height + ", " + width);
+		//System.out.println(height + ", " + width);
 		label.setIcon(new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
 	}
 	

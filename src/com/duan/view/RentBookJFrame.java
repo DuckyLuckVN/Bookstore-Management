@@ -55,7 +55,6 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JButton btnFind;
 	private JTable tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
@@ -68,6 +67,8 @@ public class RentBookJFrame extends JFrame {
 	private FindRentBookJFrame findRentBookJFrame = new FindRentBookJFrame(this);
 	private RentBookEditorJFrame insertRentBookJFrame = new RentBookEditorJFrame(this);
 	private JLabel lblNewLabel;
+	private JLabel lblTmKim;
+	private JTextField textField;
 	//private RentBookEditorJFrame insertRentBookJFrame = new RentBookEditorJFrame();
 
 	public static void main(String[] args) 
@@ -135,13 +136,6 @@ public class RentBookJFrame extends JFrame {
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
-		btnFind = new JButton("Tìm kiếm");
-		btnFind.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showFindRentBook();
-			}
-		});
-		
 		btnDetail = new JButton("Xem chi tiết");
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -152,10 +146,6 @@ public class RentBookJFrame extends JFrame {
 		btnDetail.setIcon(new ImageIcon(RentBookJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
 		btnDetail.setFont(new Font("Tahoma", Font.BOLD, 12));
 		pnlController.add(btnDetail);
-		SwingHelper.setTextBelowIconButton(btnFind);
-		btnFind.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnFind.setIcon(new ImageIcon(RentBookJFrame.class.getResource("/com/duan/icon/icons8_view_file_50px_1.png")));
-		pnlController.add(btnFind);
 		
 		btnAdd = new JButton("Thêm mới");
 		btnAdd.addActionListener(new ActionListener() {
@@ -196,32 +186,47 @@ public class RentBookJFrame extends JFrame {
 		pnlTime.setBackground(SystemColor.menu);
 		
 		lblNewLabel = new JLabel("QUẢN LÝ THUÊ SÁCH");
-		lblNewLabel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		lblNewLabel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		
+		lblTmKim = new JLabel("Tìm kiếm:");
+		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+		textField = new JTextField();
+		textField.setColumns(10);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addComponent(pnlSelect, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE))
+						.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(pnlController, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlTime, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
+				.addComponent(lblNewLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 974, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addGap(1)
-							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+					.addGap(1)
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
@@ -265,11 +270,6 @@ public class RentBookJFrame extends JFrame {
 		scrollPane.setViewportView(tblBook);
 		contentPane.setLayout(gl_contentPane);
 		setLocationRelativeTo(getOwner());
-	}
-	
-	public void showFindRentBook()
-	{
-		findRentBookJFrame.setVisible(true);
 	}
 	
 	public void showInsertRentBook()
