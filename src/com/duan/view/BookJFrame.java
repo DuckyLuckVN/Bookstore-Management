@@ -19,17 +19,25 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.dao.BookDAO;
+import com.duan.dao.CategoryDAO;
+import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Book;
 
 import java.awt.Toolkit;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.CardLayout;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
+
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -38,7 +46,14 @@ import java.awt.Color;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class BookJFrame extends JFrame {
 
@@ -64,13 +79,17 @@ public class BookJFrame extends JFrame {
 	private JButton btnMaxRight;
 	private JPanel pnlTime;
 	
-	private BookEditorJFrame inserBookJFrame = new BookEditorJFrame();
-	private BookEditorJFrame updateBookJFrame;
+	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
+	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
 	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
 	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame(this);
 	private JButton btnDetail;
 	private JLabel lblTmKim;
 	private JTextField textField;
+	
+	private List<Book> listBook = new ArrayList<Book>();
+	private Book book;
+	private int indexSelect = -1;
 
 	public static void main(String[] args) 
 	{
@@ -138,6 +157,7 @@ public class BookJFrame extends JFrame {
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
 		btnDetail = new JButton("Xem chi tiết");
+		btnDetail.setEnabled(false);
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showBookDetail();
@@ -163,7 +183,16 @@ public class BookJFrame extends JFrame {
 		btnEdit = new JButton("Thay đổi");
 		btnEdit.setEnabled(false);
 		btnEdit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					showEditorBook(getBookSelected());
+				} 
+				catch (SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -172,6 +201,27 @@ public class BookJFrame extends JFrame {
 		pnlController.add(btnEdit);
 		
 		btnDelete = new JButton("Xóa");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					if (SwingHelper.showConfirm(contentPane, "Bạn có chắc muốn xóa sách này không?"))
+					{
+						if (deleteBook())
+						{
+							getDataToList();
+							fillToTable();
+							JOptionPane.showMessageDialog(getContentPane(), "Đã xóa sách thành công!");
+						}
+					}
+				} 
+				catch (HeadlessException | SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnDelete.setEnabled(false);
 		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 12));
 		SwingHelper.setTextBelowIconButton(btnDelete);
@@ -186,11 +236,6 @@ public class BookJFrame extends JFrame {
 		pnlTime.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlTime.setBackground(SystemColor.menu);
 		
-		JLabel lblNewLabel = new JLabel("QUẢN LÝ KHO SÁCH");
-		lblNewLabel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
@@ -201,33 +246,29 @@ public class BookJFrame extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-							.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)))
+						.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
 						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
-				.addComponent(lblNewLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 974, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
 								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addComponent(pnlController, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE))
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
+						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
@@ -244,42 +285,264 @@ public class BookJFrame extends JFrame {
 		pnlSelect.setLayout(new GridLayout(1, 0, 15, 0));
 		
 		btnMaxLeft = new JButton("|<");
+		btnMaxLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblBook.getRowCount();
+				if (rowCount > 0)
+				{
+					indexSelect = 0;
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+					setControllModeTo_Editable();
+				}
+			}
+		});
 		pnlSelect.add(btnMaxLeft);
 		
 		btnLeft = new JButton("<");
+		btnLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblBook.getRowCount();
+				if (indexSelect > 0 && rowCount > 0)
+				{
+					indexSelect--;
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+					setControllModeTo_Editable();
+				}
+			}
+		});
 		btnLeft.setEnabled(false);
 		pnlSelect.add(btnLeft);
 		
 		btnRight = new JButton(">");
+		btnRight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblBook.getRowCount();
+				if (indexSelect < rowCount - 1 && rowCount > 0)
+				{
+					indexSelect++;
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+					setControllModeTo_Editable();
+				}
+			}
+		});
 		btnRight.setEnabled(false);
 		pnlSelect.add(btnRight);
 		
 		btnMaxRight = new JButton(">|");
+		btnMaxRight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblBook.getRowCount();
+				if (rowCount > 0)
+				{
+					indexSelect = rowCount - 1;
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+					setControllModeTo_Editable();
+				}
+			}
+		});
 		pnlSelect.add(btnMaxRight);
 		
 		tblBook = new JTable();
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "SỐ TRANG", "TÁC GIẢ", "SỐ LƯỢNG", "NXB", "NĂM XUẤT BẢN", "GIÁ", "GHI CHÚ", "NGÀY NHẬP"} ) 
-		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+		tblBook.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				eventTableSelectRow();
 			}
 		});
-		tblBook.getColumnModel().getColumn(0).setResizable(false);
+		tblBook.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) 
+			{
+				eventTableSelectRow();
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				if (e.getClickCount() >= 2)
+				{
+					showBookDetail();
+				}
+			}
+		});
+		tblBook.setRowHeight(25);
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "SỐ TRANG", "TÁC GIẢ", "SỐ LƯỢNG", "NXB", "NĂM XUẤT BẢN", "GIÁ", "GHI CHÚ", "NGÀY NHẬP"} ) 
+		{
+			public boolean isCellEditable(int row, int column) 
+			{
+				return false;
+			}
+		});
+		tblBook.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
 		contentPane.setLayout(gl_contentPane);
 		//setLocationRelativeTo(getOwner());
+		try 
+		{
+			getDataToList();
+			fillToTable();
+		} 
+		catch (SQLException e1) 
+		{
+			e1.printStackTrace();
+		}
 	}
 	
-	public void showInsertBook()
+	//Lấy dữ liệu BOOK từ database đổ vào list
+	public void getDataToList()
 	{
-		inserBookJFrame.setVisible(true);
+		try 
+		{
+			listBook.clear();
+			listBook = BookDAO.getAll();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	//Đổ dữ liệu từ list vào table
+	public void fillToTable() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		for (Book e : listBook)
+		{
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + " đ";
+			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String[] rowData = 
+				{
+					e.getId(), 
+					e.getTitle(), 
+					categoryTitle, 
+					e.getPageNum() + "", 
+					e.getAuthor(), 
+					e.getAmount() + "", 
+					e.getPublisher(), 
+					e.getPublicationYear() + "", 
+					price, 
+					e.getDescription(), 
+					e.getCreatedDate() + ""
+				};
+			
+			model.addRow(rowData);
+		}
+		
+		int rowCount = tblBook.getRowCount();
+		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+		if (indexSelect != -1)
+		{
+			if (indexSelect < rowCount && rowCount > 0)
+			{
+				tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+			}
+			else
+			{
+				indexSelect = rowCount - 1;
+				if (indexSelect > -1)
+				{
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+				}
+				else
+				{
+					setControllModeTo_Nothing();
+				}
+			}
+		}
 	}
 	
 	public void showBookDetail()
 	{
-		bookDetailJFrame.setVisible(true);
+		try 
+		{
+			String id = (String) tblBook.getValueAt(indexSelect, 0);
+			Book bookDetail;
+			bookDetail = BookDAO.findByID(id);
+			bookDetailJFrame.setDetail(bookDetail);
+			bookDetailJFrame.setVisible(true);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	//Hiện lên JFrame để insertBook
+	public void showInsertBook()
+	{
+		inserBookJFrame.setBookJFrame(this);
+		inserBookJFrame.setVisible(true);
+	}
+	
+	//Hiện lên JFrame để edit book
+	public void showEditorBook(Book book) throws SQLException
+	{
+		editorBookJDialog.setBookEditor(book);
+		editorBookJDialog.setBookJFrame(this);
+		editorBookJDialog.showDataToForm(book);
+		editorBookJDialog.setVisible(true);
+	}
+	
+	//Tiến hành xóa sách đang được chọn
+	public boolean deleteBook() throws SQLException 
+	{
+		String bookId = getBookSelected().getId();
+		return BookDAO.delete(bookId);
+	}
+	
+	//Trả về model Book đang được chọn trên tblBook
+	public Book getBookSelected() throws SQLException
+	{
+		if (indexSelect != -1)
+		{
+			String bookId = tblBook.getValueAt(indexSelect, 0).toString();
+			return BookDAO.findByID(bookId);
+		}
+		return null;
+	}
+	
+	
+	public void eventTableSelectRow()
+	{
+		indexSelect = tblBook.getSelectedRow();
+		setControllModeTo_Editable();
+	}
+	
+	
+	
+	//Set các nút nhấn controll chỉ enable nút "Thêm Mới"
+	//Chỉ gọi khi không có dòng nào trong bảng tblBook được chọn
+	public void setControllModeTo_Nothing()
+	{
+		btnAdd.setEnabled(true);
+		
+		btnDelete.setEnabled(false);
+		btnDetail.setEnabled(false);
+		btnEdit.setEnabled(false);
+		
+		//Các nút di chuyển select
+		btnLeft.setEnabled(false);
+		btnRight.setEnabled(false);
+	}
+	
+	//Set các nút nhấn controll chỉ enable nút "Thêm Mới"
+	//Chỉ gọi khi không có dòng nào trong bảng tblBook được chọn
+	public void setControllModeTo_Editable()
+	{
+		btnDelete.setEnabled(true);
+		btnDetail.setEnabled(true);
+		btnEdit.setEnabled(true);
+		btnAdd.setEnabled(true);
+		
+		//Các nút di chuyển select
+		btnLeft.setEnabled(true);
+		btnRight.setEnabled(true);
 	}
 }

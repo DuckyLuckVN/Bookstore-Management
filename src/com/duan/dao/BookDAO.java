@@ -13,7 +13,7 @@ import com.duan.model.Book;
 
 public class BookDAO 
 {
-    public ArrayList<Book> getAllbook() throws SQLException
+    public static ArrayList<Book> getAll() throws SQLException
     {
         ArrayList<Book> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM dbo.BOOK");
@@ -29,7 +29,7 @@ public class BookDAO
     }
     
     //Thêm dữ liệu model Book vào bảng Book, trả về TRUE nếu thành công, FALSE nếu thất bại.
-    public boolean insert(Book b) throws SQLException
+    public static boolean insert(Book b) throws SQLException
     {
         String sql = "INSERT INTO BOOK Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
@@ -42,7 +42,7 @@ public class BookDAO
 									        		b.getAmount(), 
 									        		b.getPublisher(),
 									        		b.getPublicationYear(), 
-									        		b.getMoney(), 
+									        		b.getPrice(), 
 									        		b.getImage(),
 									        		b.getDescription(),
 									        		b.getCreatedDate());
@@ -52,7 +52,7 @@ public class BookDAO
     }
     
     //Update model Book lên database tại row book có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
-    public  boolean update(Book b, String id) throws SQLException
+    public static boolean update(Book b, String id) throws SQLException
     {
         String sql = " UPDATE BOOK SET id=?, "
 					        		+ "title=?, "
@@ -64,7 +64,7 @@ public class BookDAO
 					                + "publication_year=?,"
 					                + "price=?, "
 					                + "image=?, "
-					                + "desciption=?, "
+					                + "description=?, "
 					                + "created_date=? "
 					                + "WHERE ID = ?";
         
@@ -77,7 +77,7 @@ public class BookDAO
 								        		b.getAmount(),
 								        		b.getPublisher(),
 								        		b.getPublicationYear(),
-								        		b.getMoney(), 
+								        		b.getPrice(), 
 								        		b.getImage(), 
 								        		b.getDescription(), 
 								        		b.getCreatedDate(),
@@ -88,25 +88,19 @@ public class BookDAO
     }
     
     //Xóa row có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
-    public boolean delete(String id)
+    public static boolean delete(String id) throws SQLException
    
      {
         String sql = "DELETE FROM BOOK Where id = ?";
-        try 
-        {
-            PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, id);
-            int count = pre.executeUpdate();
-            return count > 0;
-        } 
-        catch (SQLException ex) 
-        {
-            ex.printStackTrace();
-        }
-        return false;
+
+        PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, id);
+        int count = pre.executeUpdate();
+        return count > 0;
+
     }
     
     //Tìm và trả về model Book có id = id truyền vào.
-    public Book findByID(String id) throws SQLException
+    public static Book findByID(String id) throws SQLException
     {
         String sql = "SELECT * FROM BOOK Where id = ?";
         ResultSet rs = JDBCHelper.executeQuery(sql, id);
@@ -119,8 +113,21 @@ public class BookDAO
         return null;
     }
     
+    //Trả về số lượng sách có thể thao tác
+    public static int getAmountAvailable(String id) throws SQLException
+    {
+    	Book book = findByID(id);
+    	
+    	if (book != null)
+    	{
+    		return book.getAmount();
+    	}
+    	
+    	return 0;
+    }
+    
     //Trả về model Book dựa trên ResultSet truyền vào.
-    public Book readFromResultSet(ResultSet rs) throws SQLException
+    public static Book readFromResultSet(ResultSet rs) throws SQLException
     {
     	String id = rs.getString(1);
         String title = rs.getString(2);

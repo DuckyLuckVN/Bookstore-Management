@@ -1,12 +1,21 @@
 package com.duan.helper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.text.DecimalFormat;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
 public class DataHelper 
 {
+	public static final String[] EXTENSIONS_FILE_IMAGE = {".JPEG", ".TIFF", ".PNG", ".JPG", ".RAW"};
+	
 	//Kiểm tra độ dài của chuỗi đang truyền vào
 	public static boolean lengthRange(String str, int min, int max)
 	{
@@ -32,6 +41,56 @@ public class DataHelper
 			}
 		}
 		return false;
+	}
+	
+	//Kiểm tra tên fileName truyền vào có phải thuộc một trong các định dạng trong array extensions hay không?
+	public static boolean checkFileExtension(String fileName, String[] extensions)
+	{
+		//Nếu có . đuôi thì mới bắt đầu kiểm tra
+		if (fileName.contains("."))
+		{
+			for (String extension : extensions)
+			{
+				fileName = fileName.toUpperCase();
+				if (fileName.endsWith(extension))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	//Lấy ra đường dẫn URL đến source project
+	public static File getFileFromSource(String path)
+	{
+		return new File(DateHelper.class.getResource(path).getPath());
+	}
+	
+	//Ghi file vào source theo đường dẫn của file
+	public static void writeFileToSource(byte[] arrayData, String path) throws IOException
+	{
+		File file = new File(getFileFromSource("/").getAbsolutePath() + path);
+		System.out.println("FileHelper:" + file);
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.write(arrayData);
+		fos.close();
+	}
+	
+	public static byte[] getArrayByteFromFile(File file) throws IOException
+	{
+		byte[] array = Files.readAllBytes(file.toPath());
+		return array;
+	}
+	
+	
+	
+	//Trả về chuỗi đã được định dạng lại theo kiểu của đồng tiền
+	public static String getFormatForMoney(double input)
+	{
+		DecimalFormat decimalFormat = new DecimalFormat("###,###.##");
+		return decimalFormat.format(input);
 	}
 	
 	//Kiểm tra chuỗi truyền vào có phải là số nguyên không
@@ -116,7 +175,7 @@ public class DataHelper
 	
 	public static void main(String[] args) 
 	{
-		System.out.println(contain("Nguyễn Đại Hào", "á"));
+		System.out.println(isInteger("a"));;
 	}
 	
 	

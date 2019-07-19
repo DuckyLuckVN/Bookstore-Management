@@ -14,12 +14,17 @@ public class Book
     private int amount;
     private String publisher;
     private int publicationYear ;
-    private double money;
+    private double price;
     private String image;
     private String description;
     private Date createdDate;
 
-    public Book(String id, String title, String categoryId, int pageNum, String author, int amount, String publisher, int publicationYear, double money, String image, String description, Date createdDate) {
+    public Book()
+    {
+    	
+    }
+    
+    public Book(String id, String title, String categoryId, int pageNum, String author, int amount, String publisher, int publicationYear, double price, String image, String description, Date createdDate) {
         this.id = id;
         this.title = title;
         this.categoryId = categoryId;
@@ -28,7 +33,7 @@ public class Book
         this.amount = amount;
         this.publisher = publisher;
         this.publicationYear = publicationYear;
-        this.money = money;
+        this.price = price;
         this.image = image;
         this.description = description;
         this.createdDate = createdDate;
@@ -98,12 +103,12 @@ public class Book
         this.publicationYear = publicationYear;
     }
 
-    public double getMoney() {
-        return money;
+    public double getPrice() {
+        return price;
     }
 
-    public void setMoney(double money) {
-        this.money = money;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getImage() {

@@ -8,7 +8,7 @@ public class DBConnection
 {
 	private static Connection conn = null;
 	
-	private static String url = "jdbc:sqlserver://localhost; DataBaseName=Polypro";
+	private static String url = "jdbc:sqlserver://localhost; DataBaseName=BookStore";
 	private static String user = "Hao";
 	private static String password = "ChuTich@123";
 	
@@ -40,5 +40,9 @@ public class DBConnection
 	public static Connection getConnection()
 	{
 		return conn;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getConnection());
 	}
 }

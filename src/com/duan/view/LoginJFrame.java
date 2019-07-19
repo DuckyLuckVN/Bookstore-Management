@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-import com.duan.helper.Account;
+import com.duan.helper.AccountSave;
 import com.duan.helper.SwingHelper;
 
 /*

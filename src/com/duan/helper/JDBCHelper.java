@@ -22,7 +22,7 @@ public class JDBCHelper
 		if (sql.contains("{"))
 			st = DBConnection.getConnection().prepareCall(sql);
 		else
-			st = DBConnection.getConnection().prepareStatement(sql);
+			st = DBConnection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		
 		if (obj != null && obj.length > 0)
 			for (int i = 0; i < obj.length; i++)

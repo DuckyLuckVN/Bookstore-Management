@@ -11,10 +11,10 @@ import com.duan.model.User;
 
 public class UserDAO 
 {
-    public ArrayList<User> getAllUser() throws SQLException
+    public static ArrayList<User> getAll() throws SQLException
     {
         ArrayList<User> list = new ArrayList<>();
-        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM USER");
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [USER]");
 
         while (rs.next())
         {
@@ -25,9 +25,9 @@ public class UserDAO
 
     }
     
-    public boolean insert(User user ) throws SQLException
+    public static boolean insert(User user ) throws SQLException
     {
-        String sql = "INSERT INTO USER Values(?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO [USER] Values(?, ?, ?, ?, ?, ?)";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
 									        		user.getUsername(), 
@@ -42,9 +42,9 @@ public class UserDAO
          return count > 0;
     }
     
-    public boolean update(User user , int id) throws SQLException
+    public static boolean update(User user , int id) throws SQLException
     {
-        String sql = "UPDATE USER SET username=?, password=?, fullname=?,"
+        String sql = "UPDATE [USER] SET username=?, password=?, fullname=?,"
                 + "date_of_birth=?, email=?, phone_number=? Where id=?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
@@ -58,9 +58,9 @@ public class UserDAO
         return count > 0;
     }
     
-    public boolean delete(int id) throws SQLException
+    public static boolean delete(int id) throws SQLException
     {
-        String sql = "DELETE FROM USER Where id = ?";
+        String sql = "DELETE FROM [USER] Where id = ?";
         PreparedStatement pre;
         
         pre = JDBCHelper.createPreparedStatement(sql, id);
@@ -69,9 +69,9 @@ public class UserDAO
         return count > 0;
     }
     
-    public User findByID(int id) throws SQLException
+    public static User findByID(int id) throws SQLException
     {
-        String sql = "SELECT * FROM User where id = ?";
+        String sql = "SELECT * FROM [USER] WHERE id = ?";
         ResultSet rs = JDBCHelper.executeQuery(sql, id);
         
         if (rs.next())
@@ -81,7 +81,7 @@ public class UserDAO
         return null;
     }
     
-    public User readFromResultSet(ResultSet rs) throws SQLException
+    public static User readFromResultSet(ResultSet rs) throws SQLException
     {
     	int id = rs.getInt(1);
     	String use = rs.getString(2);

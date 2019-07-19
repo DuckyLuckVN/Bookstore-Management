@@ -8,9 +8,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 
 public class SwingHelper 
 {
@@ -36,6 +38,12 @@ public class SwingHelper
 		int width = (int) label.getPreferredSize().getWidth();
 		//System.out.println(height + ", " + width);
 		label.setIcon(new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+	}
+	
+	//Dùng để xóa 1 dòng nào đó trong JTable
+	public static void removeRow(JTable table, int row)
+	{
+		((DefaultTableModel) table.getModel()).removeRow(row);
 	}
 	
 	

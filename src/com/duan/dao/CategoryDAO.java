@@ -10,7 +10,7 @@ import com.duan.model.Category;
 
 public class CategoryDAO 
 {
-    public ArrayList<Category> getAll() throws SQLException
+    public static ArrayList<Category> getAll() throws SQLException
     {
         ArrayList<Category> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM CATEGORY");
@@ -23,7 +23,7 @@ public class CategoryDAO
         return list;
     }
     
-    public boolean insert(Category cg) throws SQLException
+    public static boolean insert(Category cg) throws SQLException
     {
         String sql = "INSERT INTO CATEGORY Values (?,?,?)";
 
@@ -45,7 +45,7 @@ public class CategoryDAO
 
     }
     
-    public boolean delete(String id) throws SQLException
+    public static boolean delete(String id) throws SQLException
     {
         String sql = "DELETE FROM CATEGORY Where id = ?";
         PreparedStatement pre;
@@ -55,20 +55,30 @@ public class CategoryDAO
         return count >0;
     }
     
-    public Category findById(String id) throws SQLException
+    public static Category findById(String id) throws SQLException
     {
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM CATEGORY Where id = ?", id);
         
         if (rs.next())
         {
-        	Category cg = new Category(rs.getString(id), rs.getString(2), rs.getString(3));
-        	return cg;
+        	return readFromResultSet(rs);
         }
         
         return null;
     }
     
-    public Category readFromResultSet(ResultSet rs) throws SQLException
+    public static String getTitleById(String id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM CATEGORY Where id = ?", id);
+    	if (rs.next())
+    	{
+    		return readFromResultSet(rs).getCategoryTitle();
+    	}
+    	return null;
+    	
+    }
+    
+    public static Category readFromResultSet(ResultSet rs) throws SQLException
     {
     	String id = rs.getString(1);
         String categoryTitle = rs.getString(2);

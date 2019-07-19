@@ -3,11 +3,18 @@ package com.duan.view;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.border.SoftBevelBorder;
+
+import com.duan.dao.CategoryDAO;
+import com.duan.helper.DataHelper;
+import com.duan.helper.SwingHelper;
+import com.duan.model.Book;
+
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.SwingConstants;
@@ -20,13 +27,29 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.io.File;
+import java.net.URL;
+import java.sql.SQLException;
 
 public class BookDetailJFrame extends JFrame {
 
 	private JPanel contentPane;
+	private JLabel lblMaSach;
+	private JLabel lblTenSach;
+	private JLabel lblTacGia;
+	private JLabel lblTheLoai;
+	private JLabel lblTrang;
+	private JLabel lblXuatBan;
+	private JLabel lblSoLuong;
+	private JLabel lblGia;
+	private JLabel lblDaBan;
+	private JLabel lblChoThue;
+	private JLabel lblImage;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
+	public static void main(String[] args) 
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
 			public void run() {
 				try {
 					BookDetailJFrame frame = new BookDetailJFrame();
@@ -43,7 +66,8 @@ public class BookDetailJFrame extends JFrame {
 		this();
 		setLocationRelativeTo(comp);
 	}
-	public BookDetailJFrame() {
+	public BookDetailJFrame() 
+	{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(BookDetailJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
 		setTitle("Code Dạo Ký Sự");
 		try {
@@ -55,20 +79,20 @@ public class BookDetailJFrame extends JFrame {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 552, 355);
+		setBounds(100, 100, 608, 355);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Không có ảnh");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		lblNewLabel.setBounds(10, 11, 232, 305);
-		contentPane.add(lblNewLabel);
+		lblImage = new JLabel("Không có ảnh");
+		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+		lblImage.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		lblImage.setBounds(10, 11, 232, 305);
+		contentPane.add(lblImage);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(252, 11, 244, 305);
+		panel_3.setBounds(252, 11, 340, 305);
 		contentPane.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -82,7 +106,7 @@ public class BookDetailJFrame extends JFrame {
 		lblMSch.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMSch.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
-		JLabel lblMaSach = new JLabel("10580");
+		lblMaSach = new JLabel("10580");
 		lblMaSach.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item0.add(lblMaSach);
 		
@@ -96,7 +120,7 @@ public class BookDetailJFrame extends JFrame {
 		lblTnSch_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item1.add(lblTnSch_1);
 		
-		JLabel lblTenSach = new JLabel("Code Dạo Ký Sự");
+		lblTenSach = new JLabel("Code Dạo Ký Sự");
 		lblTenSach.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item1.add(lblTenSach);
 		
@@ -110,7 +134,7 @@ public class BookDetailJFrame extends JFrame {
 		lblTcGi.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTcGi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
-		JLabel lblTacGia = new JLabel("Phạm Hoàng Huy");
+		lblTacGia = new JLabel("Phạm Hoàng Huy");
 		lblTacGia.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item2.add(lblTacGia);
 		
@@ -124,7 +148,7 @@ public class BookDetailJFrame extends JFrame {
 		lblXutBn.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item3.add(lblXutBn);
 		
-		JLabel lblTheLoai = new JLabel("Công Nghệ Thông Tin");
+		lblTheLoai = new JLabel("Công Nghệ Thông Tin");
 		lblTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item3.add(lblTheLoai);
 		
@@ -138,7 +162,7 @@ public class BookDetailJFrame extends JFrame {
 		lblSTrang.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item4.add(lblSTrang);
 		
-		JLabel lblTrang = new JLabel("325 trang");
+		lblTrang = new JLabel("325 trang");
 		lblTrang.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item4.add(lblTrang);
 		
@@ -152,7 +176,7 @@ public class BookDetailJFrame extends JFrame {
 		lblSLng.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item5.add(lblSLng);
 		
-		JLabel lblXuatBan = new JLabel("Nhà Xuất Bản Trẻ (2017)");
+		lblXuatBan = new JLabel("Nhà Xuất Bản Trẻ (2017)");
 		lblXuatBan.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item5.add(lblXuatBan);
 		
@@ -166,7 +190,7 @@ public class BookDetailJFrame extends JFrame {
 		lblGiBn.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item6.add(lblGiBn);
 		
-		JLabel lblSoLuong = new JLabel("30 quyển");
+		lblSoLuong = new JLabel("30 quyển");
 		lblSoLuong.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item6.add(lblSoLuong);
 		
@@ -180,7 +204,7 @@ public class BookDetailJFrame extends JFrame {
 		lblGiBn_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item7.add(lblGiBn_1);
 		
-		JLabel lblGia = new JLabel("110.000 đ");
+		lblGia = new JLabel("110.000 đ");
 		lblGia.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item7.add(lblGia);
 		
@@ -195,7 +219,7 @@ public class BookDetailJFrame extends JFrame {
 		lblBn.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item8.add(lblBn);
 		
-		JLabel lblDaBan = new JLabel("15 quyển");
+		lblDaBan = new JLabel("15 quyển");
 		lblDaBan.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item8.add(lblDaBan);
 		
@@ -210,8 +234,61 @@ public class BookDetailJFrame extends JFrame {
 		lblangChoThu.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item9.add(lblangChoThu);
 		
-		JLabel lblChoThue = new JLabel("10 quyển");
+		lblChoThue = new JLabel("10 quyển");
 		lblChoThue.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item9.add(lblChoThue);
+	}
+	
+	public void setDetail(Book book) throws SQLException
+	{
+		String price = DataHelper.getFormatForMoney(book.getPrice()) + " đ";
+		String publisher = book.getPublisher() + " (" + book.getPublicationYear() + ")";
+		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
+		
+		lblMaSach.setText(book.getId());
+		lblTenSach.setText(book.getTitle());
+		lblTacGia.setText(book.getAuthor());
+		lblTheLoai.setText(categoryTitle);
+		lblTrang.setText(book.getPageNum() + " trang");
+		lblXuatBan.setText(publisher);
+		lblSoLuong.setText(book.getAmount() + " quyển");
+		lblGia.setText(price);
+		setTitle("Thông tin sách | " + book.getTitle());
+		
+		//Set image
+		if (book.getImage() != null)
+		{
+			try 
+			{
+				setImage(book.getImage());
+			} 
+			catch (NullPointerException e) 
+			{
+				setImage(null);
+			}
+		}
+		else 
+		{
+			setImage(null);
+		}
+		
+	}
+	
+	//Cập nhật lại ảnh của sách
+	public void setImage(String imageName)
+	{
+		if (imageName != null)
+		{
+			URL url = getClass().getResource("/com/duan/image/" + imageName);
+			ImageIcon icon = new ImageIcon(url);
+			lblImage.setIcon(icon);
+			lblImage.setText("");
+			SwingHelper.setAutoResizeIcon(lblImage);
+		}
+		else
+		{
+			lblImage.setIcon(null);
+			lblImage.setText("Không có ảnh");
+		}
 	}
 }

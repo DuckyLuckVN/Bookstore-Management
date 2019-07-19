@@ -17,6 +17,8 @@ import java.awt.Dimension;
 
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.FontFormatException;
+
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import java.awt.SystemColor;
@@ -25,6 +27,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.beans.Customizer;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.UIManager;
 import javax.swing.JButton;
 import java.awt.Toolkit;
@@ -42,12 +47,13 @@ import javax.swing.border.SoftBevelBorder;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
 
 public class MainJFrame extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = SystemColor.controlHighlight;
 	private static final Color COLOR_MENU_HOVER = new Color(255, 250, 205);
-	private static final Border BORDER_HIGHLIGHT = new BevelBorder(BevelBorder.RAISED, null, null, null, null);
+	private static final Border BORDER_HIGHLIGHT = new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 69, 0));
 
 	private JPanel contentPane;
 	private SwingHelper sHelper = new SwingHelper();
@@ -100,6 +106,8 @@ public class MainJFrame extends JFrame {
 
 	public MainJFrame() 
 	{
+
+		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) 
@@ -156,6 +164,7 @@ public class MainJFrame extends JFrame {
 		pnl1.add(lblTItle1);
 		
 		pnl2 = new JPanel();
+		pnl2.setBorder(new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 69, 0)));
 		pnlMenuList.add(pnl2);
 		pnl2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		pnl2.addMouseListener(new MouseAdapter() {
@@ -173,7 +182,7 @@ public class MainJFrame extends JFrame {
 				setHighlightMenu(pnl2);
 			}
 		});
-		pnl2.setBackground(SystemColor.controlHighlight);
+		pnl2.setBackground(new Color(250, 240, 230));
 		pnl2.setLayout(null);
 		
 		JLabel lblKhchHng = new JLabel("Thuê sách");
@@ -430,6 +439,24 @@ public class MainJFrame extends JFrame {
 		pnlContent.add(iconContent, "name_113229955950600");
 		sHelper.setAutoResizeIcon_PreferredSize(iconContent);
 		setLocationRelativeTo(getOwner());
+		
+		
+//		//create the font
+//
+//		try {
+//		    //create the font to use. Specify the size!
+//		    Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getResource("/com/duan/library/OpenSans-Bold.ttf").getFile())).deriveFont(12f);
+//		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//		    //register the font
+//		    ge.registerFont(customFont);
+//		    //use the font
+//		    lblTitle.setFont(customFont);
+//		} catch (IOException e) {
+//		    e.printStackTrace();
+//		} catch(FontFormatException e) {
+//		    e.printStackTrace();
+//		}
+
 	}
 	
 	//Hàm này sẽ set border các panel menu lại thành null và set border cho jpanel truyền vào là BORDER_HIGHLIGHT
