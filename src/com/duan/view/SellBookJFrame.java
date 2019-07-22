@@ -18,6 +18,9 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import com.duan.helper.SwingHelper;
+
 import java.awt.Color;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -27,6 +30,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.GridLayout;
+import javax.swing.ImageIcon;
+import javax.swing.border.TitledBorder;
 
 public class SellBookJFrame extends JFrame {
 
@@ -37,6 +43,9 @@ public class SellBookJFrame extends JFrame {
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
+	private JTextField textField;
+	private JTable tblOrder;
+	private JTextField textField_1;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -63,13 +72,13 @@ public class SellBookJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 699, 437);
+		setBounds(100, 100, 694, 678);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
 		JPanel panel = new JPanel();
-		panel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		panel.setBorder(new TitledBorder(null, "Th\u00F4ng tin", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		JLabel lblTaiKhoang = new JLabel("Tài khoảng");
 		lblTaiKhoang.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -92,7 +101,7 @@ public class SellBookJFrame extends JFrame {
 		txtFullname = new JTextField();
 		txtFullname.setColumns(10);
 		
-		JLabel lblThueSach = new JLabel("Sách thuê");
+		JLabel lblThueSach = new JLabel("Sách mua");
 		lblThueSach.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		JButton btnSelectBook = new JButton("Chọn sách");
@@ -132,81 +141,53 @@ public class SellBookJFrame extends JFrame {
 		tblBook.getColumnModel().getColumn(1).setResizable(false);
 		scrollPane.setViewportView(tblBook);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-		panel_1.setLayout(null);
+		JButton btnXaSch = new JButton("Xóa");
 		
-		JLabel lblSLng = new JLabel("Số lượng:");
-		lblSLng.setBounds(10, 11, 60, 27);
-		panel_1.add(lblSLng);
-		lblSLng.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
-		JLabel lblQuyn = new JLabel("10 quyển");
-		lblQuyn.setBounds(80, 11, 89, 27);
-		panel_1.add(lblQuyn);
-		lblQuyn.setForeground(Color.BLACK);
-		lblQuyn.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		JLabel lblTngGi = new JLabel("Tổng Giá:");
+		lblTngGi.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTngGi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
 		JLabel label = new JLabel("350,000.00 đ");
-		label.setBounds(80, 49, 246, 27);
-		panel_1.add(label);
+		label.setHorizontalAlignment(SwingConstants.LEFT);
 		label.setForeground(Color.RED);
 		label.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
-		JLabel lblTngGi = new JLabel("Tổng Giá:");
-		lblTngGi.setBounds(10, 49, 66, 27);
-		panel_1.add(lblTngGi);
-		lblTngGi.setFont(new Font("Tahoma", Font.BOLD, 14));
-		
-		JButton btnConfirm = new JButton("Xác Nhận");
-		btnConfirm.setBounds(10, 87, 255, 43);
-		panel_1.add(btnConfirm);
-		btnConfirm.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addGap(5)
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE)
-					.addGap(2))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
-					.addGap(4))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 146, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap())
-		);
-		
-		JButton btnXaSch = new JButton("Xóa sách");
+		textField = new JTextField();
+		textField.setEditable(false);
+		textField.setColumns(10);
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblTngGi)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(label, GroupLayout.PREFERRED_SIZE, 127, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(269, Short.MAX_VALUE))
+				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(8)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
 						.addGroup(gl_panel.createSequentialGroup()
 							.addComponent(lblTaiKhoang)
 							.addGap(10)
-							.addComponent(lblUsername, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+							.addComponent(lblUsername, GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
 							.addGap(10)
 							.addComponent(btnSelectAccount, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_panel.createSequentialGroup()
 							.addComponent(lblTen, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
-							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE))
+							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
 						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(1)
 							.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnSelectBook)
-							.addPreferredGap(ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnXaSch, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED))
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)))
 					.addGap(9))
 		);
 		gl_panel.setVerticalGroup(
@@ -223,16 +204,103 @@ public class SellBookJFrame extends JFrame {
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblTen, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnSelectBook, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnXaSch, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
-					.addGap(9))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+							.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+							.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnXaSch, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnSelectBook, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblTngGi, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
 		);
 		panel.setLayout(gl_panel);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setLayout(new GridLayout(0, 1, 0, 15));
+		
+		JButton btnNew = new JButton("Thêm mới");
+		SwingHelper.setTextBelowIconButton(btnNew);
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNew.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/Create.png")));
+		panel_1.add(btnNew);
+		
+		JButton btnSave = new JButton("Lưu");
+		SwingHelper.setTextBelowIconButton(btnSave);
+		btnSave.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/Accept.png")));
+		panel_1.add(btnSave);
+		
+		JButton btnUpdate = new JButton("Cập nhật");
+		SwingHelper.setTextBelowIconButton(btnUpdate);
+		btnUpdate.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/Notes.png")));
+		panel_1.add(btnUpdate);
+		
+		JButton btnDelete = new JButton("Xóa");
+		SwingHelper.setTextBelowIconButton(btnDelete);
+		btnDelete.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
+		panel_1.add(btnDelete);
+		
+		JLabel lblTmKim = new JLabel("Tìm kiếm:");
+		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(5)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblTmKim)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 202, GroupLayout.PREFERRED_SIZE)
+							.addGap(399))
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addComponent(panel, GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+							.addGap(10)
+							.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+							.addGap(9))))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(6)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 379, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		
+		tblOrder = new JTable();
+		tblOrder.setModel(new DefaultTableModel(null, new String[] {"MÃ HÓA ĐƠN", "TÀI KHOẢNG MUA", "HỌ TÊN", "NHÂN VIÊN BÁN", "NGÀY BÁN"}) {
+			boolean[] columnEditables = new boolean[] {
+				false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		scrollPane_1.setViewportView(tblOrder);
 		contentPane.setLayout(gl_contentPane);
 	}
 	

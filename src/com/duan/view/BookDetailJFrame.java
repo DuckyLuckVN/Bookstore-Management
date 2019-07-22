@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.border.SoftBevelBorder;
 
+import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
@@ -253,6 +254,8 @@ public class BookDetailJFrame extends JFrame {
 		lblXuatBan.setText(publisher);
 		lblSoLuong.setText(book.getAmount() + " quyển");
 		lblGia.setText(price);
+		lblDaBan.setText(BookDAO.getCountSold(book.getId()) + " quyển");
+		lblChoThue.setText(BookDAO.getCountBeingRented(book.getId()) + " quyển");
 		setTitle("Thông tin sách | " + book.getTitle());
 		
 		//Set image
@@ -277,7 +280,7 @@ public class BookDetailJFrame extends JFrame {
 	//Cập nhật lại ảnh của sách
 	public void setImage(String imageName)
 	{
-		if (imageName != null)
+		if (imageName != null && imageName.length() > 0)
 		{
 			URL url = getClass().getResource("/com/duan/image/" + imageName);
 			ImageIcon icon = new ImageIcon(url);

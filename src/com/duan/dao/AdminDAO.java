@@ -11,7 +11,7 @@ import com.duan.model.Admin;
 
 public class AdminDAO 
 {
-    public ArrayList<Admin> getAllAdmin() throws SQLException
+    public static ArrayList<Admin> getAllAdmin() throws SQLException
     {
         ArrayList<Admin> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM ADMIN");
@@ -24,31 +24,35 @@ public class AdminDAO
         return list;
     }
     
-    public boolean insert(Admin ad) throws SQLException
+    public static boolean insert(Admin ad) throws SQLException
     {
-        String sql = "INSERT INTO ADMIN Values(?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ADMIN Values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         									ad.getUsername(), 
         									ad.getPassword() , 
         									ad.getFullname(),
         									ad.getEmail(), 
         									ad.getPhoneNumber(), 
+        									ad.getImage(),
+        									ad.isSex(),
         									ad.getRole(), 
         									ad.getCreatedDate());
         int count = pre.executeUpdate();
         return count > 0;
     }
     
-    public boolean update(Admin ad , int id) throws SQLException
+    public static boolean update(Admin ad , int id) throws SQLException
     {
         String sql = "UPDATE ADMIN SET username=?, password=?, fullname=?, "
-                + "email=?, phone_number=?, role=?, created_date=? Where id = ?";
+                + "email=?, phone_number=?, image=?, sex=? role=?, created_date=? Where id = ?";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         										ad.getUsername(), 
         										ad.getPassword(),
         										ad.getFullname(),
         										ad.getEmail(),
         										ad.getPhoneNumber(),
+        										ad.getImage(),
+        										ad.isSex(),
         										ad.getRole(),
         										ad.getCreatedDate(),
         										id);
@@ -56,7 +60,7 @@ public class AdminDAO
         return count > 0;
     }
     
-    public boolean delete(int id) throws SQLException
+    public static boolean delete(int id) throws SQLException
     {
         String sql = "DELETE FROM ADMIN Where id = ?";
         PreparedStatement  pre = JDBCHelper.createPreparedStatement(sql, id);
@@ -64,10 +68,10 @@ public class AdminDAO
         return count > 0;
     }
     
-    public Admin findByID(int id) throws SQLException
+    public static Admin findByID(int id) throws SQLException
     {
         String sql = "SELECT * FROM ADMIN Where id = ?";
-        ResultSet rs = JDBCHelper.executeQuery(sql);
+        ResultSet rs = JDBCHelper.executeQuery(sql, id);
         if (rs.next())
         {
         	return readFromResultSet(rs);
@@ -75,7 +79,7 @@ public class AdminDAO
         return null;
     }
     
-    public Admin readFromResultSet(ResultSet rs) throws SQLException
+    public static Admin readFromResultSet(ResultSet rs) throws SQLException
     {
     	int id = rs.getInt(1);
     	String username = rs.getString(2);
@@ -83,10 +87,12 @@ public class AdminDAO
     	String fullname = rs.getString(4);
     	String email = rs.getString(5);
     	String phoneNumber = rs.getString(6);
-    	int role = rs.getInt(7);
-    	Date createdDate = rs.getDate(8);
+    	String image = rs.getString(7);
+    	boolean sex = rs.getBoolean(8);
+    	int role = rs.getInt(9);
+    	Date createdDate = rs.getDate(10);
     	
-    	return new Admin(id, username, password, fullname, email, phoneNumber, role, createdDate);
+    	return new Admin(id, username, password, fullname, email, phoneNumber, image, sex, role, createdDate);
     }
     
 }

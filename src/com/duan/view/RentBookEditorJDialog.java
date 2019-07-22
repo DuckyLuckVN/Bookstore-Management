@@ -20,18 +20,26 @@ import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
 import com.duan.dao.BookDAO;
+import com.duan.dao.RentBookDAO;
+import com.duan.dao.RentBookDetailDAO;
+import com.duan.dao.UserDAO;
+import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.model.Book;
+import com.duan.model.BookProduct;
 import com.duan.model.RentBook;
 import com.duan.model.User;
 import java.awt.Color;
@@ -41,7 +49,7 @@ import java.beans.PropertyChangeEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class RentBookEditorJFrame extends JFrame {
+public class RentBookEditorJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTextField txtTaiKhoang;
@@ -52,6 +60,8 @@ public class RentBookEditorJFrame extends JFrame {
 	private JTextField txtSoLuong;
 	private JTable tblBook;
 	private JTextField txtMaTaiKhoang;
+	private JButton btnConfirm;
+	private JComboBox cboStatus;
 
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
@@ -69,7 +79,7 @@ public class RentBookEditorJFrame extends JFrame {
 		{
 			public void run() {
 				try {
-					RentBookEditorJFrame frame = new RentBookEditorJFrame();
+					RentBookEditorJDialog frame = new RentBookEditorJDialog();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -78,15 +88,17 @@ public class RentBookEditorJFrame extends JFrame {
 		});
 	}
 	
-	public RentBookEditorJFrame(RentBookJFrame rentBookJFrame)
+	public RentBookEditorJDialog(RentBookJFrame rentBookJFrame)
 	{
 		this();
 		setLocationRelativeTo(rentBookJFrame);
 	}
 
-	public RentBookEditorJFrame() {
+	public RentBookEditorJDialog() 
+	{
 		setResizable(false);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(RentBookEditorJFrame.class.getResource("/com/duan/icon/icons8_edit_property_50px.png")));
+		setModal(true);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(RentBookEditorJDialog.class.getResource("/com/duan/icon/icons8_edit_property_50px.png")));
 		setTitle("Thêm thuê sách");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -186,13 +198,24 @@ public class RentBookEditorJFrame extends JFrame {
 		btnSelectBook.setBounds(249, 233, 89, 26);
 		contentPane.add(btnSelectBook);
 		
-		JButton btnConfirm = new JButton("Xác nhận");
+		btnConfirm = new JButton("Xác nhận");
 		btnConfirm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				try 
 				{
-					validateTable();
+					if (validateTable())
+					{
+						//Nếu không phải là edit mode thì tiến hành insert
+						if (isEditMode == false)
+						{
+							insertRentbook();
+						}
+						else
+						{
+							updateRentBook();
+						}
+					}
 				} 
 				catch (SQLException e1) 
 				{
@@ -208,11 +231,11 @@ public class RentBookEditorJFrame extends JFrame {
 		lblTinhTrang.setBounds(10, 419, 68, 26);
 		contentPane.add(lblTinhTrang);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setEnabled(false);
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách", "Mất sách"}));
-		comboBox.setBounds(88, 419, 214, 26);
-		contentPane.add(comboBox);
+		cboStatus = new JComboBox();
+		cboStatus.setEnabled(false);
+		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách", "Mất sách"}));
+		cboStatus.setBounds(88, 419, 214, 26);
+		contentPane.add(cboStatus);
 		
 		txtSoLuong = new JTextField();
 		txtSoLuong.setForeground(Color.BLUE);
@@ -296,7 +319,7 @@ public class RentBookEditorJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e)
 			{
 				deleteBook();
-				updateQualityNumber();
+				updateAmountNumber();
 			}
 		});
 		btnDeleteBook.setBounds(348, 233, 89, 26);
@@ -324,9 +347,36 @@ public class RentBookEditorJFrame extends JFrame {
 			//Nếu cột được update là Số Lượng thì cập nhật lại thông tin số lượng
 			if (e.getColumn() == 3)
 			{
-				
-				updateQualityNumber();
+				if (checkAmountAt(e.getFirstRow()))
+				{
+					updateAmountNumber();				}
 			}
+		}
+	}
+	
+	//Kiểm tra dữ liệu số lượng tại row có hợp lệ hay không
+	public boolean checkAmountAt(int row)
+	{
+		String amount_temp = tblBook.getValueAt(row, 3).toString();
+		
+		//Kiểm tra xem có phải là số hay không?
+		if (DataHelper.isInteger(amount_temp))
+		{
+			int amount = DataHelper.getInt(amount_temp);
+			if (amount > 0)
+			{
+				return true;
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(contentPane, "Số lượng nhập vào phải lớn hơn 0!");
+				return false;
+			}
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(contentPane, "Số lượng nhập vào phải là số!");
+			return false;
 		}
 	}
 	
@@ -353,7 +403,7 @@ public class RentBookEditorJFrame extends JFrame {
 		{
 			listBook = selectBookJDialog.getListBookSelected();
 			fillToTable();
-			updateQualityNumber();
+			updateAmountNumber();
 		}
 	}
 	
@@ -380,8 +430,45 @@ public class RentBookEditorJFrame extends JFrame {
 		
 	}
 	
+	//Thực hiện insert dữ liệu vào bảng Rentbook
+	public void insertRentbook() throws SQLException
+	{
+		RentBook rb = new RentBook(0, userSelect.getId(), AccountSave.getAdmin().getId(), new Date(), null, 0);
+		boolean isSuccess = RentBookDAO.insert(rb, getListBookProduct());
+		
+		if (isSuccess)
+		{
+			rentBookJFrame.getDataToList();
+			rentBookJFrame.fillToTable();
+			JOptionPane.showMessageDialog(this, "Thêm phiếu thuê sách thành công!");
+		}
+	}
+	
+	//Thực hiện update dữ liệu vào bảng Rentbook
+	public void updateRentBook() throws SQLException
+	{
+		//status: 0 - Đang Thuê, 1 - Đã trả sách
+		int status = cboStatus.getSelectedIndex();
+		
+		//Status = 1 -> đã trả sách, cập nhật lại ngày trả sách
+		if (status == 1)
+		{
+			rentBook.setReturnedDate(new Date());
+		}
+		rentBook.setUserId(userSelect.getId());
+		rentBook.setStatus(status);
+		
+		boolean isSuccess = RentBookDAO.update(rentBook, getListBookProduct());
+		if (isSuccess)
+		{
+			rentBookJFrame.getDataToList();
+			rentBookJFrame.fillToTable();
+			JOptionPane.showMessageDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!");
+		}
+	}
+	
 	//Cập nhật lại tổng số lượng sách
-	public void updateQualityNumber()
+	public void updateAmountNumber()
 	{
 		
 		txtSoLuong.setText(getQualityNumber() + " quyển");
@@ -430,48 +517,93 @@ public class RentBookEditorJFrame extends JFrame {
 		int rowCount = tblBook.getRowCount();
 		
 		//CHECK - USER
-		if (userSelect != null)
+		if (userSelect == null)
 		{
-			if (rowCount > 0)
+			msg += "+ Bạn chưa chọn tài khoảng thuê\n";
+			isSuccess = false;
+		}
+		
+		//CHECK - BOOK SELECT COUNT
+		if (rowCount == 0)
+		{
+			msg += "+ Bạn chưa chọn sách thuê\n";
+			isSuccess = false;
+		}
+		
+		//Duyệt từng dòng trong bảng và kiểm tra
+		for (int i = 0; i < rowCount; i++)
+		{
+			String bookId = tblBook.getValueAt(i, 0).toString();
+			int amountAvailable = BookDAO.getAmountAvailable(bookId);
+			
+			//Nôi dung của cột số lượng trong bảng
+			String amount_temp_str = tblBook.getValueAt(i, 3).toString();
+			
+			//CHECK - SỐ LƯỢNG SÁCH
+			if (DataHelper.isInteger(amount_temp_str) && DataHelper.getInt(amount_temp_str) > 0)
 			{
-				//Duyệt từng dòng trong bảng và kiểm tra
-				for (int i = 0; i < rowCount; i++)
+				//Nếu đây không phải là chế độ cập nhật thì kiểm tra kiểu này
+				if (isEditMode == false)
 				{
-					String bookId = tblBook.getValueAt(i, 0).toString();
-					int amountAvailable = BookDAO.getAmountAvailable(bookId);
-					String amountInput_temp = tblBook.getValueAt(i, 3).toString();
-					int amountInput;
+					//Ép kiểu về integer cho số lượng
+					int amount_temp = DataHelper.getInt(amount_temp_str);
 					
-					//CHECK - SỐ LƯỢNG SÁCH
-					if (DataHelper.isInteger(amountInput_temp))
+					//Số sách nhập vào lớn hơn số sách đang có
+					if (amount_temp > amountAvailable)
 					{
-						//Ép kiểu về integer cho số lượng
-						amountInput = DataHelper.getInt(amountInput_temp);
-						
-						//Số sách nhập vào lớn hơn số sách đang có
-						if (amountInput > amountAvailable)
-						{
-							msg += "[" + bookId + "] Số sách còn lại không đủ đáp ứng cho " + amountInput + " quyển (còn " + amountAvailable + " quyển)\n";
-							isSuccess = false;
-						}
-					}
-					else
-					{
-						msg += "[" + bookId + "] Số lượng sách nhập vào phải là số\n";
+						msg += "[" + bookId + "] Số sách còn lại không đủ đáp ứng cho " + amount_temp + " quyển (còn " + amountAvailable + " quyển)\n";
 						isSuccess = false;
+					}
+				}
+				else //Nếu đây là chế độ cập nhật thì phải kiểm tra kiểu này
+				{
+					//Ép kiểu về integer cho số lượng
+					int amount_temp = DataHelper.getInt(amount_temp_str);
+					List<BookProduct> list_temp = getListBookProduct();
+
+					for (BookProduct product : RentBookDetailDAO.getListProducts(rentBook.getId()))
+					{
+						//Nếu mã sách trên table trùng với 1 mã sách trong rentbookDetail thì kiểm tra số lượng hợp lệ
+						if (product.getBook().getId().equals(bookId))
+						{
+							//Kiểm tra nếu như số lượng sách trong kho sau khi đơn thuê cập nhật số lượng mà nhỏ hơn 0 thì không cho phép
+							/*
+							 * VD: 
+							 * - Đơn thuê sách có id = Sach1 đang thuê 10 quyển
+							 * - Kho sách có id = Sach1 đang có 10 quyển
+							 * - Đơn thuê sau khi cập nhật có sách id = Sach1 sẽ thuê thành 25 quyển
+							 * vậy => tức là sẽ phải cần thêm 15 quyển nữa trong kho để đưa cho khách thuê
+							 * Nhưng trong kho chỉ còn 10 quyển nên ko cho phép
+							 * 
+							 * CT tính: amountAfterUpdate = (số_sách_đang_có + số_sách_đang_thuê) - số_sách_sau_khi_update_số_lượng 
+							 * 
+							 * Nếu: amountAfterUpdate lớn hơn hoặc = 0 thì OK, nhỏ hơn 0 thì không cho phép
+							 */
+							int amountAfterUpdate = (amountAvailable + product.getAmount()) - amount_temp;
+							if (amountAfterUpdate < 0)
+							{
+								msg += "[" + bookId + "] Số lượng sách hiện có không đủ đáp ứng thêm +" + (amount_temp - product.getAmount()) + " quyển (còn " + amountAvailable + " quyển)\n";
+								isSuccess = false;
+							}
+							break;
+						}
+						else
+						{
+							//Số sách nhập vào lớn hơn số sách đang có
+							if (amount_temp > amountAvailable)
+							{
+								msg += "[" + bookId + "] Số sách còn lại không đủ đáp ứng cho " + amount_temp + " quyển (còn " + amountAvailable + " quyển)\n";
+								isSuccess = false;
+							}
+						}
 					}
 				}
 			}
 			else
 			{
-				msg += "+ Bạn chưa chọn sách thuê\n";
+				msg += "[" + bookId + "] Số lượng sách nhập vào phải là số và lớn hơn 0\n";
 				isSuccess = false;
 			}
-		}
-		else
-		{
-			msg += "+ Bạn chưa chọn tài khoảng thuê\n";
-			isSuccess = false;
 		}
 		
 		if (isSuccess == false)
@@ -486,6 +618,7 @@ public class RentBookEditorJFrame extends JFrame {
 	//Hiển thị thông tin user truyền vào lên form
 	public void showUserDetail(User user)
 	{
+		userSelect = user;
 		String ngaySinh = DateHelper.dateToString(user.getDateOfBirth(), "dd/MM/yyyy");
 		txtMaTaiKhoang.setText(user.getId() + "");
 		txtTaiKhoang.setText(user.getUsername());
@@ -493,6 +626,67 @@ public class RentBookEditorJFrame extends JFrame {
 		txtNgaySinh.setText(ngaySinh);
 		txtSDT.setText(user.getPhoneNumber());
 		txtEmail.setText(user.getEmail());
+	}
+	
+	//Thực hiện set editMode
+	public void setEditMode(boolean status)
+	{
+		isEditMode = status;
+		if (isEditMode == false)
+		{
+			cboStatus.setEnabled(false);
+		}
+		else
+		{
+			cboStatus.setEnabled(true);
+			setTitle("Chỉnh Sửa Đơn Thuê | Mã Số: " + this.rentBook.getId());
+		}
+	}
+	
+	//Trả về danh sách Book Product trên bảng đang có
+	public List<BookProduct> getListBookProduct()
+	{
+		List<BookProduct> list = new ArrayList<BookProduct>();
+		for (int i = 0; i < listBook.size(); i++)
+		{
+			Book book = listBook.get(i);
+			int amount = DataHelper.getInt(tblBook.getValueAt(i, 3).toString());
+			BookProduct bookProduct = new BookProduct(book, amount, book.getPrice());
+			list.add(bookProduct);
+		}
+		return list;
+		
+	}
+	
+	public void setEditModel(RentBook rentBook)
+	{
+		this.rentBook = rentBook;
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		try 
+		{
+			//Hiển thị thông tin người thuê
+			this.userSelect = UserDAO.findByID(rentBook.getUserId());
+			showUserDetail(userSelect);
+			
+			//Hiển thị lại trạng thái cho cboStatus
+			cboStatus.setSelectedIndex(rentBook.getStatus());
+			
+			//Lấy về danh sách các sách chi tiết dựa vào mã số thuê @rentbook_id
+			List<BookProduct> list = RentBookDetailDAO.getListProducts(rentBook.getId());
+			
+			for (BookProduct product : list)
+			{
+				Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), product.getPrice(), product.getAmount(), false};
+				model.addRow(rowData);
+			}
+			updateAmountNumber();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void setRentBookJFrame(RentBookJFrame rentBookJFrame)

@@ -152,7 +152,6 @@ public class BookJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
-		pnlController.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
@@ -377,7 +376,7 @@ public class BookJFrame extends JFrame {
 				return false;
 			}
 		});
-		tblBook.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
+		tblBook.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
 		contentPane.setLayout(gl_contentPane);
@@ -436,6 +435,7 @@ public class BookJFrame extends JFrame {
 		}
 		
 		int rowCount = tblBook.getRowCount();
+		
 		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
 		if (indexSelect != -1)
 		{

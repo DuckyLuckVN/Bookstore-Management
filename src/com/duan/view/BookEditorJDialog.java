@@ -550,15 +550,15 @@ public class BookEditorJDialog extends JDialog {
 	}
 	
 	//Cập nhật lại icon cho lblImage lấy ảnh từ folder image có nameFile.
-	public void setImage(String fileName)
+	public void setImage(String imageName)
 	{
-		try 
+		if (imageName != null && imageName.length() > 0)
 		{
-			ImageIcon icon = new ImageIcon(DataHelper.getFileFromSource("/com/duan/image/" + fileName).getAbsolutePath());
+			ImageIcon icon = new ImageIcon(DataHelper.getFileFromSource("/com/duan/image/" + imageName).getAbsolutePath());
 			lblImage.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblImage);
-		} 
-		catch (NullPointerException e) 
+		}
+		else
 		{
 			removeImage();
 		}

@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.duan.helper.AccountSave;
 import com.duan.helper.SwingHelper;
+import javax.swing.JTextArea;
 
 /*
  * 15/05/2019
@@ -79,7 +80,7 @@ public class LoginJFrame extends JDialog
 		}
 		setResizable(false);
 		setTitle("Đăng Nhập");
-		setBounds(100, 100, 358, 500);
+		setBounds(100, 100, 755, 500);
 		contentPane = new JPanel();
 		
 		contentPane.addMouseMotionListener(new MouseMotionAdapter() 
@@ -133,12 +134,12 @@ public class LoginJFrame extends JDialog
 		lblExit.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExit.setFont(new Font("Tahoma", Font.BOLD, 24));
 		lblExit.setForeground(new Color(0, 0, 0));
-		lblExit.setBounds(329, 0, 29, 29);
+		lblExit.setBounds(726, 0, 29, 29);
 		contentPane.add(lblExit);
 		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBackground(new Color(255, 255, 255));
-		pnlForm.setBounds(10, 245, 341, 181);
+		pnlForm.setBounds(396, 246, 341, 181);
 		contentPane.add(pnlForm);
 		pnlForm.setLayout(null);
 		
@@ -209,18 +210,39 @@ public class LoginJFrame extends JDialog
 		btnLogin.setForeground(new Color(255, 255, 255));
 		btnLogin.setBackground(new Color(62, 144, 255));
 		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLogin.setBounds(13, 437, 335, 51);
+		btnLogin.setBounds(399, 438, 335, 51);
 		contentPane.add(btnLogin);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setBounds(74, 22, 211, 213);
+		lblLogo.setBounds(460, 23, 211, 213);
 //		ImageIcon icon = new ImageIcon(new ImageIcon(LoginJFrame.class.getResource("/com/daihao/icon/avatar-icon.png")).getImage().getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(), Image.SCALE_SMOOTH));
 		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/avatar-icon.png")));
 		SwingHelper.setAutoResizeIcon(lblLogo);
 		contentPane.add(lblLogo);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(65, 71, 86));
+		panel.setBounds(0, 0, 386, 500);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		lblNewLabel.setBounds(39, 36, 64, 85);
+		panel.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("BOOKSTORE");
+		lblNewLabel_1.setForeground(new Color(255, 255, 255));
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblNewLabel_1.setBounds(112, 35, 286, 57);
+		panel.add(lblNewLabel_1);
+		
+		JLabel lblManagerment = new JLabel("MANAGERMENT");
+		lblManagerment.setHorizontalAlignment(SwingConstants.LEFT);
+		lblManagerment.setForeground(Color.WHITE);
+		lblManagerment.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblManagerment.setBounds(111, 68, 286, 57);
+		panel.add(lblManagerment);
 		setLocationRelativeTo(getOwner());
 	}
-	
-
-
 }

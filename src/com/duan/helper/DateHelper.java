@@ -11,6 +11,7 @@ public class DateHelper
 	//Chuyển từ Date sang String
 	public static String dateToString(Date date, String format)
 	{
+		
 		SimpleDateFormat formater = new SimpleDateFormat(format);
 		String stringDate = formater.format(date);
 		return stringDate;

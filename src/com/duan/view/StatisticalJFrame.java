@@ -66,7 +66,7 @@ public class StatisticalJFrame extends JFrame {
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane = new JScrollPane();
 		
@@ -110,7 +110,7 @@ public class StatisticalJFrame extends JFrame {
 		
 		JComboBox comboBox_2 = new JComboBox();
 		comboBox_2.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		comboBox_2.setModel(new DefaultComboBoxModel(new String[] {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
+		comboBox_2.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
 		
@@ -152,7 +152,7 @@ public class StatisticalJFrame extends JFrame {
 		
 		JComboBox comboBox_1 = new JComboBox();
 		comboBox_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
+		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		

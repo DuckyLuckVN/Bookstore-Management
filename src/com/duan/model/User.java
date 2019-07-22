@@ -13,18 +13,45 @@ public class User
     private Date dateOfBirth;
     private String email;
     private String phoneNumber;
+    private boolean sex;
+    private Date createdDate;
 
-    public User(int id, String username, String password, String fullname, Date dateOfBirth, String email, String phoneNumber) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.fullname = fullname;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+    public User()
+    {
+    	
     }
 
-    public int getId() {
+    public User(int id, String username, String password, String fullname, Date dateOfBirth, String email,
+			String phoneNumber, boolean sex, Date createdDate) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.fullname = fullname;
+		this.dateOfBirth = dateOfBirth;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.sex = sex;
+		this.createdDate = createdDate;
+	}
+
+	public boolean isSex() {
+		return sex;
+	}
+
+	public void setSex(boolean sex) {
+		this.sex = sex;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public int getId() {
         return id;
     }
 

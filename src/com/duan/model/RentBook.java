@@ -8,17 +8,33 @@ public class RentBook
     private int userId;
     private int adminId;
     private Date createdDate;
+    private Date returnedDate;
     private int status;
 
-    public RentBook(int id, int userId, int adminId, Date createdDate, int status) {
-        this.id = id;
-        this.userId = userId;
-        this.adminId = adminId;
-        this.createdDate = createdDate;
-        this.status = status;
+    public RentBook()
+    {
+    	
     }
 
-    public int getId() {
+    public RentBook(int id, int userId, int adminId, Date createdDate, Date returnedDate, int status) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.adminId = adminId;
+		this.createdDate = createdDate;
+		this.returnedDate = returnedDate;
+		this.status = status;
+	}
+
+	public Date getReturnedDate() {
+		return returnedDate;
+	}
+
+	public void setReturnedDate(Date returnedDate) {
+		this.returnedDate = returnedDate;
+	}
+
+	public int getId() {
         return id;
     }
 
@@ -56,6 +72,19 @@ public class RentBook
 
     public void setStatus(int status) {
         this.status = status;
+    }
+    
+    public String getTitleStatus()
+    {
+	    switch (status) {
+		case 0:
+			return "Đang Thuê";
+		case 1:
+			return "Đã trả";
+		default:
+			return "Không rõ";
+		}
+    
     }
     
     

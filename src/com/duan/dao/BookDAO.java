@@ -126,6 +126,30 @@ public class BookDAO
     	return 0;
     }
     
+    //Trả về số sách đã bán được dựa trên ID
+    public static int getCountSold(String id) throws SQLException
+    {
+    	PreparedStatement st = JDBCHelper.createPreparedStatement("{call sp_getCountBookSold(?) }", id);
+    	ResultSet rs = st.executeQuery();
+    	if (rs.next())
+    	{
+    		return rs.getInt(1);
+    	}
+    	return 0;
+    }
+    
+    //Trả về số sách đang được thuê
+    public static int getCountBeingRented(String id) throws SQLException
+    {
+    	PreparedStatement st = JDBCHelper.createPreparedStatement("{call sp_getCountBookBeingRented(?) }", id);
+    	ResultSet rs = st.executeQuery();
+    	if (rs.next())
+    	{
+    		return rs.getInt(1);
+    	}
+    	return 0;
+    }
+    
     //Trả về model Book dựa trên ResultSet truyền vào.
     public static Book readFromResultSet(ResultSet rs) throws SQLException
     {
@@ -144,4 +168,10 @@ public class BookDAO
         
         return new Book(id, title, categoryId, pageNum, author, amount, publisher, publicationYear, money, image, description, createdDate);
     }
+    
+    public static void main(String[] args) throws SQLException 
+    {
+    	int count = getCountBeingRented("JH42");
+    	System.out.println(count);
+	}
 }
