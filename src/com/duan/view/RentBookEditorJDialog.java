@@ -62,6 +62,8 @@ public class RentBookEditorJDialog extends JDialog {
 	private JTextField txtMaTaiKhoang;
 	private JButton btnConfirm;
 	private JComboBox cboStatus;
+	private JButton btnSelectBook;
+	private JButton btnDeleteBook;
 
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
@@ -108,7 +110,7 @@ public class RentBookEditorJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 447, 538);
+		setBounds(100, 100, 608, 492);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -123,7 +125,7 @@ public class RentBookEditorJDialog extends JDialog {
 		txtTaiKhoang.setForeground(new Color(255, 0, 0));
 		txtTaiKhoang.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtTaiKhoang.setEditable(false);
-		txtTaiKhoang.setBounds(124, 50, 214, 26);
+		txtTaiKhoang.setBounds(124, 50, 369, 26);
 		contentPane.add(txtTaiKhoang);
 		txtTaiKhoang.setColumns(10);
 		
@@ -133,7 +135,7 @@ public class RentBookEditorJDialog extends JDialog {
 				showSelectUser();
 			}
 		});
-		btnSelectUser.setBounds(348, 13, 89, 209);
+		btnSelectUser.setBounds(503, 13, 89, 209);
 		contentPane.add(btnSelectUser);
 		
 		JLabel lblHo = new JLabel("Họ tên:");
@@ -145,14 +147,14 @@ public class RentBookEditorJDialog extends JDialog {
 		txtHoTen.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtHoTen.setEditable(false);
 		txtHoTen.setColumns(10);
-		txtHoTen.setBounds(124, 85, 214, 26);
+		txtHoTen.setBounds(124, 85, 369, 26);
 		contentPane.add(txtHoTen);
 		
 		txtEmail = new JTextField();
 		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtEmail.setEditable(false);
 		txtEmail.setColumns(10);
-		txtEmail.setBounds(124, 122, 214, 26);
+		txtEmail.setBounds(124, 122, 369, 26);
 		contentPane.add(txtEmail);
 		
 		JLabel label = new JLabel("Email:");
@@ -169,14 +171,14 @@ public class RentBookEditorJDialog extends JDialog {
 		txtSDT.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtSDT.setEditable(false);
 		txtSDT.setColumns(10);
-		txtSDT.setBounds(124, 159, 214, 26);
+		txtSDT.setBounds(124, 159, 369, 26);
 		contentPane.add(txtSDT);
 		
 		txtNgaySinh = new JTextField();
 		txtNgaySinh.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtNgaySinh.setEditable(false);
 		txtNgaySinh.setColumns(10);
-		txtNgaySinh.setBounds(124, 196, 214, 26);
+		txtNgaySinh.setBounds(124, 196, 369, 26);
 		contentPane.add(txtNgaySinh);
 		
 		JLabel lblNgySinh = new JLabel("Ngày sinh:");
@@ -189,13 +191,13 @@ public class RentBookEditorJDialog extends JDialog {
 		lblSachChoThue.setBounds(10, 233, 104, 26);
 		contentPane.add(lblSachChoThue);
 		
-		JButton btnSelectBook = new JButton("Chọn sách");
+		btnSelectBook = new JButton("Thêm sách");
 		btnSelectBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showSelectBook();
 			}
 		});
-		btnSelectBook.setBounds(249, 233, 89, 26);
+		btnSelectBook.setBounds(404, 233, 89, 26);
 		contentPane.add(btnSelectBook);
 		
 		btnConfirm = new JButton("Xác nhận");
@@ -223,7 +225,7 @@ public class RentBookEditorJDialog extends JDialog {
 				}
 			}
 		});
-		btnConfirm.setBounds(10, 462, 427, 36);
+		btnConfirm.setBounds(406, 416, 186, 36);
 		contentPane.add(btnConfirm);
 		
 		JLabel lblTinhTrang = new JLabel("Tình trạng:");
@@ -243,11 +245,11 @@ public class RentBookEditorJDialog extends JDialog {
 		txtSoLuong.setText("0 Quyển");
 		txtSoLuong.setEditable(false);
 		txtSoLuong.setColumns(10);
-		txtSoLuong.setBounds(124, 233, 115, 26);
+		txtSoLuong.setBounds(124, 233, 270, 26);
 		contentPane.add(txtSoLuong);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 270, 421, 138);
+		scrollPane.setBounds(10, 270, 582, 138);
 		contentPane.add(scrollPane);
 		
 		tblBook = new JTable();
@@ -268,7 +270,7 @@ public class RentBookEditorJDialog extends JDialog {
 				}
 			}
 		});
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "XÓA"}) {
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "ĐÃ TRẢ", "XÓA"}) {
 			
 			//Column = 4 -> cột "XÓA"
 			public boolean isCellEditable(int row, int column) {
@@ -314,7 +316,7 @@ public class RentBookEditorJDialog extends JDialog {
 		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);;
 		scrollPane.setViewportView(tblBook);
 		
-		JButton btnDeleteBook = new JButton("Xóa sách");
+		btnDeleteBook = new JButton("Xóa sách");
 		btnDeleteBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
@@ -322,7 +324,7 @@ public class RentBookEditorJDialog extends JDialog {
 				updateAmountNumber();
 			}
 		});
-		btnDeleteBook.setBounds(348, 233, 89, 26);
+		btnDeleteBook.setBounds(503, 235, 89, 26);
 		contentPane.add(btnDeleteBook);
 		
 		JLabel lblMSTi = new JLabel("Mã số:");
@@ -334,7 +336,7 @@ public class RentBookEditorJDialog extends JDialog {
 		txtMaTaiKhoang.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtMaTaiKhoang.setEditable(false);
 		txtMaTaiKhoang.setColumns(10);
-		txtMaTaiKhoang.setBounds(124, 15, 214, 26);
+		txtMaTaiKhoang.setBounds(124, 15, 369, 26);
 		contentPane.add(txtMaTaiKhoang);
 	}
 	
@@ -640,6 +642,9 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			cboStatus.setEnabled(true);
 			setTitle("Chỉnh Sửa Đơn Thuê | Mã Số: " + this.rentBook.getId());
+			btnSelectBook.setEnabled(false);
+			btnDeleteBook.setEnabled(false);
+			
 		}
 	}
 	
@@ -689,8 +694,8 @@ public class RentBookEditorJDialog extends JDialog {
 		}
 	}
 	
-	public void setRentBookJFrame(RentBookJFrame rentBookJFrame)
+	public void setRentBookJFrame(RentBookJFrame jframe)
 	{
-		this.rentBookJFrame = rentBookJFrame;
+		this.rentBookJFrame = jframe;
 	}
 }

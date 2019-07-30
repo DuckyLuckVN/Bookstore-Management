@@ -26,11 +26,13 @@ import javax.swing.border.LineBorder;
 
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.dao.LocationDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 import com.duan.model.Category;
+import com.duan.model.Location;
 
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -59,15 +61,17 @@ public class BookEditorJDialog extends JDialog {
 	private JTextArea txtGhiChu;
 	private JComboBox cboNamXuatBan;
 	private JLabel lblImage;
-	
+	private JComboBox cboViTri;
 	
 	CategoryJDialog categoryJDialog = new CategoryJDialog();
+	
+	
 	List<Category> listCategory;
+	List<Location> listLocation;
 	BookJFrame bookJFrame;
 	private File fileImage;
 	
 	private boolean isEditMode;
-	private JTextField txtSoLuong;
 	private JTextField txtTacGia;
 	
 	private Book bookEdit;
@@ -215,6 +219,7 @@ public class BookEditorJDialog extends JDialog {
 		pnlForm.add(lblNmXutBn);
 		
 		cboNamXuatBan = new JComboBox();
+		cboNamXuatBan.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		Date date = new Date();
 		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		int yearToday  = localDate.getYear();
@@ -223,7 +228,7 @@ public class BookEditorJDialog extends JDialog {
 		{
 			cboNamXuatBan.addItem(i);
 		}
-		cboNamXuatBan.setBounds(95, 221, 112, 24);
+		cboNamXuatBan.setBounds(95, 221, 81, 24);
 		pnlForm.add(cboNamXuatBan);
 		
 		JLabel lblGhiCh = new JLabel("Ghi chú");
@@ -236,18 +241,6 @@ public class BookEditorJDialog extends JDialog {
 		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtGhiChu.setBounds(95, 256, 293, 84);
 		pnlForm.add(txtGhiChu);
-		
-		JLabel lblSLng = new JLabel("Số lượng");
-		lblSLng.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblSLng.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblSLng.setBounds(217, 221, 57, 24);
-		pnlForm.add(lblSLng);
-		
-		txtSoLuong = new JTextField();
-		txtSoLuong.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtSoLuong.setColumns(10);
-		txtSoLuong.setBounds(284, 221, 104, 24);
-		pnlForm.add(txtSoLuong);
 		
 		JLabel lblVn = new JLabel("VNĐ");
 		lblVn.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -265,6 +258,17 @@ public class BookEditorJDialog extends JDialog {
 		txtTacGia.setColumns(10);
 		txtTacGia.setBounds(95, 151, 293, 24);
 		pnlForm.add(txtTacGia);
+		
+		JLabel lblVTr = new JLabel("Vị trí để sách");
+		lblVTr.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblVTr.setBounds(194, 221, 75, 24);
+		pnlForm.add(lblVTr);
+		
+		cboViTri = new JComboBox();
+		cboViTri.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		cboViTri.setModel(new DefaultComboBoxModel(new String[] {"Kệ A1", "Kệ A2", "Kệ A3"}));
+		cboViTri.setBounds(279, 221, 109, 24);
+		pnlForm.add(cboViTri);
 		
 		JPanel pnlControllImage = new JPanel();
 		pnlControllImage.setBounds(418, 244, 214, 61);
@@ -388,6 +392,7 @@ public class BookEditorJDialog extends JDialog {
 		try 
 		{
 			listCategory = CategoryDAO.getAll();
+			listLocation = LocationDAO.getAll();
 		} 
 		catch (SQLException e) 
 		{
@@ -402,6 +407,11 @@ public class BookEditorJDialog extends JDialog {
 		{
 			cboTheLoai.addItem(e.getCategoryTitle());
 		}
+		
+		for (Location e : listLocation)
+		{
+			cboViTri.addItem(e.getLocationName());
+		}
 	}
 
 	
@@ -410,6 +420,7 @@ public class BookEditorJDialog extends JDialog {
 	{
 		String categoryId = listCategory.get(cboTheLoai.getSelectedIndex()).getId();
 		int publicationYear = DataHelper.getInt(cboNamXuatBan.getItemAt(cboNamXuatBan.getSelectedIndex()).toString());
+		String locationId = listLocation.get(cboViTri.getSelectedIndex()).getId();
 		String imageName = null;
 		Date createdDate = new Date();
 		
@@ -423,22 +434,21 @@ public class BookEditorJDialog extends JDialog {
 			createdDate = bookEdit.getCreatedDate();
 		}
 
-		Book book = new Book();
 		
-		book.setId(txtMaSach.getText());
-		book.setTitle(txtTenSach.getText());
-		book.setCategoryId(categoryId);
-		book.setPageNum(DataHelper.getInt(txtSoTrang.getText()));
-		book.setPrice(DataHelper.getDouble(txtGia.getText()));
-		book.setAuthor(txtTacGia.getText());
-		book.setPublisher(txtNhaXuatBan.getText());
-		book.setPublicationYear(publicationYear);
-		book.setAmount(DataHelper.getInt(txtSoLuong.getText()));
-		book.setDescription(txtGhiChu.getText());
-		book.setCreatedDate(createdDate);
-		book.setImage(imageName);
+		this.bookEdit.setId(txtMaSach.getText());
+		this.bookEdit.setTitle(txtTenSach.getText());
+		this.bookEdit.setCategoryId(categoryId);
+		this.bookEdit.setPageNum(DataHelper.getInt(txtSoTrang.getText()));
+		this.bookEdit.setPrice(DataHelper.getDouble(txtGia.getText()));
+		this.bookEdit.setAuthor(txtTacGia.getText());
+		this.bookEdit.setPublisher(txtNhaXuatBan.getText());
+		this.bookEdit.setPublicationYear(publicationYear);
+		this.bookEdit.setLocationId(locationId);
+		this.bookEdit.setDescription(txtGhiChu.getText());
+		this.bookEdit.setCreatedDate(createdDate);
+		this.bookEdit.setImage(imageName);
 		
-		return book;
+		return this.bookEdit;
 		
 		
 	}
@@ -458,7 +468,7 @@ public class BookEditorJDialog extends JDialog {
 	{
 		setTitle("Cập nhật sách");
 		isEditMode = true;
-		bookEdit = book;
+		this.bookEdit = book;
 		
 		txtMaSach.setEnabled(false);
 		
@@ -499,16 +509,18 @@ public class BookEditorJDialog extends JDialog {
 	public void showDataToForm(Book book) throws SQLException
 	{
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
-		
+		String locationName = LocationDAO.findByID(book.getLocationId()).getLocationName();
 		txtMaSach.setText(book.getId());
 		txtTenSach.setText(book.getTitle());
 		txtTacGia.setText(book.getAuthor());
 		txtNhaXuatBan.setText(book.getPublisher());
-		txtSoLuong.setText(book.getAmount() + "");
+		//txtSoLuong.setText(book.getAmount() + "");
 		txtSoTrang.setText(book.getPageNum() + "");
 		txtGia.setText(book.getPrice() + "");
+		txtGhiChu.setText(book.getDescription());
 		cboNamXuatBan.setSelectedItem(book.getPublicationYear());
 		cboTheLoai.setSelectedItem(categoryTitle);
+		cboViTri.setSelectedItem(locationName);
 		
 		//Xử lý ảnh
 		if (book.getImage() != null)
@@ -578,5 +590,4 @@ public class BookEditorJDialog extends JDialog {
 	{
 		categoryJDialog.setVisible(true);
 	}
-	
 }

@@ -26,7 +26,7 @@ public class AdminDAO
     
     public static boolean insert(Admin ad) throws SQLException
     {
-        String sql = "INSERT INTO ADMIN Values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ADMIN Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         									ad.getUsername(), 
         									ad.getPassword() , 
@@ -36,6 +36,7 @@ public class AdminDAO
         									ad.getImage(),
         									ad.isSex(),
         									ad.getRole(), 
+        									ad.isActive(),
         									ad.getCreatedDate());
         int count = pre.executeUpdate();
         return count > 0;
@@ -44,7 +45,7 @@ public class AdminDAO
     public static boolean update(Admin ad , int id) throws SQLException
     {
         String sql = "UPDATE ADMIN SET username=?, password=?, fullname=?, "
-                + "email=?, phone_number=?, image=?, sex=? role=?, created_date=? Where id = ?";
+                + "email=?, phone_number=?, image=?, sex=? role=?, isActive=? created_date=? Where id = ?";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         										ad.getUsername(), 
         										ad.getPassword(),
@@ -54,6 +55,7 @@ public class AdminDAO
         										ad.getImage(),
         										ad.isSex(),
         										ad.getRole(),
+        										ad.isActive(),
         										ad.getCreatedDate(),
         										id);
         int count = pre.executeUpdate();
@@ -90,9 +92,10 @@ public class AdminDAO
     	String image = rs.getString(7);
     	boolean sex = rs.getBoolean(8);
     	int role = rs.getInt(9);
-    	Date createdDate = rs.getDate(10);
+    	boolean isActive = rs.getBoolean(10);
+    	Date createdDate = rs.getDate(11);
     	
-    	return new Admin(id, username, password, fullname, email, phoneNumber, image, sex, role, createdDate);
+    	return new Admin(id, username, password, fullname, email, phoneNumber, image, sex, role, isActive, createdDate);
     }
     
 }

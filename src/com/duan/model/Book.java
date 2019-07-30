@@ -16,6 +16,7 @@ public class Book
     private int publicationYear ;
     private double price;
     private String image;
+    private String locationId;
     private String description;
     private Date createdDate;
 
@@ -23,23 +24,34 @@ public class Book
     {
     	
     }
-    
-    public Book(String id, String title, String categoryId, int pageNum, String author, int amount, String publisher, int publicationYear, double price, String image, String description, Date createdDate) {
-        this.id = id;
-        this.title = title;
-        this.categoryId = categoryId;
-        this.pageNum = pageNum;
-        this.author = author;
-        this.amount = amount;
-        this.publisher = publisher;
-        this.publicationYear = publicationYear;
-        this.price = price;
-        this.image = image;
-        this.description = description;
-        this.createdDate = createdDate;
-    }
 
-    public String getId() {
+    public Book(String id, String title, String categoryId, int pageNum, String author, int amount, String publisher,
+			int publicationYear, double price, String image, String locationId, String description, Date createdDate) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.categoryId = categoryId;
+		this.pageNum = pageNum;
+		this.author = author;
+		this.amount = amount;
+		this.publisher = publisher;
+		this.publicationYear = publicationYear;
+		this.price = price;
+		this.image = image;
+		this.locationId = locationId;
+		this.description = description;
+		this.createdDate = createdDate;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getId() {
         return id;
     }
 

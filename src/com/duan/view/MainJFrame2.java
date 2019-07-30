@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.duan.helper.ComponentResizer;
 import com.duan.helper.SwingHelper;
 
 import java.awt.Color;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import javax.swing.UIManager;
 import javax.swing.JButton;
 import java.awt.Toolkit;
+import java.awt.dnd.DropTarget;
 import java.awt.GridLayout;
 import java.awt.CardLayout;
 import javax.swing.JLayeredPane;
@@ -52,8 +54,8 @@ import javax.swing.JSeparator;
 
 public class MainJFrame2 extends JFrame {
 
-	private static final Color COLOR_MENU_DEFAULT = new Color(102, 205, 170);
-	private static final Color COLOR_MENU_HOVER = new Color(150, 222, 197);
+	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
+	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
 	private static final Color COLOR_MENU_CLICKED = new Color(144, 238, 144);
 	private static final Border BORDER_HIGHLIGHT = new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 69, 0));
 
@@ -67,6 +69,9 @@ public class MainJFrame2 extends JFrame {
 	private JPanel pnl5;
 	private JPanel pnl6;
 	private JPanel pnl7;
+	
+	private int posX;
+	private int posY;
 	
 	
 	
@@ -105,10 +110,35 @@ public class MainJFrame2 extends JFrame {
 		});
 	}
 
-
+	 private void createAnsShowGui() 
+	 {
+	        ComponentResizer cr = new ComponentResizer();
+	        cr.setMinimumSize(new Dimension(10, 10));
+	        cr.setMaximumSize(new Dimension(1920, 1080));
+	        cr.registerComponent(this);
+	        cr.setSnapSize(new Dimension(10, 10));
+	        setUndecorated(true);
+	    }
+	 
 	public MainJFrame2() 
 	{
-		
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) 
+			{
+				setLocation(getX() + e.getX() - posX, getY() + e.getY() - posY);
+			}
+		});
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) 
+			{
+				posX = e.getX();
+				posY = e.getY();
+			}
+		});
+		setUndecorated(true);
+		createAnsShowGui() ;
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) 
@@ -129,7 +159,7 @@ public class MainJFrame2 extends JFrame {
 		
 		JPanel pnlMenu = new JPanel();
 		pnlMenu.setPreferredSize(new Dimension(280, 1));
-		pnlMenu.setBackground(new Color(102, 205, 170));
+		pnlMenu.setBackground(COLOR_MENU_DEFAULT);
 		
 		JPanel pnlMenuList = new JPanel();
 		pnlMenuList.setBounds(0, 114, 280, 454);
@@ -163,6 +193,7 @@ public class MainJFrame2 extends JFrame {
 				setHighlightMenu(pnl1);
 			}
 		});
+        
 		pnl1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		pnl1.setBackground(COLOR_MENU_DEFAULT);
 		pnl1.setLayout(null);
@@ -203,7 +234,7 @@ public class MainJFrame2 extends JFrame {
 				setHighlightMenu(pnl2);
 			}
 		});
-		pnl2.setBackground(new Color(102, 205, 170));
+		pnl2.setBackground(COLOR_MENU_DEFAULT);
 		pnl2.setLayout(null);
 		
 		JLabel lblKhchHng = new JLabel("Thuê sách");
@@ -450,7 +481,7 @@ public class MainJFrame2 extends JFrame {
 		
 		JLabel lblBookstore = new JLabel("BOOKSTORE");
 		lblBookstore.setBounds(61, 11, 183, 58);
-		lblBookstore.setForeground(new Color(255, 255, 255));
+		lblBookstore.setForeground(Color.DARK_GRAY);
 		lblBookstore.setFont(new Font("Tahoma", Font.BOLD, 21));
 		lblBookstore.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlMenu.setLayout(null);
@@ -461,28 +492,28 @@ public class MainJFrame2 extends JFrame {
 		
 		JLabel lblManagerment = new JLabel("MANAGERMENT");
 		lblManagerment.setHorizontalAlignment(SwingConstants.CENTER);
-		lblManagerment.setForeground(Color.WHITE);
+		lblManagerment.setForeground(Color.DARK_GRAY);
 		lblManagerment.setFont(new Font("Tahoma", Font.BOLD, 21));
 		lblManagerment.setBounds(60, 36, 220, 58);
 		pnlMenu.add(lblManagerment);
 		
 		JLabel lblVersion = new JLabel("Version: 1.0.1");
 		lblVersion.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblVersion.setForeground(new Color(255, 255, 255));
+		lblVersion.setForeground(Color.DARK_GRAY);
 		lblVersion.setBounds(20, 80, 237, 14);
 		pnlMenu.add(lblVersion);
 		
 		JPanel pnlCenter = new JPanel();
+		pnlCenter.setBorder(new MatteBorder(0, 2, 0, 0, (Color) Color.DARK_GRAY));
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 		pnlCenter.setLayout(new BorderLayout(0, 0));
 		
 		pnlContent = new JPanel();
-		pnlContent.setBorder(new MatteBorder(0, 5, 0, 0, (Color) new Color(64, 224, 208)));
+		pnlContent.setBackground(new Color(251, 251, 250));
 		pnlCenter.add(pnlContent, BorderLayout.CENTER);
 		pnlContent.setLayout(new CardLayout(0, 0));
 		
 		JLabel iconContent = new JLabel("");
-		iconContent.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
 		iconContent.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContent.add(iconContent, "name_113229955950600");
 		sHelper.setAutoResizeIcon_PreferredSize(iconContent);

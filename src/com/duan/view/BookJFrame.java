@@ -90,6 +90,7 @@ public class BookJFrame extends JFrame {
 	private List<Book> listBook = new ArrayList<Book>();
 	private Book book;
 	private int indexSelect = -1;
+	private JButton btnNhpKho;
 
 	public static void main(String[] args) 
 	{
@@ -239,19 +240,23 @@ public class BookJFrame extends JFrame {
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		textField = new JTextField();
+		textField.setBorder(null);
 		textField.setColumns(10);
+		
+		btnNhpKho = new JButton("Nhập kho");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+						.addComponent(pnlSelect, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE))
-						.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
+							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+							.addComponent(btnNhpKho, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
@@ -264,9 +269,10 @@ public class BookJFrame extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnNhpKho, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -346,6 +352,8 @@ public class BookJFrame extends JFrame {
 		pnlSelect.add(btnMaxRight);
 		
 		tblBook = new JTable();
+		tblBook.setDragEnabled(true);
+		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -368,8 +376,8 @@ public class BookJFrame extends JFrame {
 				}
 			}
 		});
-		tblBook.setRowHeight(25);
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "SỐ TRANG", "TÁC GIẢ", "SỐ LƯỢNG", "NXB", "NĂM XUẤT BẢN", "GIÁ", "GHI CHÚ", "NGÀY NHẬP"} ) 
+		tblBook.setRowHeight(35);
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "TÁC GIẢ", "SỐ LƯỢNG", "GIÁ", "GHI CHÚ"} ) 
 		{
 			public boolean isCellEditable(int row, int column) 
 			{
@@ -421,14 +429,10 @@ public class BookJFrame extends JFrame {
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getPageNum() + "", 
 					e.getAuthor(), 
 					e.getAmount() + "", 
-					e.getPublisher(), 
-					e.getPublicationYear() + "", 
 					price, 
 					e.getDescription(), 
-					e.getCreatedDate() + ""
 				};
 			
 			model.addRow(rowData);

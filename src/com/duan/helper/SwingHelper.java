@@ -37,7 +37,8 @@ public class SwingHelper
 		int height = (int) label.getPreferredSize().getHeight();
 		int width = (int) label.getPreferredSize().getWidth();
 		//System.out.println(height + ", " + width);
-		label.setIcon(new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+		if (img != null)
+			label.setIcon(new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
 	}
 	
 	//Dùng để xóa 1 dòng nào đó trong JTable

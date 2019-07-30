@@ -15,6 +15,7 @@ public class Admin
     private String image;
     private boolean sex;
     private int role;
+    private boolean isActive;
     private Date createdDate;
     
     
@@ -23,8 +24,9 @@ public class Admin
     	
     }
     
+
 	public Admin(int id, String username, String password, String fullname, String email, String phoneNumber,
-			String image, boolean sex, int role, Date createdDate) {
+			String image, boolean sex, int role, boolean isActive, Date createdDate) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -35,8 +37,11 @@ public class Admin
 		this.image = image;
 		this.sex = sex;
 		this.role = role;
+		this.isActive = isActive;
 		this.createdDate = createdDate;
 	}
+
+
 
 	public int getId() {
 		return id;
@@ -117,6 +122,20 @@ public class Admin
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+
+
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
+	
 
     
     

@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 import com.duan.helper.JDBCHelper;
 import com.duan.model.Book;
+import com.duan.model.Location;
 
 
 public class BookDAO 
@@ -31,7 +34,7 @@ public class BookDAO
     //Thêm dữ liệu model Book vào bảng Book, trả về TRUE nếu thành công, FALSE nếu thất bại.
     public static boolean insert(Book b) throws SQLException
     {
-        String sql = "INSERT INTO BOOK Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO BOOK Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
         											b.getId(), 
@@ -44,6 +47,7 @@ public class BookDAO
 									        		b.getPublicationYear(), 
 									        		b.getPrice(), 
 									        		b.getImage(),
+									        		b.getLocationId(),
 									        		b.getDescription(),
 									        		b.getCreatedDate());
         
@@ -57,13 +61,14 @@ public class BookDAO
         String sql = " UPDATE BOOK SET id=?, "
 					        		+ "title=?, "
 					        		+ "category_id=?, "
-					        		+ "page_num=?,"
+					        		+ "page_num=?, "
 					                + "author=?, "
 					                + "amount=?, "
 					                + "publisher=?, "
 					                + "publication_year=?,"
 					                + "price=?, "
 					                + "image=?, "
+					                + "location_id=?, "
 					                + "description=?, "
 					                + "created_date=? "
 					                + "WHERE ID = ?";
@@ -79,6 +84,7 @@ public class BookDAO
 								        		b.getPublicationYear(),
 								        		b.getPrice(), 
 								        		b.getImage(), 
+								        		b.getLocationId(),
 								        		b.getDescription(), 
 								        		b.getCreatedDate(),
 								        		id);
@@ -163,15 +169,20 @@ public class BookDAO
         int publicationYear = rs.getInt(8) ;
         double money = rs.getDouble(9);
         String image = rs.getString(10);
-        String description = rs.getString(11);
-        Date createdDate = rs.getDate(12);
+        String locationId = rs.getString(11);
+        String description = rs.getString(12);
+        Date createdDate = rs.getDate(13);
         
-        return new Book(id, title, categoryId, pageNum, author, amount, publisher, publicationYear, money, image, description, createdDate);
+        return new Book(id, title, categoryId, pageNum, author, amount, publisher, publicationYear, money, image, locationId, description, createdDate);
     }
     
     public static void main(String[] args) throws SQLException 
     {
-    	int count = getCountBeingRented("JH42");
-    	System.out.println(count);
-	}
+    	List<Location> list = new ArrayList<Location>();
+    	list.add(new Location("A1", "Kệ A1", 100, ""));
+    	list.add(new Location("A2", "Kệ A2", 120, ""));
+    	list.add(new Location("A3", "Kệ A3", 130, ""));
+    	List<Location> listAll = LocationDAO.getAll();
+    	System.out.println(listAll.size());
+    }
 }
