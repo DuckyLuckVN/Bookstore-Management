@@ -1,4 +1,4 @@
-mpackage com.duan.view;
+package com.duan.view;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
