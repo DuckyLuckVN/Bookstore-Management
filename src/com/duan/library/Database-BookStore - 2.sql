@@ -125,9 +125,8 @@ GO
 CREATE TABLE [ORDER]
 (
 	id int PRIMARY KEY IDENTITY(100, 1),
-	user_id INT,
+	user_id INT NULL,
 	admin_id int,
-	fullname nvarchar(256),
 	date_created DATE 
 	CONSTRAINT fk_Book FOREIGN KEY (user_id) REFERENCES [USER](id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_ADMIN_ORDER FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -193,8 +192,8 @@ GO
 
 
 INSERT INTO dbo.[ORDER](user_id ,admin_id ,fullname ,date_created)
-VALUES  ( 100 , 101 , N'Đỗ Thanh Tú' , GETDATE() ),
-		( 101 , 103 , N'Phạm Văn Vượng ' , GETDATE())
+VALUES  ( 100 , 101 , GETDATE() ),
+		( 101 , 103 , GETDATE())
 GO
 
 INSERT INTO ORDER_DETAIL(order_id ,	book_id, amount, price)

@@ -38,7 +38,6 @@ public class SellBookJFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField lblUsername;
-	private JTextField txtFullname;
 	private JTable tblBook;
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
@@ -95,12 +94,6 @@ public class SellBookJFrame extends JFrame {
 			}
 		});
 		
-		JLabel lblTen = new JLabel("Họ tên");
-		lblTen.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		
-		txtFullname = new JTextField();
-		txtFullname.setColumns(10);
-		
 		JLabel lblThueSach = new JLabel("Sách mua");
 		lblThueSach.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
@@ -113,8 +106,10 @@ public class SellBookJFrame extends JFrame {
 		});
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
 		tblBook = new JTable();
+		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "XÓA"}) {
 			
 			//Column = 4 -> cột "XÓA"
@@ -147,7 +142,7 @@ public class SellBookJFrame extends JFrame {
 		lblTngGi.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTngGi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
-		JLabel label = new JLabel("350,000.00 đ");
+		JLabel label = new JLabel("0 đ");
 		label.setHorizontalAlignment(SwingConstants.LEFT);
 		label.setForeground(Color.RED);
 		label.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -163,31 +158,27 @@ public class SellBookJFrame extends JFrame {
 					.addComponent(lblTngGi)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(label, GroupLayout.PREFERRED_SIZE, 127, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(269, Short.MAX_VALUE))
+					.addContainerGap(261, Short.MAX_VALUE))
 				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 215, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnSelectBook)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnXaSch, GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+					.addGap(8))
+				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
 					.addGap(8)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
 						.addGroup(gl_panel.createSequentialGroup()
 							.addComponent(lblTaiKhoang)
 							.addGap(10)
-							.addComponent(lblUsername, GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+							.addComponent(lblUsername, GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
 							.addGap(10)
-							.addComponent(btnSelectAccount, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addComponent(lblTen, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
-							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
-						.addGroup(gl_panel.createSequentialGroup()
-							.addGap(1)
-							.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnSelectBook)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnXaSch, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)))
+							.addComponent(btnSelectAccount, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)))
 					.addGap(9))
 		);
 		gl_panel.setVerticalGroup(
@@ -200,11 +191,7 @@ public class SellBookJFrame extends JFrame {
 							.addGap(1)
 							.addComponent(lblUsername, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
 						.addComponent(btnSelectAccount, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTen, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
 							.addComponent(lblThueSach, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
@@ -212,8 +199,8 @@ public class SellBookJFrame extends JFrame {
 								.addComponent(btnXaSch, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnSelectBook, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)))
 						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 195, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(label, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
@@ -229,6 +216,7 @@ public class SellBookJFrame extends JFrame {
 		panel_1.setLayout(new GridLayout(0, 1, 0, 15));
 		
 		JButton btnNew = new JButton("Thêm mới");
+		btnNew.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		SwingHelper.setTextBelowIconButton(btnNew);
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -238,16 +226,19 @@ public class SellBookJFrame extends JFrame {
 		panel_1.add(btnNew);
 		
 		JButton btnSave = new JButton("Lưu");
+		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		SwingHelper.setTextBelowIconButton(btnSave);
 		btnSave.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/Accept.png")));
 		panel_1.add(btnSave);
 		
 		JButton btnUpdate = new JButton("Cập nhật");
+		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		SwingHelper.setTextBelowIconButton(btnUpdate);
 		btnUpdate.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/Notes.png")));
 		panel_1.add(btnUpdate);
 		
 		JButton btnDelete = new JButton("Xóa");
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		SwingHelper.setTextBelowIconButton(btnDelete);
 		btnDelete.setIcon(new ImageIcon(SellBookJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		panel_1.add(btnDelete);
