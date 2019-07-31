@@ -54,6 +54,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JSplitPane;
+import javax.swing.border.TitledBorder;
 
 public class StorageJFrame extends JFrame {
 
@@ -71,22 +73,15 @@ public class StorageJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblBook;
-	private JPanel pnlSelect;
-	private JButton btnMaxLeft;
-	private JButton btnLeft;
-	private JButton btnRight;
-	private JButton btnMaxRight;
-	private JPanel pnlTime;
+	private JTable tblStorage;
 	private JButton btnDetail;
-	private JLabel lblTmKim;
-	private JTextField textField;
 	
 	
 	private List<Book> listBook = new ArrayList<Book>();
 	private Book book;
 	private int indexSelect = -1;
-	private JButton btnNhpKho;
+	private JTable tblBook;
+	private JTextField textField;
 
 	public static void main(String[] args) 
 	{
@@ -116,7 +111,7 @@ public class StorageJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
+		setBounds(100, 100, 805, 600);
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -149,192 +144,89 @@ public class StorageJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pnlController.setBounds(624, 5, 159, 313);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
-		btnDetail = new JButton("Xem chi tiết");
-		btnDetail.setEnabled(false);
+		btnDetail = new JButton(" Đơn mới");
+		btnDetail.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDetail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});
-		SwingHelper.setTextBelowIconButton(btnDetail);
-		btnDetail.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
-		btnDetail.setFont(new Font("Tahoma", Font.BOLD, 12));
+		
+		btnDetail.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/Create.png")));
+		btnDetail.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		pnlController.add(btnDetail);
 		
-		btnAdd = new JButton("Thêm mới");
+		btnAdd = new JButton(" Lưu lại");
+		btnAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});
-		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 12));
-		SwingHelper.setTextBelowIconButton(btnAdd);
-		btnAdd.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_add_50px_3.png")));
+		btnAdd.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		btnAdd.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/Accept.png")));
 		btnAdd.setSelectedIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_add_64px.png")));
 		pnlController.add(btnAdd);
 		
-		btnEdit = new JButton("Thay đổi");
-		btnEdit.setEnabled(false);
+		btnEdit = new JButton(" Cập nhật");
+		btnEdit.setHorizontalAlignment(SwingConstants.LEFT);
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				
 			}
 		});
-		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 12));
-		SwingHelper.setTextBelowIconButton(btnEdit);
-		btnEdit.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_edit_property_50px.png")));
+		btnEdit.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		btnEdit.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/Notes.png")));
 		pnlController.add(btnEdit);
 		
 		btnDelete = new JButton("Xóa");
+		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				
 			}
 		});
-		btnDelete.setEnabled(false);
-		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 12));
-		SwingHelper.setTextBelowIconButton(btnDelete);
-		btnDelete.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		btnDelete.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(5, 324, 778, 211);
 		
-		pnlSelect = new JPanel();
-		
-		pnlTime = new JPanel();
-		pnlTime.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		pnlTime.setBackground(SystemColor.menu);
-		
-		lblTmKim = new JLabel("Tìm kiếm:");
-		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		textField = new JTextField();
-		textField.setBorder(null);
-		textField.setColumns(10);
-		
-		btnNhpKho = new JButton("Nhập kho");
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addComponent(pnlSelect, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 428, Short.MAX_VALUE)
-							.addComponent(btnNhpKho)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNhpKho, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlSelect, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
-		);
-		pnlTime.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblTime = new JLabel("23:15");
-		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTime.setIcon(new ImageIcon(StorageJFrame.class.getResource("/com/duan/icon/icons8_alarm_clock_24px_1.png")));
-		lblTime.setForeground(Color.RED);
-		lblTime.setFont(new Font("Tahoma", Font.BOLD, 18));
-		pnlTime.add(lblTime);
-		pnlSelect.setLayout(new GridLayout(1, 0, 15, 0));
-		
-		btnMaxLeft = new JButton("|<");
-		btnMaxLeft.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				int rowCount = tblBook.getRowCount();
-				if (rowCount > 0)
-				{
-					indexSelect = 0;
-					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
-					setControllModeTo_Editable();
-				}
-			}
-		});
-		pnlSelect.add(btnMaxLeft);
-		
-		btnLeft = new JButton("<");
-		btnLeft.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				int rowCount = tblBook.getRowCount();
-				if (indexSelect > 0 && rowCount > 0)
-				{
-					indexSelect--;
-					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
-					setControllModeTo_Editable();
-				}
-			}
-		});
-		btnLeft.setEnabled(false);
-		pnlSelect.add(btnLeft);
-		
-		btnRight = new JButton(">");
-		btnRight.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				int rowCount = tblBook.getRowCount();
-				if (indexSelect < rowCount - 1 && rowCount > 0)
-				{
-					indexSelect++;
-					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
-					setControllModeTo_Editable();
-				}
-			}
-		});
-		btnRight.setEnabled(false);
-		pnlSelect.add(btnRight);
-		
-		btnMaxRight = new JButton(">|");
-		btnMaxRight.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				int rowCount = tblBook.getRowCount();
-				if (rowCount > 0)
-				{
-					indexSelect = rowCount - 1;
-					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
-					setControllModeTo_Editable();
-				}
-			}
-		});
-		pnlSelect.add(btnMaxRight);
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(7, 46, 611, 272);
 		
 		tblBook = new JTable();
-		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
-		tblBook.addKeyListener(new KeyAdapter() {
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "GIÁ NHẬP", "SỐ LƯỢNG"}) {
+			boolean[] columnEditables = new boolean[] {
+				false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		scrollPane_1.setViewportView(tblBook);
+		
+		tblStorage = new JTable();
+		tblStorage.setBorder(new EmptyBorder(0, 0, 0, 0));
+		tblStorage.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
 			{
 				eventTableSelectRow();
 			}
 		});
-		tblBook.addMouseListener(new MouseAdapter() {
+		tblStorage.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) 
 			{
@@ -349,18 +241,41 @@ public class StorageJFrame extends JFrame {
 				}
 			}
 		});
-		tblBook.setRowHeight(35);
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "TÁC GIẢ", "SỐ LƯỢNG", "GIÁ", "GHI CHÚ"} ) 
+		tblStorage.setRowHeight(35);
+		tblStorage.setModel(new DefaultTableModel(null, new String[] {"MÃ NHẬP KHO", "NGƯỜI NHẬP", "TỔNG SỐ", "GHI CHÚ", "NGÀY NHẬP"} ) 
 		{
 			public boolean isCellEditable(int row, int column) 
 			{
 				return false;
 			}
 		});
-		tblBook.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
-		scrollPane.setViewportView(tblBook);
-		contentPane.setLayout(gl_contentPane);
+		tblStorage.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		tblStorage.getColumnModel().getColumn(1).setPreferredWidth(200);
+		scrollPane.setViewportView(tblStorage);
+		contentPane.setLayout(null);
+		contentPane.add(scrollPane_1);
+		contentPane.add(pnlController);
+		contentPane.add(scrollPane);
+		
+		JLabel lblChnSch = new JLabel("Chọn sách:");
+		lblChnSch.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblChnSch.setBounds(7, 5, 70, 30);
+		contentPane.add(lblChnSch);
+		
+		textField = new JTextField();
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		textField.setEditable(false);
+		textField.setBounds(87, 5, 178, 30);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JButton btnChnSch = new JButton("Chọn sách");
+		btnChnSch.setBounds(275, 5, 89, 30);
+		contentPane.add(btnChnSch);
+		
+		JButton btnDeleteBook = new JButton("Xóa");
+		btnDeleteBook.setBounds(539, 6, 79, 30);
+		contentPane.add(btnDeleteBook);
 		//setLocationRelativeTo(getOwner());
 		try 
 		{
@@ -390,7 +305,7 @@ public class StorageJFrame extends JFrame {
 	//Đổ dữ liệu từ list vào table
 	public void fillToTable() throws SQLException
 	{
-		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		DefaultTableModel model = (DefaultTableModel) tblStorage.getModel();
 		model.setRowCount(0);
 		
 		for (Book e : listBook)
@@ -411,21 +326,21 @@ public class StorageJFrame extends JFrame {
 			model.addRow(rowData);
 		}
 		
-		int rowCount = tblBook.getRowCount();
+		int rowCount = tblStorage.getRowCount();
 		
 		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
 		if (indexSelect != -1)
 		{
 			if (indexSelect < rowCount && rowCount > 0)
 			{
-				tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+				tblStorage.setRowSelectionInterval(indexSelect, indexSelect);
 			}
 			else
 			{
 				indexSelect = rowCount - 1;
 				if (indexSelect > -1)
 				{
-					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+					tblStorage.setRowSelectionInterval(indexSelect, indexSelect);
 				}
 				else
 				{
@@ -440,7 +355,7 @@ public class StorageJFrame extends JFrame {
 	
 	public void eventTableSelectRow()
 	{
-		indexSelect = tblBook.getSelectedRow();
+		indexSelect = tblStorage.getSelectedRow();
 		setControllModeTo_Editable();
 	}
 	
@@ -456,9 +371,6 @@ public class StorageJFrame extends JFrame {
 		btnDetail.setEnabled(false);
 		btnEdit.setEnabled(false);
 		
-		//Các nút di chuyển select
-		btnLeft.setEnabled(false);
-		btnRight.setEnabled(false);
 	}
 	
 	//Set các nút nhấn controll chỉ enable nút "Thêm Mới"
@@ -470,8 +382,5 @@ public class StorageJFrame extends JFrame {
 		btnEdit.setEnabled(true);
 		btnAdd.setEnabled(true);
 		
-		//Các nút di chuyển select
-		btnLeft.setEnabled(true);
-		btnRight.setEnabled(true);
 	}
 }

@@ -147,17 +147,24 @@ GO
 
 CREATE TABLE BOOK_LOST
 (
+	rentbook_id INT PRIMARY KEY,
+	admin_id INT,
+	created_date DATE,
+	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON DELETE CASCADE ON UPDATE CASCADE
+)
+GO
+
+CREATE TABLE BOOK_LOST_DETAIL
+(
 	rentbook_id INT,
 	book_id VARCHAR(50) NOT NULL,
 	amount INT NOT NULL CHECK (amount > 0),
 	cost MONEY,
-	description NVARCHAR(256) NULL,
-	created_date DATE,
 	PRIMARY KEY (rentbook_id, book_id),
 	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_LostBook_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
-GO
 
 INSERT dbo.LOCATION ( id, location_name, max_storage, description)
 VALUES  ( 'A1', N'Kệ A1', 100, N''),

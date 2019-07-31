@@ -270,7 +270,7 @@ public class RentBookEditorJDialog extends JDialog {
 				}
 			}
 		});
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "ĐÃ TRẢ", "XÓA"}) {
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "XÓA"}) {
 			
 			//Column = 4 -> cột "XÓA"
 			public boolean isCellEditable(int row, int column) {

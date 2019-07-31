@@ -56,7 +56,7 @@ public class MainJFrame2 extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
 	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
-	private static final Color COLOR_MENU_CLICKED = new Color(144, 238, 144);
+	private static final Color COLOR_MENU_CLICKED = new Color(255, 234, 167);
 	private static final Border BORDER_HIGHLIGHT = new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 69, 0));
 
 	private JPanel contentPane;
@@ -117,7 +117,6 @@ public class MainJFrame2 extends JFrame {
 	        cr.setMaximumSize(new Dimension(1920, 1080));
 	        cr.registerComponent(this);
 	        cr.setSnapSize(new Dimension(10, 10));
-	        setUndecorated(true);
 	    }
 	 
 	public MainJFrame2() 
@@ -137,7 +136,6 @@ public class MainJFrame2 extends JFrame {
 				posY = e.getY();
 			}
 		});
-		setUndecorated(true);
 		createAnsShowGui() ;
 		addWindowListener(new WindowAdapter() {
 			@Override
