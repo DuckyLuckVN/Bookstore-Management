@@ -68,6 +68,12 @@ public class DataHelper
 		return new File(DateHelper.class.getResource(path).getPath());
 	}
 	
+	//Tra ve duong dan file source goc cua ung dung
+		public static String getRootSource()
+		{
+			return DataHelper.class.getResource("/").toString();
+		}
+	
 	//Ghi file vào source theo đường dẫn của file
 	public static void writeFileToSource(byte[] arrayData, String path) throws IOException
 	{

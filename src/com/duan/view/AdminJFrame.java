@@ -19,6 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.helper.DataHelper;
+import com.duan.helper.SwingHelper;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -31,9 +33,17 @@ import java.util.Locale;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.swing.ButtonGroup;
 
 public class AdminJFrame extends JFrame {
 
@@ -45,6 +55,10 @@ public class AdminJFrame extends JFrame {
 	private JTextField txtFullname;
 	private JTextField txtEmail;
 	private JTextField txtPhoneNum;
+	private JLabel lblAnh ;
+	private JComboBox cboChucVu;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private File fileAnhDaChon = null;
 
 	/**
 	 * Launch the application.
@@ -94,6 +108,13 @@ public class AdminJFrame extends JFrame {
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		txtFind = new JTextField();
+		txtFind.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				//su kien nha nut
+			}
+		});
 		txtFind.setColumns(10);
 		
 		JLabel lblTiKhong = new JLabel("Tài khoảng");
@@ -134,9 +155,9 @@ public class AdminJFrame extends JFrame {
 		JLabel lblChcV = new JLabel("Chức vụ");
 		lblChcV.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Nhân viên", "Quản Lý", "Giám Đốc"}));
+		cboChucVu = new JComboBox();
+		cboChucVu.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		cboChucVu.setModel(new DefaultComboBoxModel(new String[] {"Nhân viên", "Quản Lý ", "Giám Đốc"}));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
 		JButton btnToMi = new JButton("Tạo mới");
@@ -172,6 +193,30 @@ public class AdminJFrame extends JFrame {
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				int index_cbo_selected = cboChucVu.getSelectedIndex();
+				int role;
+				switch (index_cbo_selected) {
+				case 0:
+					//Nhan Vien
+					role = 3;
+					break;
+				case 1:
+					//Quan ly
+					role = 2;
+					break;
+				case 2:
+					//Giam doc
+					role = 1;
+					break;
+				}
+				System.out.println();
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -182,6 +227,9 @@ public class AdminJFrame extends JFrame {
 					.addGap(1))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(btnNewButton)
+					.addPreferredGap(ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE))
@@ -192,52 +240,76 @@ public class AdminJFrame extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
-					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(18)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnNewButton)))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
 		);
 		
 		JPanel panel = new JPanel();
 		
-		JLabel lblNewLabel = new JLabel("Không có ảnh");
-		lblNewLabel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAnh = new JLabel("Không có ảnh");
+		lblAnh.setBounds(0, 0, 181, 235);
+		
+		
+		
+		//Set icon xong moi goi setAutoResizeIcon
+		lblAnh.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/image/S1e18_Waddles_stare.png")));
+		SwingHelper.setAutoResizeIcon(lblAnh);
+		
+		
+		
+		
+		lblAnh.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		lblAnh.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		JButton btnChnnh = new JButton("Chọn ảnh");
+		btnChnnh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				JFileChooser chooser = new JFileChooser();
+				int status = chooser.showOpenDialog(contentPane);
+				
+				if (status == JFileChooser.APPROVE_OPTION)
+				{
+					
+					System.out.println("Da94 chon file");
+					fileAnhDaChon = chooser.getSelectedFile();
+					System.out.println(fileAnhDaChon.getName());
+					String duongdanString = DataHelper.getRootSource() + "com/duan/image/";
+					
+				}
+				
+				
+			}
+		});
+		btnChnnh.setBounds(0, 246, 85, 37);
 		
 		JButton btnXa_1 = new JButton("Xóa");
+		btnXa_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				lblAnh.setIcon(null);
+			}
+		});
+		btnXa_1.setBounds(96, 246, 85, 37);
 		
 		JLabel lblGiiTnh = new JLabel("Giới tính");
 		lblGiiTnh.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel.createSequentialGroup()
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblNewLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
-							.addComponent(btnChnnh, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
-							.addGap(11)
-							.addComponent(btnXa_1, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap())
-		);
-		gl_panel.setVerticalGroup(
-			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
-					.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnChnnh, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnXa_1, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)))
-		);
-		panel.setLayout(gl_panel);
 		
-		JRadioButton rdbtnNam = new JRadioButton("Nam");
+		JRadioButton rdoNam = new JRadioButton("Nam");
+		buttonGroup.add(rdoNam);
+		rdoNam.setSelected(true);
 		
-		JRadioButton rdbtnN = new JRadioButton("Nữ");
+		JRadioButton rdoNu = new JRadioButton("Nữ");
+		buttonGroup.add(rdoNu);
 		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
 		gl_pnlForm.setHorizontalGroup(
 			gl_pnlForm.createParallelGroup(Alignment.LEADING)
@@ -257,25 +329,25 @@ public class AdminJFrame extends JFrame {
 						.addComponent(lblChcV, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
 					.addGap(8)
 					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-						.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-						.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-						.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-						.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+						.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+						.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+						.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+						.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+						.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
 						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(rdbtnNam, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
+							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
 							.addGap(2)
-							.addComponent(rdbtnN, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE))
+						.addComponent(cboChucVu, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
 					.addGap(10)
 					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 181, GroupLayout.PREFERRED_SIZE)
-					.addGap(8))
+					.addGap(6))
 		);
 		gl_pnlForm.setVerticalGroup(
 			gl_pnlForm.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlForm.createSequentialGroup()
 					.addGap(9)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_pnlForm.createSequentialGroup()
 							.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
 							.addGap(11)
@@ -302,13 +374,22 @@ public class AdminJFrame extends JFrame {
 							.addComponent(txtPhoneNum, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
 							.addGap(13)
 							.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-								.addComponent(rdbtnNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-								.addComponent(rdbtnN, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+								.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+								.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
 							.addGap(9)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-						.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(cboChucVu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+						.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 		);
+		panel.setLayout(null);
+		panel.add(lblAnh);
+		panel.add(btnChnnh);
+		panel.add(btnXa_1);
 		pnlForm.setLayout(gl_pnlForm);
 		contentPane.setLayout(gl_contentPane);
+	}
+	
+	public void test()
+	{
+		//lblAnh
 	}
 }

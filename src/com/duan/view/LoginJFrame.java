@@ -34,6 +34,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.duan.helper.AccountSave;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
+
 import javax.swing.JTextArea;
 
 /*
@@ -187,10 +189,19 @@ public class LoginJFrame extends JDialog
 		pnlForm.add(txtPassword);
 		
 		JButton btnLogin = new JButton("Đăng Nhập");
-		btnLogin.addActionListener(new ActionListener() {
+		btnLogin.addActionListener(new ActionListener() 
+		{
 			public void actionPerformed(ActionEvent e) 
 			{
-
+				//xu ly
+				
+				//day la model admin sau khi da dang nhap
+				Admin admin = new Admin();
+				//luu lai
+				
+				//cuoi cung phai chay 2 thang nay
+				AccountSave.setAdmin(admin);
+				active();
 			}
 		});
 		btnLogin.addMouseListener(new MouseAdapter() {
@@ -244,5 +255,10 @@ public class LoginJFrame extends JDialog
 		lblManagerment.setBounds(111, 68, 286, 57);
 		panel.add(lblManagerment);
 		setLocationRelativeTo(getOwner());
+	}
+	
+	public void active()
+	{
+		//Goi ham nay khi login thanh cong
 	}
 }
