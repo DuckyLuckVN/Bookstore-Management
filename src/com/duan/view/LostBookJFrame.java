@@ -72,16 +72,16 @@ public class LostBookJFrame extends JFrame {
 		
 		JLabel lblChnSchMt = new JLabel("Chọn sách mất:");
 		lblChnSchMt.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblChnSchMt.setBounds(10, 268, 93, 24);
+		lblChnSchMt.setBounds(511, 261, 93, 24);
 		contentPane.add(lblChnSchMt);
 		
 		JButton btnChn = new JButton("Chọn");
 		btnChn.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnChn.setBounds(116, 270, 75, 23);
+		btnChn.setBounds(617, 263, 75, 23);
 		contentPane.add(btnChn);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 304, 496, 140);
+		scrollPane.setBounds(511, 297, 496, 140);
 		contentPane.add(scrollPane);
 		
 		tblBook = new JTable();
@@ -102,12 +102,12 @@ public class LostBookJFrame extends JFrame {
 			}
 		});
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnXa.setBounds(449, 270, 57, 22);
+		btnXa.setBounds(950, 263, 57, 22);
 		contentPane.add(btnXa);
 		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Th\u00F4ng tin", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		pnlForm.setBounds(10, 11, 496, 246);
+		pnlForm.setBounds(511, 4, 496, 246);
 		contentPane.add(pnlForm);
 		
 		JComboBox comboBox = new JComboBox();
@@ -176,32 +176,36 @@ public class LostBookJFrame extends JFrame {
 		pnlForm.add(label);
 		
 		JPanel pnlControll = new JPanel();
-		pnlControll.setBounds(10, 455, 496, 59);
+		pnlControll.setBounds(511, 448, 496, 59);
 		contentPane.add(pnlControll);
 		pnlControll.setLayout(new GridLayout(1, 1, 15, 0));
 		
 		JButton btnToMi = new JButton("Tạo mới");
+		btnToMi.setBorder(new EmptyBorder(0, 0, 0, 0));
 		btnToMi.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnToMi.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Create.png")));
 		pnlControll.add(btnToMi);
 		
 		JButton btnLu = new JButton("Lưu");
+		btnLu.setBorder(new EmptyBorder(0, 0, 0, 0));
 		btnLu.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnLu.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Accept.png")));
 		pnlControll.add(btnLu);
 		
 		JButton btnCpNht = new JButton("Cập nhật");
+		btnCpNht.setBorder(new EmptyBorder(0, 0, 0, 0));
 		btnCpNht.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnCpNht.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Notes.png")));
 		pnlControll.add(btnCpNht);
 		
 		JButton btnXa_1 = new JButton("Xóa");
+		btnXa_1.setBorder(new EmptyBorder(0, 0, 0, 0));
 		btnXa_1.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnXa_1.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		pnlControll.add(btnXa_1);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(516, 11, 491, 503);
+		scrollPane_1.setBounds(10, 4, 491, 503);
 		contentPane.add(scrollPane_1);
 		
 		tblLostBook = new JTable();

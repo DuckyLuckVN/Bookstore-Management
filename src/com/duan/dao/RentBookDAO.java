@@ -79,7 +79,7 @@ public class RentBookDAO
     	if (RentBookDAO.findById(rb.getId()) != null)
     	{
     		//Xóa các dữ liệu cũ, insert dữ liệu mới
-    		JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=?", rb.getId());
+    		RentBookDetailDAO.delete(rb.getId());
     		update(rb, rb.getId());
     		for (BookProduct bp : list)
     		{

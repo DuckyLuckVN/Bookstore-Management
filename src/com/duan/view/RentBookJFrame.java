@@ -57,6 +57,7 @@ import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.TitledBorder;
 
 public class RentBookJFrame extends JFrame {
 
@@ -153,7 +154,7 @@ public class RentBookJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
-		pnlController.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
@@ -228,6 +229,7 @@ public class RentBookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		pnlSelect = new JPanel();
 		
@@ -461,6 +463,7 @@ public class RentBookJFrame extends JFrame {
 	public void eventTableSelectRow()
 	{
 		indexSelect = tblRentBook.getSelectedRow();
+		
 		setControllModeTo_Editable();
 	}
 	

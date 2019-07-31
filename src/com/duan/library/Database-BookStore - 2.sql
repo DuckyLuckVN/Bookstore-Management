@@ -115,7 +115,6 @@ CREATE TABLE RENTBOOK_DETAIL
 	book_id varchar(50),
 	amount INT NOT NULL,
 	price money,
-	amount_returned INT,
 	PRIMARY KEY (rentBook_id,book_id),
 	CONSTRAINT fk_renbook FOREIGN KEY (rentbook_id) REFERENCES dbo.RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_bookID FOREIGN KEY (book_id) REFERENCES Book(id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -151,7 +150,7 @@ CREATE TABLE BOOK_LOST
 	admin_id INT,
 	created_date DATE,
 	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES [dbo].[ADMIN](id)
 )
 GO
 
@@ -162,9 +161,10 @@ CREATE TABLE BOOK_LOST_DETAIL
 	amount INT NOT NULL CHECK (amount > 0),
 	cost MONEY,
 	PRIMARY KEY (rentbook_id, book_id),
-	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_LostBook_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_LostBook_Detail_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_LostBook__Detail_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
+GO
 
 INSERT dbo.LOCATION ( id, location_name, max_storage, description)
 VALUES  ( 'A1', N'Kệ A1', 100, N''),
@@ -198,7 +198,7 @@ VALUES  ( 'quanly' , '123' , N'Lý Tiểu Long' , 'lytieulong@gmail.com' ,'01682
 GO
 
 
-INSERT INTO dbo.[ORDER](user_id ,admin_id ,fullname ,date_created)
+INSERT INTO dbo.[ORDER](user_id ,admin_id ,date_created)
 VALUES  ( 100 , 101 , GETDATE() ),
 		( 101 , 103 , GETDATE())
 GO
@@ -338,6 +338,7 @@ SELECT * FROM dbo.LOCATION
 UPDATE dbo.BOOK SET description = 'abcdef descrip' WHERE id = 'GH12'
 
 SELECT * FROM dbo.[USER]
+SELECT * FROM dbo.[ORDER]
 SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
 

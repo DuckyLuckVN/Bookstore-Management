@@ -80,7 +80,7 @@ public class MainJFrame2 extends JFrame {
 	private BookJFrame bookJFrame = new BookJFrame();
 	private LoginJFrame loginJFrame = new LoginJFrame();
 	private RentBookJFrame rentBookJFrame = new RentBookJFrame();
-	private SellBookJFrame sellBookJFrame = new SellBookJFrame();
+	private OrderJFrame sellBookJFrame = new OrderJFrame();
 	private UserJFrame userJFrame = new UserJFrame();
 	private AdminJFrame adminJFrame = new AdminJFrame();
 	private StatisticalJFrame statisticalJFrame = new StatisticalJFrame();

@@ -72,8 +72,8 @@ public class MainJFrame extends JFrame {
 	
 	private BookJFrame bookJFrame = new BookJFrame();
 	private LoginJFrame loginJFrame = new LoginJFrame();
-	private RentBookJFrame2 rentBookJFrame = new RentBookJFrame2();
-	private SellBookJFrame sellBookJFrame = new SellBookJFrame();
+	private RentBookJFrame rentBookJFrame = new RentBookJFrame();
+	private OrderJFrame sellBookJFrame = new OrderJFrame();
 	private UserJFrame userJFrame = new UserJFrame();
 	private AdminJFrame adminJFrame = new AdminJFrame();
 	private StatisticalJFrame statisticalJFrame = new StatisticalJFrame();
