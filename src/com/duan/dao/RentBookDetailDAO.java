@@ -75,6 +75,12 @@ public class RentBookDetailDAO
     	return list;
     }
     
+    //Xóa hết RentBookDetail có mã rentbook là rentbook_id
+    public static boolean delete(int rentbook_id) throws SQLException
+    {
+    	return JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=?", rentbook_id) > 0;
+    }
+    
     public static void main(String[] args) throws SQLException {
 		System.out.println(getListProducts(111).size());
 	}

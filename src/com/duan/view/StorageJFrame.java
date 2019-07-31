@@ -81,7 +81,6 @@ public class StorageJFrame extends JFrame {
 	private Book book;
 	private int indexSelect = -1;
 	private JTable tblBook;
-	private JTextField textField;
 
 	public static void main(String[] args) 
 	{
@@ -111,7 +110,7 @@ public class StorageJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 805, 600);
+		setBounds(100, 100, 805, 672);
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -201,9 +200,10 @@ public class StorageJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 324, 778, 211);
+		scrollPane.setBounds(7, 329, 778, 272);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		scrollPane_1.setBounds(7, 46, 611, 272);
 		
 		tblBook = new JTable();
@@ -262,15 +262,8 @@ public class StorageJFrame extends JFrame {
 		lblChnSch.setBounds(7, 5, 70, 30);
 		contentPane.add(lblChnSch);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textField.setEditable(false);
-		textField.setBounds(87, 5, 178, 30);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
 		JButton btnChnSch = new JButton("Chọn sách");
-		btnChnSch.setBounds(275, 5, 89, 30);
+		btnChnSch.setBounds(87, 5, 89, 30);
 		contentPane.add(btnChnSch);
 		
 		JButton btnDeleteBook = new JButton("Xóa");

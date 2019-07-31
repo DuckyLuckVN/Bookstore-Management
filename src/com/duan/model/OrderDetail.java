@@ -6,13 +6,13 @@ public class OrderDetail
     private int orderId;
     private String bookId;
     private int amount;
-    private double money;
+    private double price;
 
-    public OrderDetail(int orderId, String bookId, int amount, double money) {
+    public OrderDetail(int orderId, String bookId, int amount, double price) {
         this.orderId = orderId;
         this.bookId = bookId;
         this.amount = amount;
-        this.money = money;
+        this.price = price;
     }
 
     public int getOrderId() {
@@ -39,12 +39,12 @@ public class OrderDetail
         this.amount = amount;
     }
 
-    public double getMoney() {
-        return money;
+    public double getPrice() {
+        return price;
     }
 
-    public void setMoney(double money) {
-        this.money = money;
+    public void setPrice(double price) {
+        this.price = price;
     }
     
     

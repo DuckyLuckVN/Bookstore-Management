@@ -54,6 +54,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.border.TitledBorder;
 
 public class BookJFrame extends JFrame {
 
@@ -68,6 +69,7 @@ public class BookJFrame extends JFrame {
 	private JMenu mnExportTo;
 	private JMenuItem mntmCreateBackupFile;
 	private JPanel pnlController;
+	private JButton btnDetail;
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
@@ -83,7 +85,6 @@ public class BookJFrame extends JFrame {
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
 	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
 	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame(this);
-	private JButton btnDetail;
 	private JLabel lblTmKim;
 	private JTextField textField;
 	
@@ -153,6 +154,7 @@ public class BookJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
@@ -229,6 +231,7 @@ public class BookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		pnlSelect = new JPanel();
 		
