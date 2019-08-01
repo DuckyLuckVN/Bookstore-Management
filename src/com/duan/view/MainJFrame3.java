@@ -10,6 +10,8 @@ import javax.swing.border.EmptyBorder;
 import com.duan.helper.ComponentResizer;
 import com.duan.helper.SwingHelper;
 
+import diu.swe.habib.JPanelSlider.JPanelSlider;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -52,7 +54,7 @@ import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import javax.swing.JSeparator;
 
-public class MainJFrame2 extends JFrame {
+public class MainJFrame3 extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
 	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
@@ -61,7 +63,7 @@ public class MainJFrame2 extends JFrame {
 
 	private JPanel contentPane;
 	private SwingHelper sHelper = new SwingHelper();
-	private JPanel pnlContent;
+	private JPanelSlider pnlContent;
 	private JPanel pnl1;
 	private JPanel pnl2;
 	private JPanel pnl3;
@@ -69,6 +71,7 @@ public class MainJFrame2 extends JFrame {
 	private JPanel pnl5;
 	private JPanel pnl6;
 	private JPanel pnl7;
+	private Container containerSelected = null;
 	
 	private int posX;
 	private int posY;
@@ -76,6 +79,7 @@ public class MainJFrame2 extends JFrame {
 	
 	
 	private BorderLayout borderLayout = new BorderLayout(0, 0);
+	private CardLayout cardLayout = new CardLayout(0, 0);
 	
 	private BookJFrame bookJFrame = new BookJFrame();
 	private LoginJFrame loginJFrame = new LoginJFrame();
@@ -101,7 +105,7 @@ public class MainJFrame2 extends JFrame {
 			{
 				try 
 				{
-					MainJFrame2 frame = new MainJFrame2();
+					MainJFrame3 frame = new MainJFrame3();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -119,7 +123,7 @@ public class MainJFrame2 extends JFrame {
 	        cr.setSnapSize(new Dimension(10, 10));
 	    }
 	 
-	public MainJFrame2() 
+	public MainJFrame3() 
 	{
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -147,7 +151,7 @@ public class MainJFrame2 extends JFrame {
 				}
 			}
 		});
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame3.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 1093, 687);
@@ -199,7 +203,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblTItle1 = new JLabel("Kho sách");
 		lblTItle1.setForeground(new Color(0, 0, 0));
 		lblTItle1.setBounds(22, 0, 178, 66);
-		lblTItle1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
+		lblTItle1.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
 		lblTItle1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblTItle1.setHorizontalAlignment(SwingConstants.LEFT);
 		pnl1.add(lblTItle1);
@@ -238,7 +242,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblKhchHng = new JLabel("Thuê sách");
 		lblKhchHng.setForeground(new Color(0, 0, 0));
 		lblKhchHng.setBounds(22, 0, 178, 66);
-		lblKhchHng.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
+		lblKhchHng.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
 		lblKhchHng.setHorizontalAlignment(SwingConstants.LEFT);
 		lblKhchHng.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl2.add(lblKhchHng);
@@ -277,7 +281,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblNhnVin = new JLabel("Bán sách");
 		lblNhnVin.setForeground(new Color(0, 0, 0));
 		lblNhnVin.setBounds(22, 0, 178, 66);
-		lblNhnVin.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
+		lblNhnVin.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
 		lblNhnVin.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl3.add(lblNhnVin);
@@ -316,7 +320,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblCuHnh = new JLabel("Khách hàng");
 		lblCuHnh.setForeground(new Color(0, 0, 0));
 		lblCuHnh.setBounds(22, 0, 178, 66);
-		lblCuHnh.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
+		lblCuHnh.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
 		lblCuHnh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCuHnh.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl7.add(lblCuHnh);
@@ -354,7 +358,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblHan = new JLabel("Mất sách");
 		lblHan.setForeground(new Color(0, 0, 0));
 		lblHan.setBounds(22, 0, 178, 66);
-		lblHan.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_generic_book_file_type_32px_3.png")));
+		lblHan.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_generic_book_file_type_32px_3.png")));
 		lblHan.setHorizontalAlignment(SwingConstants.LEFT);
 		lblHan.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl4.add(lblHan);
@@ -396,7 +400,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblThu = new JLabel("Thống kê");
 		lblThu.setForeground(new Color(0, 0, 0));
 		lblThu.setBounds(22, 0, 178, 66);
-		lblThu.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
+		lblThu.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
 		lblThu.setHorizontalAlignment(SwingConstants.LEFT);
 		lblThu.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl5.add(lblThu);
@@ -437,7 +441,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblNhnVin_1 = new JLabel("Quản trị viên");
 		lblNhnVin_1.setForeground(new Color(0, 0, 0));
 		lblNhnVin_1.setBounds(22, 0, 178, 66);
-		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
+		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
 		lblNhnVin_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl6.add(lblNhnVin_1);
@@ -466,7 +470,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblngXut = new JLabel("Đăng xuất");
 		lblngXut.setForeground(new Color(0, 0, 0));
 		lblngXut.setBounds(22, 0, 178, 51);
-		lblngXut.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
+		lblngXut.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
 		lblngXut.setHorizontalAlignment(SwingConstants.LEFT);
 		lblngXut.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl8.add(lblngXut);
@@ -475,7 +479,7 @@ public class MainJFrame2 extends JFrame {
 		
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setBounds(10, 22, 64, 67);
-		lblLogo.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		lblLogo.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		
 		JLabel lblBookstore = new JLabel("BOOKSTORE");
 		lblBookstore.setBounds(61, 11, 183, 58);
@@ -506,15 +510,18 @@ public class MainJFrame2 extends JFrame {
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 		pnlCenter.setLayout(new BorderLayout(0, 0));
 		
-		pnlContent = new JPanel();
+		pnlContent = new JPanelSlider();
 		pnlContent.setBackground(new Color(251, 251, 250));
 		pnlCenter.add(pnlContent, BorderLayout.CENTER);
-		pnlContent.setLayout(new CardLayout(0, 0));
+		pnlContent.setLayout(cardLayout);
 		
-		JLabel iconContent = new JLabel("");
-		iconContent.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlContent.add(iconContent, "name_113229955950600");
-		sHelper.setAutoResizeIcon_PreferredSize(iconContent);
+		JLabel lblIcon = new JLabel("");
+		lblIcon.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
+		pnlContent.add(lblIcon, "name_99788257003228");
+		
+//		JPanel panel = new JPanel();
+//		pnlContent.add(panel, "a");
 		setLocationRelativeTo(getOwner());
 		
 		
@@ -533,7 +540,19 @@ public class MainJFrame2 extends JFrame {
 //		} catch(FontFormatException e) {
 //		    e.printStackTrace();
 //		}
+		
+		addContainer();
 
+	}
+	
+	public void addContainer()
+	{
+		pnlContent.add(adminContainer, "1");
+		pnlContent.add(bookContainer, "2");
+		pnlContent.add(rentbContainer, "3");
+		pnlContent.add(sellBookContainer, "4");
+		pnlContent.add(statisticalContainer, "5");
+		pnlContent.add(userContainer, "6");
 	}
 	
 	//Hàm này sẽ set border các panel menu lại thành null và set border cho jpanel truyền vào là BORDER_HIGHLIGHT
@@ -564,10 +583,16 @@ public class MainJFrame2 extends JFrame {
 	//Hiển thị nội dung chính panel ở giữa, dựa vào Container truyền vào
 	public void setContainerShow(Container container)
 	{
-		pnlContent.removeAll();
-		pnlContent.add(container);
-		pnlContent.repaint();
-		pnlContent.revalidate();
+//		pnlContent.removeAll();
+//		pnlContent.add(container);
+//		pnlContent.repaint();
+//		pnlContent.revalidate();
+		
+		if (containerSelected != container)
+		{
+			containerSelected = container;
+			pnlContent.nextPanel(10, 20, container, true);
+		}
 	}
 	
 	public void showBookJFrame()
