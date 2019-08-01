@@ -169,5 +169,6 @@ public class CategoryJDialog extends JDialog {
 	public void test()
 	{
 		txtGhiChu.getText();
+		//then 
 	}
 }
