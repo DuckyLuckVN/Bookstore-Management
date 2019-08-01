@@ -96,6 +96,7 @@ public class MainJFrame3 extends JFrame {
 	private Container userContainer = userJFrame.getContentPane();
 	private Container adminContainer = adminJFrame.getContentPane();
 	private Container statisticalContainer = new StatisticalJFrame().getContentPane();
+	private Container lostBookContainer = new LostBookJFrame().getContentPane();
 	
 	public static void main(String[] args)
 	{
@@ -106,6 +107,7 @@ public class MainJFrame3 extends JFrame {
 				try 
 				{
 					MainJFrame3 frame = new MainJFrame3();
+					frame.addContainer();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -349,6 +351,7 @@ public class MainJFrame3 extends JFrame {
 			public void mouseClicked(MouseEvent e) 
 			{
 				setBackgroundMenuClicked(pnl4);
+				showLostBookJFrame();
 				setHighlightMenu(pnl4);
 			}
 		});
@@ -541,7 +544,7 @@ public class MainJFrame3 extends JFrame {
 //		    e.printStackTrace();
 //		}
 		
-		addContainer();
+		//addContainer();
 
 	}
 	
@@ -605,6 +608,11 @@ public class MainJFrame3 extends JFrame {
 	{
 		dispose();
 		loginJFrame.setVisible(true);
+	}
+	
+	public void showLostBookJFrame()
+	{
+		setContainerShow(lostBookContainer);
 	}
 	
 	public void showRentBookJFrame()

@@ -144,7 +144,6 @@ public class StorageJFrame extends JFrame {
 		
 		pnlController = new JPanel();
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		pnlController.setBounds(624, 5, 159, 313);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
@@ -200,11 +199,10 @@ public class StorageJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(7, 329, 778, 272);
+		scrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "B\u1EA3ng nh\u1EADp kho", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		scrollPane_1.setBounds(7, 46, 611, 272);
 		
 		tblBook = new JTable();
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "GIÁ NHẬP", "SỐ LƯỢNG"}) {
@@ -252,23 +250,53 @@ public class StorageJFrame extends JFrame {
 		tblStorage.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		tblStorage.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblStorage);
-		contentPane.setLayout(null);
-		contentPane.add(scrollPane_1);
-		contentPane.add(pnlController);
-		contentPane.add(scrollPane);
 		
 		JLabel lblChnSch = new JLabel("Chọn sách:");
 		lblChnSch.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblChnSch.setBounds(7, 5, 70, 30);
-		contentPane.add(lblChnSch);
 		
 		JButton btnChnSch = new JButton("Chọn sách");
-		btnChnSch.setBounds(87, 5, 89, 30);
-		contentPane.add(btnChnSch);
 		
 		JButton btnDeleteBook = new JButton("Xóa");
-		btnDeleteBook.setBounds(539, 6, 79, 30);
-		contentPane.add(btnDeleteBook);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(2)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addGap(8)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addComponent(lblChnSch)
+									.addGap(10)
+									.addComponent(btnChnSch, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE)
+									.addGap(363)
+									.addComponent(btnDeleteBook, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE))
+								.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(2))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblChnSch, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnChnSch, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnDeleteBook, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)))
+							.addGap(10)
+							.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
+						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
+					.addGap(11)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+					.addGap(6))
+		);
+		contentPane.setLayout(gl_contentPane);
 		//setLocationRelativeTo(getOwner());
 		try 
 		{

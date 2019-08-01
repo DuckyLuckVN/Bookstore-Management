@@ -64,25 +64,18 @@ public class LostBookJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1033, 564);
+		setBounds(100, 100, 1017, 541);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		JLabel lblChnSchMt = new JLabel("Chọn sách mất:");
 		lblChnSchMt.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblChnSchMt.setBounds(511, 261, 93, 24);
-		contentPane.add(lblChnSchMt);
 		
 		JButton btnChn = new JButton("Chọn");
 		btnChn.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnChn.setBounds(617, 263, 75, 23);
-		contentPane.add(btnChn);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(511, 297, 496, 140);
-		contentPane.add(scrollPane);
 		
 		tblBook = new JTable();
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ", "TỔNG THUÊ", "SỐ MẤT", "TIỀN PHẠT"}) 
@@ -102,13 +95,9 @@ public class LostBookJFrame extends JFrame {
 			}
 		});
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnXa.setBounds(950, 263, 57, 22);
-		contentPane.add(btnXa);
 		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Th\u00F4ng tin", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		pnlForm.setBounds(511, 4, 496, 246);
-		contentPane.add(pnlForm);
 		
 		JComboBox comboBox = new JComboBox();
 		comboBox.setBounds(116, 27, 363, 24);
@@ -176,37 +165,37 @@ public class LostBookJFrame extends JFrame {
 		pnlForm.add(label);
 		
 		JPanel pnlControll = new JPanel();
-		pnlControll.setBounds(511, 448, 496, 59);
-		contentPane.add(pnlControll);
 		pnlControll.setLayout(new GridLayout(1, 1, 15, 0));
 		
 		JButton btnToMi = new JButton("Tạo mới");
 		btnToMi.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnToMi.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnToMi.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnToMi.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Create.png")));
 		pnlControll.add(btnToMi);
 		
 		JButton btnLu = new JButton("Lưu");
 		btnLu.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnLu.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnLu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnLu.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Accept.png")));
 		pnlControll.add(btnLu);
 		
 		JButton btnCpNht = new JButton("Cập nhật");
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnCpNht.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnCpNht.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnCpNht.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Notes.png")));
 		pnlControll.add(btnCpNht);
 		
 		JButton btnXa_1 = new JButton("Xóa");
 		btnXa_1.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnXa_1.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnXa_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnXa_1.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		pnlControll.add(btnXa_1);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 4, 491, 503);
-		contentPane.add(scrollPane_1);
 		
 		tblLostBook = new JTable();
 		tblLostBook.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "SỐ SÁCH MẤT", "TIỀN PHẠT"}) 
@@ -219,5 +208,43 @@ public class LostBookJFrame extends JFrame {
 			}
 		});
 		scrollPane_1.setViewportView(tblLostBook);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(5)
+					.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+					.addGap(10)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+							.addComponent(lblChnSchMt, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)
+							.addGap(13)
+							.addComponent(btnChn, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
+							.addGap(258)
+							.addComponent(btnXa, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+						.addComponent(pnlControll, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE)
+					.addGap(11)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblChnSchMt, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(2)
+							.addComponent(btnChn))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(2)
+							.addComponent(btnXa, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)))
+					.addGap(11)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+					.addGap(11)
+					.addComponent(pnlControll, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE))
+		);
+		contentPane.setLayout(gl_contentPane);
 	}
 }
