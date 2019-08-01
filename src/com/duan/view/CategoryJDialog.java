@@ -32,13 +32,18 @@ import javax.swing.JDialog;
 
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CategoryJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTable tblCategory;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField txtMaTheLoai;
+	private JTextField txtTenTheLoai;
+	private JTextArea txtGhiChu;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -101,17 +106,17 @@ public class CategoryJDialog extends JDialog {
 		lblMThLoi.setBounds(10, 11, 77, 33);
 		panel.add(lblMThLoi);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textField.setBounds(97, 11, 237, 33);
-		panel.add(textField);
-		textField.setColumns(10);
+		txtMaTheLoai = new JTextField();
+		txtMaTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtMaTheLoai.setBounds(97, 11, 237, 33);
+		panel.add(txtMaTheLoai);
+		txtMaTheLoai.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textField_1.setColumns(10);
-		textField_1.setBounds(97, 55, 237, 33);
-		panel.add(textField_1);
+		txtTenTheLoai = new JTextField();
+		txtTenTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtTenTheLoai.setColumns(10);
+		txtTenTheLoai.setBounds(97, 55, 237, 33);
+		panel.add(txtTenTheLoai);
 		
 		JLabel lblTnThLoi = new JLabel("Tên thể loại");
 		lblTnThLoi.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -123,11 +128,11 @@ public class CategoryJDialog extends JDialog {
 		lblGhiCh.setBounds(10, 99, 77, 25);
 		panel.add(lblGhiCh);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setBorder(new LineBorder(SystemColor.controlShadow));
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textArea.setBounds(97, 99, 237, 65);
-		panel.add(textArea);
+		txtGhiChu = new JTextArea();
+		txtGhiChu.setBorder(new LineBorder(SystemColor.controlShadow));
+		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtGhiChu.setBounds(97, 99, 237, 65);
+		panel.add(txtGhiChu);
 		
 		JButton btnThm = new JButton(" Lưu");
 		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
@@ -148,10 +153,21 @@ public class CategoryJDialog extends JDialog {
 		contentPane.add(btnXa);
 		
 		JButton btn = new JButton(" Mới");
+		btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				
+			}
+		});
 		btn.setHorizontalAlignment(SwingConstants.LEFT);
 		btn.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
 		btn.setBounds(364, 8, 105, 38);
 		contentPane.add(btn);
 		setLocationRelativeTo(getOwner());
+	}
+	
+	public void test()
+	{
+		txtGhiChu.getText();
 	}
 }
