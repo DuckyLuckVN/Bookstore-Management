@@ -47,9 +47,6 @@ public class UserJFrame extends JFrame {
 	private JTextField txtPhoneNum;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -64,9 +61,7 @@ public class UserJFrame extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+
 	public UserJFrame() 
 	{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(UserJFrame.class.getResource("/com/duan/icon/icons8_user_groups_64px.png")));
@@ -130,7 +125,7 @@ public class UserJFrame extends JFrame {
 					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
 		);
 		
-		JLabel lblTiKhong = new JLabel("Tài khoảng");
+		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		txtUsername = new JTextField();
@@ -301,6 +296,11 @@ public class UserJFrame extends JFrame {
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	public void test()
+	{
+		
 	}
 
 }
