@@ -96,7 +96,7 @@ public class MainJFrame3 extends JFrame {
 	private Container userContainer = userJFrame.getContentPane();
 	private Container adminContainer = adminJFrame.getContentPane();
 	private Container statisticalContainer = new StatisticalJFrame().getContentPane();
-	private Container lostBookContainer = new LostBookJFrame().getContentPane();
+	private Container lostBookContainer = new LostBookEditorJFrame().getContentPane();
 	
 	public static void main(String[] args)
 	{
@@ -545,7 +545,6 @@ public class MainJFrame3 extends JFrame {
 //		}
 		
 		//addContainer();
-
 	}
 	
 	public void addContainer()
@@ -556,6 +555,7 @@ public class MainJFrame3 extends JFrame {
 		pnlContent.add(sellBookContainer, "4");
 		pnlContent.add(statisticalContainer, "5");
 		pnlContent.add(userContainer, "6");
+		pnlContent.add(lostBookContainer, "7");
 	}
 	
 	//Hàm này sẽ set border các panel menu lại thành null và set border cho jpanel truyền vào là BORDER_HIGHLIGHT
@@ -594,7 +594,7 @@ public class MainJFrame3 extends JFrame {
 		if (containerSelected != container)
 		{
 			containerSelected = container;
-			pnlContent.nextPanel(10, 20, container, true);
+			pnlContent.nextPanel(10, 15, container, true);
 		}
 	}
 	

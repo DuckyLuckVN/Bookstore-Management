@@ -7,55 +7,83 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
+
+import java.awt.Font;
+import javax.swing.border.BevelBorder;
 import javax.swing.JScrollPane;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JTextField;
 import javax.swing.JTable;
-import javax.swing.border.TitledBorder;
-import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
+
+import com.duan.dao.AdminDAO;
+import com.duan.dao.OrderDAO;
+import com.duan.dao.UserDAO;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SwingHelper;
+import com.duan.model.Order;
+
+import java.awt.Color;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.EtchedBorder;
+import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
+import java.awt.event.ActionEvent;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.GridLayout;
 import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class LostBookJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTable tblBook;
-	private JTable tblLostBook;
+	private JTable tblOrder;
+	private JButton btnMaxLeft;
+	private JButton btnLeft;
+	private JButton btnRight;
+	private JButton btnMaxRight;
+	private JButton btnDetail;
+	private JButton btnAdd;
+	private JButton btnEdit;
+	private JButton btnDelete;
+	
+	private OrderEditorJDialog insertOrderJDialog = new OrderEditorJDialog();
+	private OrderEditorJDialog editOrderJDialog = new OrderEditorJDialog();
+	private List<Order> listOrder;
+	private int indexSelected = -1;
+	
 
-	public static void main(String[] args) 
-	{
-		EventQueue.invokeLater(new Runnable() 
-		{
-			public void run() 
-			{
-				try 
-				{
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
 					LostBookJFrame frame = new LostBookJFrame();
 					frame.setVisible(true);
-				} 
-				catch (Exception e) 
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
 
-
-	public LostBookJFrame() {
+	public LostBookJFrame() 
+	{
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LostBookJFrame.class.getResource("/com/duan/icon/icons8_buy_for_change_64px_1.png")));
+		setTitle("Báo mất sách");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -63,188 +91,332 @@ public class LostBookJFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1017, 541);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 833, 614);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		JLabel lblChnSchMt = new JLabel("Chọn sách mất:");
-		lblChnSchMt.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		JButton btnChn = new JButton("Chọn");
-		btnChn.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		
-		tblBook = new JTable();
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ", "TỔNG THUÊ", "SỐ MẤT", "TIỀN PHẠT"}) 
-		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		scrollPane.setViewportView(tblBook);
-		
-		JButton btnXa = new JButton("Xóa");
-		btnXa.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		
-		JPanel pnlForm = new JPanel();
-		pnlForm.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Th\u00F4ng tin", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(116, 27, 363, 24);
-		
-		JLabel lblNgiThu = new JLabel("Người thuê:");
-		lblNgiThu.setBounds(10, 60, 93, 24);
-		lblNgiThu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		textField = new JTextField();
-		textField.setBounds(116, 62, 363, 24);
-		textField.setEditable(false);
-		textField.setColumns(10);
-		
-		JLabel lblTiKhong = new JLabel("Tài khoảng:");
-		lblTiKhong.setBounds(10, 95, 93, 24);
-		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		textField_1 = new JTextField();
-		textField_1.setBounds(116, 97, 363, 24);
-		textField_1.setEditable(false);
-		textField_1.setColumns(10);
-		
-		JLabel lblTngSchThu = new JLabel("Tổng sách thuê:");
-		lblTngSchThu.setBounds(10, 130, 93, 24);
-		lblTngSchThu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		
-		textField_2 = new JTextField();
-		textField_2.setBounds(116, 132, 363, 24);
-		textField_2.setEditable(false);
-		textField_2.setColumns(10);
-		
-		textField_3 = new JTextField();
-		textField_3.setBounds(116, 167, 363, 24);
-		textField_3.setEditable(false);
-		textField_3.setColumns(10);
-		
-		JLabel lblNgiChoThu = new JLabel("NV cho thuê:");
-		lblNgiChoThu.setBounds(10, 165, 93, 24);
-		lblNgiChoThu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		pnlForm.setLayout(null);
-		
-		JLabel lblNewLabel = new JLabel("Mã đơn thuê:");
-		lblNewLabel.setBounds(10, 25, 96, 24);
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		pnlForm.add(lblNewLabel);
-		pnlForm.add(comboBox);
-		pnlForm.add(lblNgiThu);
-		pnlForm.add(textField);
-		pnlForm.add(lblTiKhong);
-		pnlForm.add(textField_1);
-		pnlForm.add(lblTngSchThu);
-		pnlForm.add(textField_2);
-		pnlForm.add(lblNgiChoThu);
-		pnlForm.add(textField_3);
-		
-		JLabel lblTngTinPht = new JLabel("Tổng tiền phạt:");
-		lblTngTinPht.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblTngTinPht.setBounds(10, 200, 106, 24);
-		pnlForm.add(lblTngTinPht);
-		
-		JLabel label = new JLabel("0 đ");
-		label.setForeground(Color.RED);
-		label.setFont(new Font("Tahoma", Font.BOLD, 13));
-		label.setBounds(116, 202, 262, 24);
-		pnlForm.add(label);
-		
-		JPanel pnlControll = new JPanel();
-		pnlControll.setLayout(new GridLayout(1, 1, 15, 0));
-		
-		JButton btnToMi = new JButton("Tạo mới");
-		btnToMi.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnToMi.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnToMi.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Create.png")));
-		pnlControll.add(btnToMi);
-		
-		JButton btnLu = new JButton("Lưu");
-		btnLu.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnLu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnLu.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Accept.png")));
-		pnlControll.add(btnLu);
-		
-		JButton btnCpNht = new JButton("Cập nhật");
-		btnCpNht.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnCpNht.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnCpNht.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/Notes.png")));
-		pnlControll.add(btnCpNht);
-		
-		JButton btnXa_1 = new JButton("Xóa");
-		btnXa_1.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnXa_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		btnXa_1.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
-		pnlControll.add(btnXa_1);
-		
 		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
-		tblLostBook = new JTable();
-		tblLostBook.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "SỐ SÁCH MẤT", "TIỀN PHẠT"}) 
+		JPanel pnlController = new JPanel();
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		pnlController.setLayout(new GridLayout(0, 1, 10, 5));
+		
+		btnDetail = new JButton("Xem chi tiết");
+		btnDetail.setEnabled(false);
+		btnDetail.setFont(new Font("Tahoma", Font.BOLD, 12));
+		SwingHelper.setTextBelowIconButton(btnDetail);
+		btnDetail.addActionListener(new ActionListener() 
 		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+			public void actionPerformed(ActionEvent e) 
+			{
+				
 			}
 		});
-		scrollPane_1.setViewportView(tblLostBook);
+		btnDetail.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px.png")));
+		pnlController.add(btnDetail);
+		
+		btnAdd = new JButton("Thêm mới");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				showInsertOrder();
+			}
+		});
+		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 12));
+		SwingHelper.setTextBelowIconButton(btnAdd);
+		btnAdd.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_add_50px_3.png")));
+		pnlController.add(btnAdd);
+		
+		btnEdit = new JButton("Cập nhật");
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				showEditOrder();
+			}
+		});
+		btnEdit.setEnabled(false);
+		btnEdit.setFont(new Font("Tahoma", Font.BOLD, 12));
+		SwingHelper.setTextBelowIconButton(btnEdit);
+		btnEdit.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_edit_property_50px.png")));
+		pnlController.add(btnEdit);
+		
+		btnDelete = new JButton("Xóa");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(SwingHelper.showConfirm(contentPane, "Bạn có muốn xóa đơn hàng này?"))
+				{
+					try 
+					{
+						OrderDAO.delete(listOrder.get(indexSelected).getId());
+						listOrder.remove(indexSelected);
+						fillToTable();
+					} 
+					catch (SQLException e1) 
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		btnDelete.setEnabled(false);
+		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 12));
+		SwingHelper.setTextBelowIconButton(btnDelete);
+		btnDelete.setIcon(new ImageIcon(LostBookJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
+		pnlController.add(btnDelete);
+		
+		tblOrder = new JTable();
+		tblOrder.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				eventTableSelectRow();
+				System.out.println("OK");
+			}
+		});
+		tblOrder.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) 
+			{
+				eventTableSelectRow();
+			}
+		});
+		tblOrder.setRowHeight(35);
+		tblOrder.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "SỐ SÁCH MẤT", "TIỀN PHẠT"}) 
+		{
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		});
+//		tblOrder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+//			
+//			@Override
+//			public void valueChanged(ListSelectionEvent evt) 
+//			{
+//				eventTableSelectRow();
+//			}
+//		});
+		scrollPane_1.setViewportView(tblOrder);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(1, 0, 15, 0));
+		
+		btnMaxLeft = new JButton("|<");
+		btnMaxLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblOrder.getRowCount();
+				if (rowCount > 0)
+				{
+					indexSelected = 0;
+					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					setControllModeTo_Editable();
+				}
+			}
+		});
+		panel.add(btnMaxLeft);
+		
+		btnLeft = new JButton("<");
+		btnLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblOrder.getRowCount();
+				if (indexSelected > 0 && rowCount > 0)
+				{
+					indexSelected--;
+					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					setControllModeTo_Editable();
+				}
+			}
+		});
+		btnLeft.setEnabled(false);
+		panel.add(btnLeft);
+		
+		btnRight = new JButton(">");
+		btnRight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				int rowCount = tblOrder.getRowCount();
+				if (indexSelected < rowCount - 1 && rowCount > 0)
+				{
+					indexSelected++;
+					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					setControllModeTo_Editable();
+				}
+			}
+		});
+		btnRight.setEnabled(false);
+		panel.add(btnRight);
+		
+		JButton btnMaxRight = new JButton(">|");
+		btnMaxRight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int rowCount = tblOrder.getRowCount();
+				if (rowCount > 0)
+				{
+					indexSelected = rowCount - 1;
+					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					setControllModeTo_Editable();
+				}
+			}
+		});
+		panel.add(btnMaxRight);
+		
+		JLabel label = new JLabel("23:15");
+		label.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setForeground(Color.RED);
+		label.setFont(new Font("Tahoma", Font.BOLD, 18));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(5)
-					.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
-					.addGap(10)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblChnSchMt, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE)
-							.addGap(13)
-							.addComponent(btnChn, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)
-							.addGap(258)
-							.addComponent(btnXa, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE))
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-						.addComponent(pnlControll, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
+						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(label, GroupLayout.PREFERRED_SIZE, 178, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 178, GroupLayout.PREFERRED_SIZE))
+					.addGap(5))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, 246, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
+					.addGap(6)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblChnSchMt, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(2)
-							.addComponent(btnChn))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(2)
-							.addComponent(btnXa, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)))
-					.addGap(11)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-					.addGap(11)
-					.addComponent(pnlControll, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE))
+						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+						.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(label, GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		contentPane.setLayout(gl_contentPane);
+		
+		getDataTolist();
+		fillToTable();
+	}
+	
+	public void getDataTolist()
+	{
+		try 
+		{
+			listOrder = OrderDAO.getAll();
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void fillToTable()
+	{
+		DefaultTableModel model = (DefaultTableModel) tblOrder.getModel();
+		model.setRowCount(0);
+		
+		try 
+		{
+			for (Order order : listOrder)
+			{
+				String user = "Không có";
+				if (UserDAO.findByID(order.getUserId()) != null)
+				{
+					user = UserDAO.findByID(order.getUserId()).getUsername();
+				}
+				
+				String admin = AdminDAO.findByID(order.getAdminId()).getUsername();
+				String createdDate = DateHelper.dateToString(order.getDateCreated(), "dd/MM/yyyy");
+				
+				Object[] rowData = {order.getId(), user, admin, "", "", createdDate};
+				model.addRow(rowData);
+			}
+			
+			//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+			int rowCount = tblOrder.getRowCount();
+			if (indexSelected != -1)
+			{
+				if (indexSelected < rowCount && rowCount > 0)
+				{
+					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+				}
+				else
+				{
+					indexSelected = rowCount - 1;
+					if (indexSelected > -1)
+					{
+						tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					}
+					else
+					{
+						setControllModeTo_Nothing();
+					}
+				}
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
+	//Sự kiện được gọi khi nhấn nút 'Thêm mới' nó sẽ mở ra một cửa sổ để nhập thông tin order vào
+	private void showInsertOrder()
+	{
+		insertOrderJDialog.setEditMode(false);
+//		insertOrderJDialog.setOrderJFrame(this);
+		insertOrderJDialog.setVisible(true);
+	}
+	
+	//Mở ra một cửa sổ để chỉnh sửa thông tin order đang chọn
+	private void showEditOrder()
+	{
+		editOrderJDialog.setEditMode(true);
+//		editOrderJDialog.setOrderJFrame(this);
+		editOrderJDialog.setOrderModel(listOrder.get(indexSelected));
+		editOrderJDialog.setVisible(true);
+	}
+	
+	//Hàm này sẽ dc gọi khi có 1 dòng trong bảng dc chọn vào
+	public void eventTableSelectRow()
+	{
+		indexSelected = tblOrder.getSelectedRow();
+		setControllModeTo_Editable();
+	}
+	
+	//Set các nút nhấn controll chỉ enable nút "Thêm Mới"
+	//Chỉ gọi khi không có dòng nào trong bảng tblBook được chọn
+	public void setControllModeTo_Nothing()
+	{
+		btnAdd.setEnabled(true);
+		
+		btnDelete.setEnabled(false);
+		btnDetail.setEnabled(false);
+		btnEdit.setEnabled(false);
+		
+		//Các nút di chuyển select
+		btnLeft.setEnabled(false);
+		btnRight.setEnabled(false);
+	}
+	
+	//Set các nút nhấn controll chỉ enable nút "Thêm Mới"
+	//Chỉ gọi khi không có dòng nào trong bảng tblBook được chọn
+	public void setControllModeTo_Editable()
+	{
+		btnDelete.setEnabled(true);
+		btnDetail.setEnabled(true);
+		btnEdit.setEnabled(true);
+		btnAdd.setEnabled(true);
+		
+		//Các nút di chuyển select
+		btnLeft.setEnabled(true);
+		btnRight.setEnabled(true);
 	}
 }
