@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.dao.UserDAO;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -27,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
@@ -45,6 +47,8 @@ public class UserJFrame extends JFrame {
 	private JDateChooser txtBirthDay;
 	private JTextField txtEmail;
 	private JTextField txtPhoneNum;
+	private JRadioButton rdoNam;
+	private JRadioButton rdoNu;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	public static void main(String[] args) {
@@ -173,11 +177,11 @@ public class UserJFrame extends JFrame {
 		JLabel lblGiiTnh = new JLabel("Giới tính");
 		lblGiiTnh.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JRadioButton rdbtnNam = new JRadioButton("Nam");
-		buttonGroup.add(rdbtnNam);
+		rdoNam = new JRadioButton("Nam");
+		buttonGroup.add(rdoNam);
 		
-		JRadioButton rdbtnN = new JRadioButton("Nữ");
-		buttonGroup.add(rdbtnN);
+		rdoNu = new JRadioButton("Nữ");
+		buttonGroup.add(rdoNu);
 		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
 		gl_pnlForm.setHorizontalGroup(
 			gl_pnlForm.createParallelGroup(Alignment.LEADING)
@@ -211,9 +215,9 @@ public class UserJFrame extends JFrame {
 						.addGroup(gl_pnlForm.createSequentialGroup()
 							.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
 							.addGap(10)
-							.addComponent(rdbtnNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
 							.addGap(2)
-							.addComponent(rdbtnN, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)))
 					.addGap(8))
 		);
 		gl_pnlForm.setVerticalGroup(
@@ -246,8 +250,8 @@ public class UserJFrame extends JFrame {
 					.addGap(11)
 					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdbtnNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdbtnN, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
 		);
 		pnlForm.setLayout(gl_pnlForm);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
@@ -256,7 +260,7 @@ public class UserJFrame extends JFrame {
 		btnTaoMoi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				
+				//goi ham can xy ly
 			}
 		});
 		btnTaoMoi.setHorizontalAlignment(SwingConstants.LEFT);
@@ -298,9 +302,28 @@ public class UserJFrame extends JFrame {
 		contentPane.setLayout(gl_contentPane);
 	}
 
-	public void test()
+	public void test() throws SQLException
 	{
+		String username = txtUsername.getText();
+		boolean sex;
 		
+		if (rdoNam.isSelected() == true)
+		{
+			sex = true;
+		}
+		else if (rdoNam.isSelected() == false)
+		{
+			sex = false;
+		}
+		
+		if (UserDAO.findByUsername(username) == null)
+		{
+			//thuc hien
+		}
+		else
+		{
+			//Thong bao da ton tai username
+		}
 	}
 
 }
