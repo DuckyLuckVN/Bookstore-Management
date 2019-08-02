@@ -86,6 +86,18 @@ public class UserDAO
         return null;
     }
     
+    public static User findByUsername(String username) throws SQLException
+    {
+        String sql = "SELECT * FROM [USER] WHERE username = ?";
+        ResultSet rs = JDBCHelper.executeQuery(sql, username);
+        
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        return null;
+    }
+    
     public static User readFromResultSet(ResultSet rs) throws SQLException
     {
     	int id = rs.getInt(1);
