@@ -257,17 +257,27 @@ public class UserJFrame extends JFrame {
 		pnlForm.setLayout(gl_pnlForm);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
-		JButton btnToMi = new JButton("Tạo mới");
-		btnToMi.setHorizontalAlignment(SwingConstants.LEFT);
-		btnToMi.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Create.png")));
-		btnToMi.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		pnlController.add(btnToMi);
+		JButton btnTaoMoi = new JButton("Tạo mới");
+		btnTaoMoi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				
+			}
+		});
+		btnTaoMoi.setHorizontalAlignment(SwingConstants.LEFT);
+		btnTaoMoi.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Create.png")));
+		btnTaoMoi.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		pnlController.add(btnTaoMoi);
 		
-		JButton btnThm = new JButton(" Thêm");
-		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
-		btnThm.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Accept.png")));
-		btnThm.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		pnlController.add(btnThm);
+		JButton btnThem = new JButton(" Thêm");
+		btnThem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnThem.setHorizontalAlignment(SwingConstants.LEFT);
+		btnThem.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Accept.png")));
+		btnThem.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		pnlController.add(btnThem);
 		
 		JButton btnCpNht = new JButton(" Cập nhật");
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
