@@ -594,7 +594,7 @@ public class MainJFrame3 extends JFrame {
 		if (containerSelected != container)
 		{
 			containerSelected = container;
-			pnlContent.nextPanel(10, 15, container, true);
+			pnlContent.nextPanel(15, 15, container, true);
 		}
 	}
 	
