@@ -17,6 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.Font;
 import javax.swing.JTextArea;
@@ -36,8 +37,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class CategoryJDialog extends JDialog {
+	String head[]= {"Mã thể loại","Tên thể loại","Ghi chú"};
+	DefaultTableModel model = new DefaultTableModel(head, 0);
 
 	private JPanel contentPane;
 	private JTable tblCategory;
@@ -46,6 +53,7 @@ public class CategoryJDialog extends JDialog {
 	private JTextArea txtGhiChu;
 
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -78,6 +86,12 @@ public class CategoryJDialog extends JDialog {
 		setContentPane(contentPane);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+			}
+		});
 		scrollPane.setBounds(10, 204, 459, 147);
 		
 		JPanel panel = new JPanel();
@@ -86,6 +100,15 @@ public class CategoryJDialog extends JDialog {
 		panel.setLayout(null);
 		
 		tblCategory = new JTable();
+		tblCategory.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = tblCategory.getSelectedRow();
+				txtMaTheLoai.setText(tblCategory.getValueAt(row, 0).toString());
+				txtTenTheLoai.setText(tblCategory.getValueAt(row, 1).toString());
+				txtGhiChu.setText(tblCategory.getValueAt(row, 2).toString());
+			}
+		});
 		tblCategory.setModel(new DefaultTableModel(null, new String[] {"MÃ THỂ LOẠI", "TÊN THỂ LOẠI", "GHI CHÚ"})
 		{
 			boolean[] columnEditables = new boolean[] {
@@ -135,18 +158,100 @@ public class CategoryJDialog extends JDialog {
 		panel.add(txtGhiChu);
 		
 		JButton btnThm = new JButton(" Lưu");
+		btnThm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
+				if (ret != JOptionPane.YES_OPTION) {
+					return;
+				}
+				try {
+					String user="sa";
+					String pass = "123";
+					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
+					Connection con = DriverManager.getConnection(url, user, pass);
+					String sql="insert into tblCategory scrollPane value(?,?,?)";
+					PreparedStatement st = con.prepareStatement(sql);
+					st.setString(1,txtMaTheLoai.getText());
+					st.setString(2, txtTenTheLoai.getText());
+					st.setString(3, txtGhiChu.getText());
+					st.executeUpdate();
+				} catch (Exception e2) {
+					System.out.print(e);
+				}
+
+			}
+		});
 		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
 		btnThm.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		btnThm.setBounds(364, 57, 105, 38);
 		contentPane.add(btnThm);
 		
 		JButton btnCpNht = new JButton("Cập nhật");
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					String user ="sa";
+					String pass ="123";
+					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore2";
+					Connection con = DriverManager.getConnection(url, user, pass);
+					String sql = "update tblCategory set uMaTheLoai=?, uTenTheLoai=?, uGhiChu=?";
+					PreparedStatement st = con.prepareStatement(sql);
+					st.setString(1, txtMaTheLoai.getText());
+					st.setString(2, txtTenTheLoai.getText());
+					st.setString(3, txtGhiChu.getText());
+					st.executeUpdate();
+					con.close();
+					LoadDataToJTable();
+				} catch (Exception e) {
+					System.out.print(e);
+				}
+			}
+
+			private void LoadDataToJTable() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		btnCpNht.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
 		btnCpNht.setBounds(364, 106, 105, 38);
 		contentPane.add(btnCpNht);
 		
 		JButton btnXa = new JButton("Xóa");
+		btnXa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
+				if(ret != JOptionPane.YES_OPTION) {
+					return;
+				}
+				Connection c = null;
+				PreparedStatement ps = null;
+               try {
+            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
+            	   ps = c.prepareStatement("Delete From tblCategory where id = ?");
+            	   ps.setString(1, txtMaTheLoai.getText());
+            	   ret = ps.executeUpdate();
+            	   if (ret != -1) {
+            		   JOptionPane.showMessageDialog(rootPane, "Thông đã được xóa");  
+            	   }
+			} catch (Exception ex) {
+				 ex.printStackTrace();
+			}finally {
+				try {
+					if (c != null) {
+					     c.close();
+					   }
+					if (ps != null) {
+					     ps.close();
+					   }
+				} catch (Exception ex2) {
+					   ex2.printStackTrace();
+				}
+			}
+			}
+		});
 		btnXa.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
 		btnXa.setBounds(364, 155, 105, 38);
@@ -156,7 +261,10 @@ public class CategoryJDialog extends JDialog {
 		btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				
+				txtMaTheLoai.setText("");
+				txtTenTheLoai.setText("");
+				txtGhiChu.setText("");
+				txtMaTheLoai.requestFocus();
 			}
 		});
 		btn.setHorizontalAlignment(SwingConstants.LEFT);
