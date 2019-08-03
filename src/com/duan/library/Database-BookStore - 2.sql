@@ -336,3 +336,23 @@ SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
 
 DELETE FROM dbo.RENTBOOK
+/****** Object:  StoredProcedure  [sp_getTotalRentbook]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách đã thuê trong RENTBOOK_DETAIL theo renbook_id
+GO
+CREATE PROC sp_getTotalRentBook (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM RENTBOOK_DETAIL
+	WHERE rentbook_id = @rentbook_id
+END
+/****** Object:  StoredProcedure  [sp_getTotalCostBookLost]  Script Date: 8/03/2019 ******/
+--Trả về tổng số cost có trong LostBook theo renbook_id
+GO
+CREATE PROC sp_getTotalCostBookLost (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(cost)
+	FROM BOOK_LOST
+	WHERE rentbook_id = @rentbook_id
+END
