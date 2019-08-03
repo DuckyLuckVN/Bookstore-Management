@@ -356,3 +356,35 @@ AS BEGIN
 	FROM BOOK_LOST
 	WHERE rentbook_id = @rentbook_id
 END
+/****** Object:  StoredProcedure  [sp_getTotalCountBookLost]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách đã mất theo renbook_id
+GO
+CREATE PROC sp_getTotalCountBookLost (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM BOOK_LOST
+	WHERE rentbook_id = @rentbook_id
+END
+/****** Object:  StoredProcedure  [sp_getAmountBookRented]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách của sách có @book_id đã thuê với đơn thuê có mã @rentbook_id
+GO
+CREATE PROC sp_getAmountBookRented (@rentbook_id INT, @book_id VARCHAR(50))
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM RENTBOOK_DETAIL
+	WHERE rentbook_id = @rentbook_id AND book_id = @book_id
+END
+/****** Object:  StoredProcedure  [sp_getLostBookDetail]  Script Date: 8/03/2019 ******/
+--Trả về thông tin chi tiết của LOST_BOOK_DETAIL theo rentbook_id
+GO
+CREATE PROC sp_getLostBookDetail (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		book_id,
+		amount,
+		cost
+	FROM BOOK_LOST
+	WHERE rentbook_id = @rentbook_id
+END 
