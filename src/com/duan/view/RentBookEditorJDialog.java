@@ -73,7 +73,8 @@ public class RentBookEditorJDialog extends JDialog {
 	
 	private RentBook rentBook;
 	private User userSelect;
-	private List<Book> listBook = new ArrayList<Book>();
+	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
+	private List<BookProduct> listBookProductEdit = new ArrayList<BookProduct>();
 	
 	public static void main(String[] args) 
 	{
@@ -206,7 +207,7 @@ public class RentBookEditorJDialog extends JDialog {
 			{
 				try 
 				{
-					if (validateTable())
+					if (validateAll())
 					{
 						//Nếu không phải là edit mode thì tiến hành insert
 						if (isEditMode == false)
@@ -356,6 +357,18 @@ public class RentBookEditorJDialog extends JDialog {
 		}
 	}
 	
+	public void fillToTable()
+	{
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		for (BookProduct product : listBookProduct)
+		{
+			Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), product.getPrice(), product.getAmount(), false};
+			model.addRow(rowData);
+		}
+	}
+	
 	//Kiểm tra dữ liệu số lượng tại row có hợp lệ hay không
 	public boolean checkAmountAt(int row)
 	{
@@ -403,7 +416,7 @@ public class RentBookEditorJDialog extends JDialog {
 		//Kiểm tra sách đã được chọn
 		if (selectBookJDialog.getStatus() == selectBookJDialog.STATUS_SELECTED)
 		{
-			listBook = selectBookJDialog.getListBookSelected();
+			listBookProduct = selectBookJDialog.getListBookProductSelected();
 			fillToTable();
 			updateAmountNumber();
 		}
@@ -419,18 +432,6 @@ public class RentBookEditorJDialog extends JDialog {
 		bookDetailJFrame.setVisible(true);
 	}
 	
-	public void fillToTable()
-	{
-		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
-		model.setRowCount(0);
-		
-		for (Book book : listBook)
-		{
-			Object[] rowData = {book.getId(), book.getTitle(), book.getPrice(), 1, false};
-			model.addRow(rowData);
-		}
-		
-	}
 	
 	//Thực hiện insert dữ liệu vào bảng Rentbook
 	public void insertRentbook() throws SQLException
@@ -506,13 +507,13 @@ public class RentBookEditorJDialog extends JDialog {
 			if (isChecked)
 			{
 				model.removeRow(i);
-				listBook.remove(i);
+				listBookProduct.remove(i);
 			}
 		}
 	}
 	
-	//Tiến hành kiểm tra tất cả giá trị trong bảng sách, trả về TRUE nếu hợp lệ, FALSE nếu không hợp lệ.
-	public boolean validateTable() throws SQLException
+	//Tiến hành kiểm tra tất cả giá trị trong JDialog, trả về TRUE nếu hợp lệ, FALSE nếu không hợp lệ.
+	public boolean validateAll() throws SQLException
 	{
 		boolean isSuccess = true;
 		String msg = "";
@@ -652,15 +653,15 @@ public class RentBookEditorJDialog extends JDialog {
 	public List<BookProduct> getListBookProduct()
 	{
 		List<BookProduct> list = new ArrayList<BookProduct>();
-		for (int i = 0; i < listBook.size(); i++)
+		for (int i = 0; i < listBookProduct.size(); i++)
 		{
-			Book book = listBook.get(i);
+			Book book = listBookProduct.get(i).getBook();
 			int amount = DataHelper.getInt(tblBook.getValueAt(i, 3).toString());
-			BookProduct bookProduct = new BookProduct(book, amount, book.getPrice());
+			BookProduct bookProduct = new BookProduct(book, amount, listBookProduct.get(i).getPrice());
 			list.add(bookProduct);
 		}
+		System.out.println(list.size());
 		return list;
-		
 	}
 	
 	public void setEditModel(RentBook rentBook)
@@ -679,13 +680,9 @@ public class RentBookEditorJDialog extends JDialog {
 			cboStatus.setSelectedIndex(rentBook.getStatus());
 			
 			//Lấy về danh sách các sách chi tiết dựa vào mã số thuê @rentbook_id
-			List<BookProduct> list = RentBookDetailDAO.getListProducts(rentBook.getId());
+			this.listBookProduct = RentBookDetailDAO.getListProducts(rentBook.getId());
 			
-			for (BookProduct product : list)
-			{
-				Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), product.getPrice(), product.getAmount(), false};
-				model.addRow(rowData);
-			}
+			fillToTable();
 			updateAmountNumber();
 		} 
 		catch (SQLException e) 

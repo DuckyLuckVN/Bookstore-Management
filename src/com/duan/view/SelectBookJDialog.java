@@ -179,6 +179,7 @@ public class SelectBookJDialog extends JDialog {
 	public void setListBookSelected() throws SQLException
 	{
 		listBookSelected.clear();
+		listBookProduct.clear();
 
 		int rowCount = tblBook.getRowCount();
 		//Lặp duyệt qua từng dòng trong bảng
@@ -218,6 +219,11 @@ public class SelectBookJDialog extends JDialog {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setListBook(List<Book> listBook)
+	{
+		this.listBook = listBook;
 	}
 	
 	public void fillToTable()

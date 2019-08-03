@@ -30,6 +30,19 @@ public class RentBookDAO
         return list;
     }
     
+    public static ArrayList<RentBook> getAllReturned() throws SQLException
+    {
+        ArrayList<RentBook> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK WHERE status=1");
+
+        while (rs.next())
+        {
+        	RentBook e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+    }
+    
     public static boolean insert(RentBook rb) throws SQLException
     {
         String sql = "INSERT INTO RENTBOOK Values(?, ?, ?, ?, ?)";
