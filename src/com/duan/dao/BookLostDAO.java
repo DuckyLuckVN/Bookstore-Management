@@ -39,7 +39,7 @@ public class BookLostDAO
     public static ArrayList<BookLost> getAll() throws SQLException
     {
         ArrayList<BookLost> list = new ArrayList<>();
-        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [ORDER]");
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM BOOK_LOST");
 
         while(rs.next())
         {
@@ -88,7 +88,7 @@ public class BookLostDAO
     {
         String sql = "UPDATE BOOK_LOST SET rentbook_id = ?, "
         							+ "admin_id = ?, "
-        							+ "date_created = ? "
+        							+ "created_date = ? "
         							+ "WHERE rentbook_id = ?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
@@ -110,8 +110,8 @@ public class BookLostDAO
         	update(bookLost, bookLost.getRentbookId());
         	for (BookProduct p : products)
         	{
-        		OrderDetail detail = new OrderDetail(bookLost.getRentbookId(), p.getBook().getId(), p.getAmount(), p.getPrice());
-        		OrderDetailDAO.insert(detail);
+        		BookLostDetail detail = new BookLostDetail(bookLost.getRentbookId(), p.getBook().getId(), p.getAmount(), p.getPrice());
+        		BookLostDetailDAO.insert(detail);
         	}
         	return true;
         }

@@ -88,6 +88,7 @@ public class MainJFrame3 extends JFrame {
 	private UserJFrame userJFrame = new UserJFrame();
 	private AdminJFrame adminJFrame = new AdminJFrame();
 	private StatisticalJFrame statisticalJFrame = new StatisticalJFrame();
+	private BookLostJFrame bookLostJFrame = new BookLostJFrame();
 	
 	//Khai báo container
 	private Container bookContainer = bookJFrame.getContentPane();
@@ -95,8 +96,8 @@ public class MainJFrame3 extends JFrame {
 	private Container sellBookContainer = sellBookJFrame.getContentPane();
 	private Container userContainer = userJFrame.getContentPane();
 	private Container adminContainer = adminJFrame.getContentPane();
-	private Container statisticalContainer = new StatisticalJFrame().getContentPane();
-	private Container lostBookContainer = new LostBookEditorJFrame().getContentPane();
+	private Container statisticalContainer = statisticalJFrame.getContentPane();
+	private Container bookLostContainer = bookLostJFrame.getContentPane();
 	
 	public static void main(String[] args)
 	{
@@ -555,7 +556,7 @@ public class MainJFrame3 extends JFrame {
 		pnlContent.add(sellBookContainer, "4");
 		pnlContent.add(statisticalContainer, "5");
 		pnlContent.add(userContainer, "6");
-		pnlContent.add(lostBookContainer, "7");
+		pnlContent.add(bookLostContainer, "7");
 	}
 	
 	//Hàm này sẽ set border các panel menu lại thành null và set border cho jpanel truyền vào là BORDER_HIGHLIGHT
@@ -612,7 +613,9 @@ public class MainJFrame3 extends JFrame {
 	
 	public void showLostBookJFrame()
 	{
-		setContainerShow(lostBookContainer);
+		bookLostJFrame.getDataTolist();
+		bookLostJFrame.fillToTable();
+		setContainerShow(bookLostContainer);
 	}
 	
 	public void showRentBookJFrame()

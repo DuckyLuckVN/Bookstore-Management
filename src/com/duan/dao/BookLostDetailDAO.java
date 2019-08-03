@@ -92,6 +92,28 @@ public class BookLostDetailDAO
     	return list;
     }
     
+    //Trả vể tổng số tiền phạt của đơn báo mất @rentbook_id
+    public static int getTotalLost(int rentbook_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getTotalCountBookLost(?)}", rentbook_id);
+    	if (rs.next())
+    	{
+    		return rs.getInt(1);
+    	}
+    	return 0;
+    }
+    
+    //Trả về tổng số sách đã mất trong hóa đơn thuê  báo mất sách
+    public static double getTotalCost(int rentbook_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getTotalCostBookLost(?)}", rentbook_id);
+    	if (rs.next())
+    	{
+    		return rs.getDouble(1);
+    	}
+    	return 0;
+    }
+    
     public static BookLostDetail findByID(int order_id, String book_id) throws SQLException
     {
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM BOOK_LOST_DETAIL Where rentbook_id =? AND book_id=?", order_id, book_id);

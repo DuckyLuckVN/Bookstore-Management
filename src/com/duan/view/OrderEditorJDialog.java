@@ -233,7 +233,7 @@ public class OrderEditorJDialog extends JDialog {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if (checkErrorAll() == false)
+				if (validateAll())
 				{
 					if (isEditMode == false && insertOrder())
 					{
@@ -269,6 +269,7 @@ public class OrderEditorJDialog extends JDialog {
 			Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), price, product.getAmount()};
 			model.addRow(rowData);
 		}
+
 	}
 	
 	//Hàm này được gọi khi các row trong bảng bị thay đổi (thêm, xóa, cập nhật)
@@ -400,10 +401,10 @@ public class OrderEditorJDialog extends JDialog {
 		this.orderJFrame = orderJFrame;
 	}
 	
-	//Kiểm tra bắt lỗi trước khi thực hiện, nếu có lỗi sẽ trả về TRUE
-	public boolean checkErrorAll()
+	//Kiểm tra bắt lỗi trước khi thực hiện, trả về TRUE nếu hợp lệ
+	public boolean validateAll()
 	{
-		boolean isError = true;
+		boolean isSuccess = true;
 		String msg = "";
 		
 		try 
@@ -411,7 +412,7 @@ public class OrderEditorJDialog extends JDialog {
 			//Lỗi chưa chọn sách
 			if (listBookProduct.size() == 0)
 			{
-				isError = true;
+				isSuccess = false;
 				msg += "+ Sách chưa được chọn, vui lòng chọn sách trước khi xác nhận \n";
 			}
 	
@@ -433,13 +434,9 @@ public class OrderEditorJDialog extends JDialog {
 					//NẾU EDIT MODE == FALSE (INSERT MODE) THÌ KIỂM TRA KIỂU NÀY
 					if (isEditMode == false)
 					{
-						if (amount <= amountAvailable)
+						if (amount > amountAvailable)
 						{
-							isError = false;
-						}
-						else
-						{
-							isError = true;
+							isSuccess = false;
 							msg += "+ [" + product.getBook().getId() + "] Không đủ sách để bán (chỉ còn: " + amountAvailable + " quyển, cần bán: " + amount + " quyển) \n";
 						}
 					}
@@ -459,13 +456,9 @@ public class OrderEditorJDialog extends JDialog {
 						int amountAvailableAfterUpdate = amountAvailable + amountProduct - product.getAmount();
 						System.out.println(amountAvailableAfterUpdate);
 						//Nếu số lượng sách tồn kho sau khi update (amountAvailableAfterUpdate) mà nhỏ hơn 0 thì => báo không đủ sách để đáp ứng
-						if (amountAvailableAfterUpdate >= 0)
+						if (amountAvailableAfterUpdate < 0)
 						{
-							isError = false;
-						}
-						else
-						{
-							isError = true;
+							isSuccess = false;
 							msg += "+ [" + product.getBook().getId() + "] Không đủ sách để thêm vào (chỉ còn: " + amountAvailable + " quyển, cần bổ sung: " + (product.getAmount() - amountProduct) + " quyển)\n";
 						}
 					}
@@ -473,7 +466,7 @@ public class OrderEditorJDialog extends JDialog {
 				}
 				else
 				{
-					isError = true;
+					isSuccess = false;
 					msg += "+ [" + product.getBook().getId() + "] Số lượng nhập vào phải là số và lớn hơn 0\n";
 				}
 			}
@@ -483,12 +476,12 @@ public class OrderEditorJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		
-		if (isError)
+		if (isSuccess == false)
 		{
 			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg);
 		}
 		
-		return isError;
+		return isSuccess;
 	}
 	
 	//Thêm Order vào Database

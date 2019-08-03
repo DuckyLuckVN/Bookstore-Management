@@ -161,7 +161,7 @@ CREATE TABLE BOOK_LOST_DETAIL
 	amount INT NOT NULL CHECK (amount > 0),
 	cost MONEY,
 	PRIMARY KEY (rentbook_id, book_id),
-	CONSTRAINT fk_LostBook_Detail_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_LostBook_Detail_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].BOOK_LOST(rentbook_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_LostBook__Detail_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 GO
@@ -327,7 +327,67 @@ AS BEGIN
 		WHERE MONTH([ORDER].Date_created) = @month
 	GROUP BY BOOK.id, ORDER_DETAIL.price, ORDER_DETAIL.amount
 END
-						
+GO
+
+/****** Object:  StoredProcedure  [sp_getTotalRentbook]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách đã thuê trong RENTBOOK_DETAIL theo renbook_id
+CREATE PROC sp_getTotalRentBook (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM RENTBOOK_DETAIL
+	WHERE rentbook_id = @rentbook_id
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getTotalCostBookLost]  Script Date: 8/03/2019 ******/
+--Trả về tổng số cost có trong LostBook theo renbook_id
+CREATE PROC sp_getTotalCostBookLost (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(cost)
+	FROM dbo.BOOK_LOST_DETAIL
+	WHERE rentbook_id = @rentbook_id
+END				
+GO
+
+/****** Object:  StoredProcedure  [sp_getTotalCountBookLost]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách đã mất theo renbook_id
+GO
+CREATE PROC sp_getTotalCountBookLost (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM dbo.BOOK_LOST_DETAIL
+	WHERE rentbook_id = @rentbook_id
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getAmountBookRented]  Script Date: 8/03/2019 ******/
+--Trả về tổng số sách của sách có @book_id đã thuê với đơn thuê có mã @rentbook_id
+GO
+CREATE PROC sp_getAmountBookRented (@rentbook_id INT, @book_id VARCHAR(50))
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM RENTBOOK_DETAIL
+	WHERE rentbook_id = @rentbook_id AND book_id = @book_id
+END
+GO
+
+
+/****** Object:  StoredProcedure  [sp_getLostBookDetail]  Script Date: 8/03/2019 ******/
+--Trả về thông tin chi tiết của LOST_BOOK_DETAIL theo rentbook_id
+CREATE PROC sp_getLostBookDetail (@rentbook_id INT)
+AS BEGIN
+	SELECT
+		book_id,
+		amount,
+		cost
+	FROM dbo.BOOK_LOST_DETAIL
+	WHERE rentbook_id = @rentbook_id
+END
+GO
 
 
 	
@@ -341,5 +401,7 @@ SELECT * FROM dbo.[USER]
 SELECT * FROM dbo.[ORDER]
 SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
+SELECT * FROM dbo.BOOK_LOST
+SELECT * FROM dbo.BOOK_LOST_DETAIL
 
 DELETE FROM dbo.RENTBOOK

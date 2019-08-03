@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.JOptionPane;
 import com.duan.helper.JDBCHelper;
 import com.duan.model.Admin;
 
