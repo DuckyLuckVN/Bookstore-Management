@@ -388,3 +388,13 @@ AS BEGIN
 	FROM BOOK_LOST
 	WHERE rentbook_id = @rentbook_id
 END 
+/****** Object:  StoredProcedure  [sp_getLostBookDetail]  Script Date: 8/04/2019 ******/
+--Trả về tổng số sách đã nhập trong hóa đơn nhập
+GO
+CREATE PROC sp_getTotalCountBookOfStorage (@storage_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM STORAGE_DETAIL
+	WHERE storage_id = @storage_id
+END
