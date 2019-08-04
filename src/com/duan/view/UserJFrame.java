@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.UserDAO;
 import com.toedter.calendar.JDateChooser;
 
@@ -39,7 +40,7 @@ import javax.swing.border.TitledBorder;
 public class UserJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tblUser;
+	private CustomJTableRed tblUser;
 	private JTextField textField;
 	private JTextField txtUsername;
 	private JTextField txtPassword;
@@ -290,7 +291,7 @@ public class UserJFrame extends JFrame {
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnXa);
 		
-		tblUser = new JTable();
+		tblUser = new CustomJTableRed();
 		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢNG", "MẬT KHẨU", "HỌ TÊN", "NGÀY SINH", "EMAIL", "SỐ ĐIỆN THOẠI"}) 
 		{
 			public boolean isCellEditable(int row, int column) {

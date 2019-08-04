@@ -219,8 +219,17 @@ VALUES	(100,'GH12',3,300000),
 		(101,'GH12',2,400000)
 GO
 
+INSERT INTO dbo.STORAGE( admin_id, description, created_date)
+VALUES  ( 101, N'Không ghi chú gì hết', GETDATE())
+GO
+
+INSERT INTO dbo.STORAGE_DETAIL ( storage_id, book_id, amount, price )
+VALUES  ( 100, 'GH12', 90, 250000),
+		( 100, 'JH42', 50, 180000)
+
 SELECT * FROM dbo.BOOK
 SELECT * FROM dbo.ORDER_DETAIL
+SELECT * FROM dbo.STORAGE
 GO
 
 
@@ -389,6 +398,16 @@ AS BEGIN
 END
 GO
 
+/****** Object:  StoredProcedure  [sp_getLostBookDetail]  Script Date: 8/04/2019 ******/
+--Trả về tổng số sách đã nhập trong hóa đơn nhập
+CREATE PROC sp_getTotalCountBookOfStorage (@storage_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM STORAGE_DETAIL
+	WHERE storage_id = @storage_id
+END
+GO
 
 	
 

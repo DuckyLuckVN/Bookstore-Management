@@ -5,11 +5,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.duan.helper.JDBCHelper;
 import com.duan.model.Book;
+import com.duan.model.BookProduct;
 import com.duan.model.Order;
 import com.duan.model.Storage;
+import com.duan.model.StorageDetail;
 
 public class StorageDAO 
 {
@@ -29,10 +32,9 @@ public class StorageDAO
 	//Thêm dữ liệu model Storage vào bảng Storage, trả về TRUE nếu thành công, FALSE nếu thất bại.
 	public static boolean insert(Storage storage) throws SQLException
 	{
-		String sql = "INSERT INTO [STORAGE] Values(?, ?, ? , ?)";
+		String sql = "INSERT INTO [STORAGE] Values(?, ? , ?)";
 		
-		 PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
-					storage.getId(), 
+		 PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
 					storage.getAdminId(), 
 					storage.getDescription(),
 					storage.getCreatedDate());
@@ -40,17 +42,72 @@ public class StorageDAO
 
 		 return count > 0;
 	}
+	
+	//Thêm dữ liệu model Storage lên Database, sau đó insert StorageDetail dựa vào listProduct
+	public static boolean insert(Storage storage, List<BookProduct> listProduct) throws SQLException
+	{
+		//Thực hiện insert dữ liệu, lấy ra mã storage vừa insert và insert detail
+		String sql = "INSERT INTO [STORAGE] Values(?, ? , ?)";
+	
+		 PreparedStatement st = JDBCHelper.createPreparedStatement(sql, 
+					storage.getAdminId(), 
+					storage.getDescription(),
+					storage.getCreatedDate());
+		 
+		 boolean isSuccess = st.executeUpdate() > 0;
+		 
+		if (isSuccess)
+		{
+			//Lấy ra id mới vừa được tạo
+			ResultSet rs = st.getGeneratedKeys();
+			if (rs.next());
+			{
+				int storage_id = rs.getInt(1);
+				//insert detail từ listProduct vào
+				for (BookProduct p : listProduct)
+				{
+					StorageDetail detail = new StorageDetail(storage_id, p.getBook().getId(), p.getAmount(), p.getPrice());
+					StorageDetailDao.insert(detail);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	//Update model Storage lên database tại row storage có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
-	public static boolean update(Storage storage, int id) throws SQLException
+	public static boolean update(Storage storage) throws SQLException
     {
-        String sql = " UPDATE STORAGE SET id=? adminId=? description=? createdDate=? WHERE id = ?";
+        String sql = " UPDATE STORAGE SET admin_id=?, description=?, created_date=? WHERE id = ?";
 					        		
-        PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,storage.getId(),storage.getAdminId(),
-        															storage.getDescription(),storage.getCreatedDate(), id);
+        PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
+        												storage.getAdminId(),
+        												storage.getDescription(),
+        												storage.getCreatedDate(), 
+        												storage.getId());
 		int count = pre.executeUpdate();
         
         return count > 0 ;
     }
+	
+	//cập nhật model Storage lên Database, sau đó update lại StorageDetail dựa vào listProduct
+	public static boolean update(Storage storage, List<BookProduct> listProduct) throws SQLException
+	{
+		if (update(storage))
+		{
+			//Xóa hết các dữ liệu detail cũ, và insert cái mới từ listProduct vào
+			StorageDetailDao.delete(storage.getId());
+			
+			for (BookProduct p : listProduct)
+			{
+				StorageDetail detail = new StorageDetail(storage.getId(), p.getBook().getId(), p.getAmount(), p.getPrice());
+				StorageDetailDao.insert(detail);
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	//Xóa row có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
 	public static boolean delete(int id) throws SQLException
 	{

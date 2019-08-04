@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -52,11 +53,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.Dimension;
 
 public class BookLostJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tblOrder;
+	private CustomJTableRed tblBookLost;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
 	private JButton btnRight;
@@ -176,38 +178,29 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.setIcon(new ImageIcon(BookLostJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
 		pnlController.add(btnDelete);
 		
-		tblOrder = new JTable();
-		tblOrder.addKeyListener(new KeyAdapter() {
+		tblBookLost = new CustomJTableRed();
+		tblBookLost.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
 			{
 				eventTableSelectRow();
-				System.out.println("OK");
 			}
 		});
-		tblOrder.addMouseListener(new MouseAdapter() {
+		tblBookLost.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) 
 			{
 				eventTableSelectRow();
 			}
 		});
-		tblOrder.setRowHeight(35);
-		tblOrder.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "TỔNG SÁCH MẤT", "TỔNG TIỀN PHẠT"}) 
+		tblBookLost.setRowHeight(35);
+		tblBookLost.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN THUÊ", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "TỔNG SÁCH MẤT", "TỔNG TIỀN PHẠT"}) 
 		{
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		});
-//		tblOrder.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-//			
-//			@Override
-//			public void valueChanged(ListSelectionEvent evt) 
-//			{
-//				eventTableSelectRow();
-//			}
-//		});
-		scrollPane_1.setViewportView(tblOrder);
+		scrollPane_1.setViewportView(tblBookLost);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 0, 15, 0));
@@ -216,11 +209,11 @@ public class BookLostJFrame extends JFrame {
 		btnMaxLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int rowCount = tblOrder.getRowCount();
+				int rowCount = tblBookLost.getRowCount();
 				if (rowCount > 0)
 				{
 					indexSelected = 0;
-					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 					setControllModeTo_Editable();
 				}
 			}
@@ -231,11 +224,11 @@ public class BookLostJFrame extends JFrame {
 		btnLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int rowCount = tblOrder.getRowCount();
+				int rowCount = tblBookLost.getRowCount();
 				if (indexSelected > 0 && rowCount > 0)
 				{
 					indexSelected--;
-					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 					setControllModeTo_Editable();
 				}
 			}
@@ -247,11 +240,11 @@ public class BookLostJFrame extends JFrame {
 		btnRight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				int rowCount = tblOrder.getRowCount();
+				int rowCount = tblBookLost.getRowCount();
 				if (indexSelected < rowCount - 1 && rowCount > 0)
 				{
 					indexSelected++;
-					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 					setControllModeTo_Editable();
 				}
 			}
@@ -263,11 +256,11 @@ public class BookLostJFrame extends JFrame {
 		btnMaxRight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int rowCount = tblOrder.getRowCount();
+				int rowCount = tblBookLost.getRowCount();
 				if (rowCount > 0)
 				{
 					indexSelected = rowCount - 1;
-					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 					setControllModeTo_Editable();
 				}
 			}
@@ -326,7 +319,7 @@ public class BookLostJFrame extends JFrame {
 	
 	public void fillToTable()
 	{
-		DefaultTableModel model = (DefaultTableModel) tblOrder.getModel();
+		DefaultTableModel model = (DefaultTableModel) tblBookLost.getModel();
 		model.setRowCount(0);
 		
 		try 
@@ -348,19 +341,19 @@ public class BookLostJFrame extends JFrame {
 			
 			
 			//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
-			int rowCount = tblOrder.getRowCount();
+			int rowCount = tblBookLost.getRowCount();
 			if (indexSelected != -1)
 			{
 				if (indexSelected < rowCount && rowCount > 0)
 				{
-					tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+					tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 				}
 				else
 				{
 					indexSelected = rowCount - 1;
 					if (indexSelected > -1)
 					{
-						tblOrder.setRowSelectionInterval(indexSelected, indexSelected);
+						tblBookLost.setRowSelectionInterval(indexSelected, indexSelected);
 					}
 					else
 					{
@@ -380,6 +373,7 @@ public class BookLostJFrame extends JFrame {
 	private void showInsertBookLost()
 	{
 		insertBookLostJDialog = new BookLostEditorJDialog();
+		insertBookLostJDialog.setBookLostJFrame(this);
 		insertBookLostJDialog.setLocationRelativeTo(this);
 		insertBookLostJDialog.setEditMode(false);
 		
@@ -399,7 +393,7 @@ public class BookLostJFrame extends JFrame {
 	//Hàm này sẽ dc gọi khi có 1 dòng trong bảng dc chọn vào
 	public void eventTableSelectRow()
 	{
-		indexSelected = tblOrder.getSelectedRow();
+		indexSelected = tblBookLost.getSelectedRow();
 		setControllModeTo_Editable();
 	}
 	

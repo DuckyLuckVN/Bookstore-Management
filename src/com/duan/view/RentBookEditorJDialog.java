@@ -328,7 +328,7 @@ public class RentBookEditorJDialog extends JDialog {
 		btnDeleteBook.setBounds(503, 235, 89, 26);
 		contentPane.add(btnDeleteBook);
 		
-		JLabel lblMSTi = new JLabel("Mã số:");
+		JLabel lblMSTi = new JLabel("ID Tài khoảng:");
 		lblMSTi.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblMSTi.setBounds(10, 13, 104, 26);
 		contentPane.add(lblMSTi);

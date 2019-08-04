@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.UserDAO;
@@ -75,7 +76,7 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblRentBook;
+	private CustomJTableRed tblRentBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -358,7 +359,7 @@ public class RentBookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblRentBook = new JTable();
+		tblRentBook = new CustomJTableRed();
 		tblRentBook.setRowHeight(30);
 		tblRentBook.addKeyListener(new KeyAdapter() {
 			@Override

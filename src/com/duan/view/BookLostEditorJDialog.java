@@ -331,7 +331,6 @@ public class BookLostEditorJDialog extends JDialog {
 			for (BookProduct bp : listBookProduct)
 			{
 				Book book = bp.getBook();
-				System.out.println(rentBookSelected.getId());
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getAmount();
 				String price_str = DataHelper.getFormatForMoney(bp.getPrice()) + "đ";
 				
@@ -444,7 +443,6 @@ public class BookLostEditorJDialog extends JDialog {
 				String cost_str = tblBook.getValueAt(i, 5).toString();
 				String book_id = tblBook.getValueAt(i, 0).toString();
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book_id).getAmount();
-				System.out.println(amountRented);
 				
 				
 				//CHECK SỐ LƯỢNG MẤT
