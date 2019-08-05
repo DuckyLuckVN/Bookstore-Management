@@ -297,6 +297,7 @@ public class LocationJDialog extends JDialog {
 						}
 					}
 				});
+				LoadDataToJtable();
 	}
 	//ĐỌC DỮ LIỆU TỪ BẢNG LOCATION
 	String header[]= {"Mã Kệ Sách","Tên kệ","Sức chứa","Ghi chú"};

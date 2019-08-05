@@ -45,10 +45,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class CategoryJDialog extends JDialog {
+public class CategoryJDialog extends JDialog 
+{
 	String header[]= {"MÃ THỂ LOẠI","TÊN THỂ LOẠI","GHI CHÚ"};
 	DefaultTableModel model = new DefaultTableModel(header, 0);
-	public void CategoryJDialog() {
+	public void CategoryJDialog() 
+	{
 		LoadDataToJtable();
 	}
 	public void LoadDataToJtable() {
@@ -326,5 +328,6 @@ public class CategoryJDialog extends JDialog {
 			}
 			}
 		});
+		LoadDataToJtable();
 	}
 }
