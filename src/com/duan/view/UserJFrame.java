@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -20,6 +21,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.dao.UserDAO;
+import com.duan.helper.DateHelper;
+import com.duan.model.User;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -29,18 +32,29 @@ import javax.swing.JTextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class UserJFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTable tblUser;
-	private JTextField textField;
+	private JTextField txtsearch;
 	private JTextField txtUsername;
 	private JTextField txtPassword;
 	private JTextField txtFullname;
@@ -51,6 +65,11 @@ public class UserJFrame extends JFrame {
 	private JRadioButton rdoNu;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
+	UserDAO dao;
+	ArrayList<User> list = new ArrayList<>();
+	DefaultTableModel model = null ;
+	int index = -1;
+	User user;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -68,6 +87,7 @@ public class UserJFrame extends JFrame {
 
 	public UserJFrame() 
 	{
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(UserJFrame.class.getResource("/com/duan/icon/icons8_user_groups_64px.png")));
 		setTitle("Quản Lý Người Dùng");
 		try {
@@ -87,6 +107,8 @@ public class UserJFrame extends JFrame {
 		pnlForm.setBorder(new TitledBorder(null, "Th\u00F4ng tin", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		JPanel pnlController = new JPanel();
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -94,8 +116,15 @@ public class UserJFrame extends JFrame {
 		JLabel lblTmKim = new JLabel("Tìm kiếm");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		textField = new JTextField();
-		textField.setColumns(10);
+		txtsearch = new JTextField();
+		txtsearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				fillToTableSearch();
+			}
+		});
+		txtsearch.setColumns(10);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -108,7 +137,7 @@ public class UserJFrame extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(textField, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
+					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -120,7 +149,7 @@ public class UserJFrame extends JFrame {
 							.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+								.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED))
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -261,6 +290,13 @@ public class UserJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) 
 			{
 				//goi ham can xy ly
+				txtUsername.setText("");
+				txtPassword.setText("");
+				txtFullname.setText("");
+				txtBirthDay.setDate(null);
+				txtEmail.setText("");
+				txtPhoneNum.setText("");
+				rdoNam.isSelected();
 			}
 		});
 		btnTaoMoi.setHorizontalAlignment(SwingConstants.LEFT);
@@ -270,7 +306,12 @@ public class UserJFrame extends JFrame {
 		
 		JButton btnThem = new JButton(" Thêm");
 		btnThem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (checkForm()) 
+				{
+					insert();
+				}
 			}
 		});
 		btnThem.setHorizontalAlignment(SwingConstants.LEFT);
@@ -279,12 +320,33 @@ public class UserJFrame extends JFrame {
 		pnlController.add(btnThem);
 		
 		JButton btnCpNht = new JButton(" Cập nhật");
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				
+				if (checkForm()) 
+				{
+					update();
+				}
+			}
+		});
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
 		btnCpNht.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnCpNht);
 		
 		JButton btnXa = new JButton(" Xóa");
+		btnXa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa?", "Thông báo", JOptionPane.YES_NO_OPTION);
+				if (luachon == JOptionPane.YES_OPTION) 
+				{
+					delete();
+				}
+				
+			}
+		});
 		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
 		btnXa.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Delete.png")));
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -297,33 +359,240 @@ public class UserJFrame extends JFrame {
 				return false;
 			}
 		});
+		tblUser.getSelectionModel().addListSelectionListener(new ListSelectionListener() 
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) 
+			{
+				showdetail();
+			}
+		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
 		contentPane.setLayout(gl_contentPane);
+		loadListToUser();
+	}
+	
+	public void loadListToUser()
+	{
+		try 
+		{
+			dao = new UserDAO();
+			list = dao.getAll();
+			if (list.size() > 0) 
+			{
+				fillToTable();
+			}
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void fillToTable()
+	{
+		model = (DefaultTableModel) tblUser.getModel();
+		model.setRowCount(0);
+		for (User user : list) 
+		{
+			Object[] rows = new Object[]{user.getId() , user.getUsername() , user.getPassword() , user.getFullname() , user.getDateOfBirth(), user.getEmail() , user.getPhoneNumber()};
+			model.addRow(rows);
+		}
+	}
+	
+	public void showdetail()
+	{
+		index = tblUser.getSelectedRow();
+		if (index < 0) 
+		{
+			return;
+		}
+		User user = list.get(index);
+		txtUsername.setText(user.getUsername());
+		txtPassword.setText(user.getPassword());
+		txtFullname.setText(user.getFullname());
+		txtBirthDay.setDate(user.getDateOfBirth());
+		txtEmail.setText(user.getEmail());
+		txtPhoneNum.setText(user.getPhoneNumber());
+		if (user.isSex() == true) 
+		{
+			rdoNam.setSelected(true);
+		}else 
+		{
+			rdoNu.setSelected(true);
+		}
 	}
 
-	public void test() throws SQLException
+	
+	public boolean checkForm()
 	{
-		String username = txtUsername.getText();
-		boolean sex;
-		
-		if (rdoNam.isSelected() == true)
+		boolean rong = false;
+		String thongbao = " Đã có lỗi xảy ra : \n";
+		if (txtUsername.getText().equals("")) 
 		{
-			sex = true;
+			rong = true;
+			thongbao+="Tài khoản không được để trống\n";
 		}
-		else if (rdoNam.isSelected() == false)
+		if (txtPassword.getText().equals("")) 
 		{
-			sex = false;
+			rong = true;
+			thongbao+="Mật khẩu không được để trống \n";		
 		}
-		
-		if (UserDAO.findByUsername(username) == null)
+		if (txtFullname.getText().equals(""))
 		{
-			//thuc hien
+			rong = true;
+			thongbao+="Họ tên không được để trống\n";
+		}
+		if(txtBirthDay.getDate() == null)
+		{
+			rong = true;
+			thongbao+="Ngày sinh sai định dạng hoặc không được để trống\n";
+		}
+		if (txtEmail.getText().equals(""))
+		{
+			rong = true;
+			thongbao +="Email không được để trống!\n";
 		}
 		else
+        {
+            if (!txtEmail.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
+            {
+                rong = true;
+                thongbao+="Email không đúng định dạng\n";
+            }
+        }
+		if (txtPhoneNum.getText().equals(""))
 		{
-			//Thong bao da ton tai username
+			rong = true;
+			thongbao +="Số điện thoại không được để trống!\n";
+		}
+		else
+        {
+            if (!txtPhoneNum.getText().matches("\\d{10,14}")) 
+            {
+                thongbao+="Số ĐT không đúng dịnh dạng\n";
+                rong = true;
+            }
+        }
+		
+		if (rong == true) 
+		{
+			JOptionPane.showMessageDialog(this, thongbao);
+			return false;
+		}
+		return true;
+	}
+	
+	public void insert()
+	{
+		dao = new UserDAO();
+		
+		String taikhoan = txtUsername.getText();
+		String matkhau = txtPassword.getText();
+		String hoten = txtFullname.getText();
+		Date ngaysinh = txtBirthDay.getDate();
+		String email = txtEmail.getText();
+		String sodt = txtPhoneNum.getText();
+		boolean gioitinh = false;
+		if (gioitinh == true) 
+		{
+			rdoNam.isSelected();
+		}
+		else 
+		{
+			rdoNu.isSelected();
+		}
+		user = new User(0, taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		try 
+		{
+			if (dao.insert(user)) 
+			{
+				list.add(user);
+				JOptionPane.showMessageDialog(this, "Thêm thành công User có mã : " + user.getId());
+				fillToTable();
+				
+			}
+		} 
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	public void update()
+	{
+		dao = new UserDAO();
+		String taikhoan = txtUsername.getText();
+		String matkhau = txtPassword.getText();
+		String hoten = txtFullname.getText();
+		Date ngaysinh = txtBirthDay.getDate();
+		String email = txtEmail.getText();
+		String sodt = txtPhoneNum.getText();
+		boolean gioitinh = false;
+		if (gioitinh == true) 
+		{
+			rdoNam.isSelected();
+		}
+		else 
+		{
+			rdoNu.isSelected();
+		}
+		user = new User(0, taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		try 
+		{
+			if (dao.update(user, user.getId())) 
+			{
+				list.set(index, user);
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công USER có mã : "+ user.getId());
+				fillToTable();
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void delete()
+	{
+		dao = new UserDAO();
+		
+		try 
+		{
+			if (dao.delete(list.get(index).getId())) 
+			{
+				JOptionPane.showMessageDialog(this, "Xóa thành công USER có mã : "+list.get(index).getId());
+				list.remove(index);
+				fillToTable();
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void fillToTableSearch()
+    {
+        
+        model = (DefaultTableModel) tblUser.getModel();
+        model.setRowCount(0);
+        
+        for (User user : list) 
+        {
+            boolean isFound = Pattern.compile("^(?i)[([\\w\\s][\\p{L}\\s])]*" + txtsearch.getText() + "[([\\w\\s][\\p{L}\\s])]*$", 
+					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(user.getFullname()).matches();
+            
+            if (isFound) 
+            {
+                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};
+                
+                model.addRow(rows);
+            }
+
+        }
+        
+    }
 
 }
