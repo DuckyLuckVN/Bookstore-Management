@@ -46,7 +46,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class CategoryJDialog extends JDialog {
-	String header[]= {"Mã thể loại","Tên thể loại","Ghi chú"};
+	String header[]= {"MÃ THỂ LOẠI","TÊN THỂ LOẠI","GHI CHÚ"};
 	DefaultTableModel model = new DefaultTableModel(header, 0);
 	public void CategoryJDialog() {
 		LoadDataToJtable();
@@ -78,7 +78,6 @@ public class CategoryJDialog extends JDialog {
 			 System.out.println(e);
 		} 
 	}
-	//truy xuất dữ liệu của bảng category
    
 	private JPanel contentPane;
 	private JTable tblCategory;
@@ -286,7 +285,6 @@ public class CategoryJDialog extends JDialog {
 					  if (ret != -1) {
 				              JOptionPane.showMessageDialog(rootPane, "Dữ liệu lưu thành công");
 						  }
-					  
 					  LoadDataToJtable();
 				} catch (Exception e2) {
 					 e2.printStackTrace();
@@ -316,7 +314,7 @@ public class CategoryJDialog extends JDialog {
 				PreparedStatement ps = null;
                try {
             	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-            	   ps = c.prepareStatement("delete From CATEGORY where id= ?");
+            	   ps = c.prepareStatement("delete from CATEGORY where id= ?");
             	   ps.setString(1, txtMaTheLoai.getText());
             	   ret = ps.executeUpdate();
             	   if (ret != -1) {
