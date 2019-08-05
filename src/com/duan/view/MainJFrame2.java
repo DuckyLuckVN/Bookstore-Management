@@ -7,8 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.duan.helper.AccountSave;
 import com.duan.helper.ComponentResizer;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 
 import diu.swe.habib.JPanelSlider.JPanelSlider;
 
@@ -54,7 +56,7 @@ import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import javax.swing.JSeparator;
 
-public class MainJFrame3 extends JFrame {
+public class MainJFrame2 extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
 	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
@@ -64,6 +66,10 @@ public class MainJFrame3 extends JFrame {
 	private JPanel contentPane;
 	private SwingHelper sHelper = new SwingHelper();
 	private JPanelSlider pnlContent;
+	private JLabel lblAvatar;
+	private JLabel lblChucVu;
+	private JLabel lblHoTen;
+	
 	private JPanel pnl1;
 	private JPanel pnl2;
 	private JPanel pnl3;
@@ -91,6 +97,7 @@ public class MainJFrame3 extends JFrame {
 	private StatisticalJFrame statisticalJFrame = new StatisticalJFrame();
 	private BookLostJFrame bookLostJFrame = new BookLostJFrame();
 	private StorageJFrame storageJFrame = new StorageJFrame();
+	private SettingJDialog settingJDialog = new SettingJDialog();
 	
 	//Khai báo container
 	private Container bookContainer = bookJFrame.getContentPane();
@@ -110,7 +117,7 @@ public class MainJFrame3 extends JFrame {
 			{
 				try 
 				{
-					MainJFrame3 frame = new MainJFrame3();
+					MainJFrame2 frame = new MainJFrame2();
 					frame.addContainer();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -129,7 +136,7 @@ public class MainJFrame3 extends JFrame {
 	        cr.setSnapSize(new Dimension(10, 10));
 	    }
 	 
-	public MainJFrame3() 
+	public MainJFrame2() 
 	{
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -157,10 +164,10 @@ public class MainJFrame3 extends JFrame {
 				}
 			}
 		});
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame3.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 1093, 773);
+		setBounds(100, 100, 1093, 764);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		setContentPane(contentPane);
@@ -170,7 +177,6 @@ public class MainJFrame3 extends JFrame {
 		pnlMenu.setBackground(COLOR_MENU_DEFAULT);
 		
 		JPanel pnlMenuList = new JPanel();
-		pnlMenuList.setBounds(0, 114, 280, 525);
 		pnlMenuList.setBackground(COLOR_MENU_DEFAULT);
 		pnlMenuList.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -207,9 +213,9 @@ public class MainJFrame3 extends JFrame {
 		pnl1.setLayout(null);
 		
 		JLabel lblTItle1 = new JLabel("Sách");
+		lblTItle1.setBounds(21, 0, 259, 50);
 		lblTItle1.setForeground(new Color(0, 0, 0));
-		lblTItle1.setBounds(22, 0, 178, 66);
-		lblTItle1.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
+		lblTItle1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
 		lblTItle1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblTItle1.setHorizontalAlignment(SwingConstants.LEFT);
 		pnl1.add(lblTItle1);
@@ -246,9 +252,9 @@ public class MainJFrame3 extends JFrame {
 		pnl3.setLayout(null);
 		
 		JLabel lblNhnVin = new JLabel("Bán sách");
+		lblNhnVin.setBounds(21, 0, 259, 50);
 		lblNhnVin.setForeground(new Color(0, 0, 0));
-		lblNhnVin.setBounds(22, 0, 178, 66);
-		lblNhnVin.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
+		lblNhnVin.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
 		lblNhnVin.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl3.add(lblNhnVin);
@@ -285,9 +291,9 @@ public class MainJFrame3 extends JFrame {
 		pnl2.setLayout(null);
 		
 		JLabel lblKhchHng = new JLabel("Thuê sách");
+		lblKhchHng.setBounds(21, 0, 259, 50);
 		lblKhchHng.setForeground(new Color(0, 0, 0));
-		lblKhchHng.setBounds(22, 0, 178, 66);
-		lblKhchHng.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
+		lblKhchHng.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
 		lblKhchHng.setHorizontalAlignment(SwingConstants.LEFT);
 		lblKhchHng.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl2.add(lblKhchHng);
@@ -324,9 +330,9 @@ public class MainJFrame3 extends JFrame {
 		pnl4.setLayout(null);
 		
 		JLabel lblHan = new JLabel("Mất sách");
+		lblHan.setBounds(21, 0, 259, 50);
 		lblHan.setForeground(new Color(0, 0, 0));
-		lblHan.setBounds(22, 0, 178, 66);
-		lblHan.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8-health-book-32.png")));
+		lblHan.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8-health-book-32.png")));
 		lblHan.setHorizontalAlignment(SwingConstants.LEFT);
 		lblHan.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl4.add(lblHan);
@@ -363,9 +369,9 @@ public class MainJFrame3 extends JFrame {
 		pnl7.setLayout(null);
 		
 		JLabel lblCuHnh = new JLabel("Khách hàng");
+		lblCuHnh.setBounds(21, 0, 259, 50);
 		lblCuHnh.setForeground(new Color(0, 0, 0));
-		lblCuHnh.setBounds(22, 0, 178, 66);
-		lblCuHnh.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
+		lblCuHnh.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
 		lblCuHnh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCuHnh.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl7.add(lblCuHnh);
@@ -405,9 +411,9 @@ public class MainJFrame3 extends JFrame {
 		pnl5.setLayout(null);
 		
 		JLabel lblThu = new JLabel("Thống kê");
+		lblThu.setBounds(21, 0, 259, 50);
 		lblThu.setForeground(new Color(0, 0, 0));
-		lblThu.setBounds(22, 0, 178, 66);
-		lblThu.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
+		lblThu.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
 		lblThu.setHorizontalAlignment(SwingConstants.LEFT);
 		lblThu.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl5.add(lblThu);
@@ -446,15 +452,14 @@ public class MainJFrame3 extends JFrame {
 		pnl6.setLayout(null);
 		
 		JLabel lblNhnVin_1 = new JLabel("Quản trị viên");
+		lblNhnVin_1.setBounds(21, 0, 259, 50);
 		lblNhnVin_1.setForeground(new Color(0, 0, 0));
-		lblNhnVin_1.setBounds(22, 0, 178, 66);
-		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
+		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
 		lblNhnVin_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl6.add(lblNhnVin_1);
 		
 		JPanel pnl8 = new JPanel();
-		pnl8.setBounds(0, 657, 280, 51);
 		pnl8.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		pnl8.addMouseListener(new MouseAdapter() {
 			@Override
@@ -477,7 +482,7 @@ public class MainJFrame3 extends JFrame {
 		JLabel lblngXut = new JLabel("Đăng xuất");
 		lblngXut.setForeground(new Color(0, 0, 0));
 		lblngXut.setBounds(22, 0, 178, 51);
-		lblngXut.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
+		lblngXut.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
 		lblngXut.setHorizontalAlignment(SwingConstants.LEFT);
 		lblngXut.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl8.add(lblngXut);
@@ -485,17 +490,12 @@ public class MainJFrame3 extends JFrame {
 		contentPane.add(pnlMenu, BorderLayout.WEST);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setBounds(10, 22, 64, 67);
-		lblLogo.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		lblLogo.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		
 		JLabel lblBookstore = new JLabel("BOOKSTORE");
-		lblBookstore.setBounds(61, 11, 183, 58);
 		lblBookstore.setForeground(Color.DARK_GRAY);
 		lblBookstore.setFont(new Font("Tahoma", Font.BOLD, 21));
 		lblBookstore.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlMenu.setLayout(null);
-		pnlMenu.add(pnl8);
-		pnlMenu.add(pnlMenuList);
 		
 		pnl9 = new JPanel();
 		pnl9.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -527,32 +527,141 @@ public class MainJFrame3 extends JFrame {
 			}
 			
 		});
-		pnl9.setLayout(null);
 		pnl9.setBackground(COLOR_MENU_DEFAULT);
 		pnlMenuList.add(pnl9);
+		pnl9.setLayout(null);
 		
 		JLabel lblNhpKho = new JLabel(" Nhập kho");
-		lblNhpKho.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")));
+		lblNhpKho.setBounds(21, 0, 259, 50);
+		lblNhpKho.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")));
 		lblNhpKho.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhpKho.setForeground(Color.BLACK);
 		lblNhpKho.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblNhpKho.setBounds(22, 0, 178, 66);
 		pnl9.add(lblNhpKho);
-		pnlMenu.add(lblLogo);
-		pnlMenu.add(lblBookstore);
 		
 		JLabel lblManagerment = new JLabel("MANAGERMENT");
 		lblManagerment.setHorizontalAlignment(SwingConstants.CENTER);
 		lblManagerment.setForeground(Color.DARK_GRAY);
 		lblManagerment.setFont(new Font("Tahoma", Font.BOLD, 21));
-		lblManagerment.setBounds(60, 36, 220, 58);
-		pnlMenu.add(lblManagerment);
 		
 		JLabel lblVersion = new JLabel("Version: 1.0.1");
 		lblVersion.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblVersion.setForeground(Color.DARK_GRAY);
-		lblVersion.setBounds(20, 80, 237, 14);
-		pnlMenu.add(lblVersion);
+		
+		JPanel pnlAvatar = new JPanel();
+		pnlAvatar.setBackground(COLOR_MENU_DEFAULT);
+		pnlAvatar.setLayout(null);
+		
+		JLabel lblCicleAvatar = new JLabel("");
+		lblCicleAvatar.setBounds(10, 11, 73, 75);
+		pnlAvatar.add(lblCicleAvatar);
+		lblCicleAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/cicleAvatar.png")));
+		SwingHelper.setAutoResizeIcon(lblCicleAvatar);
+		
+		lblAvatar = new JLabel("");
+		lblAvatar.setBounds(10, 11, 73, 75);
+		pnlAvatar.add(lblAvatar);
+		lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/43087105_2147322358815729_8587652113234919424_n.jpg")));
+		SwingHelper.setAutoResizeIcon(lblAvatar);
+		
+		lblChucVu = new JLabel("Nhân viên");
+		lblChucVu.setForeground(Color.RED);
+		lblChucVu.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblChucVu.setHorizontalAlignment(SwingConstants.CENTER);
+		lblChucVu.setBounds(103, 23, 115, 20);
+		pnlAvatar.add(lblChucVu);
+		
+		lblHoTen = new JLabel("Đào Quang Tiến");
+		lblHoTen.setBounds(93, 35, 189, 43);
+		pnlAvatar.add(lblHoTen);
+		lblHoTen.setHorizontalAlignment(SwingConstants.CENTER);
+		lblHoTen.setFont(new Font("Tahoma", Font.BOLD, 14));
+		
+		JLabel lblBGFrameAvatar = new JLabel("");
+		lblBGFrameAvatar.setBounds(81, 22, 189, 56);
+		pnlAvatar.add(lblBGFrameAvatar);
+		
+		lblBGFrameAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/frame2.png")));
+		SwingHelper.setAutoResizeIcon(lblBGFrameAvatar);
+		
+		JPanel pnl10 = new JPanel();
+		pnl10.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		pnl10.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) 
+			{
+				sHelper.changeBackground(pnl10, COLOR_MENU_HOVER);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) 
+			{
+				sHelper.changeBackground(pnl10, COLOR_MENU_DEFAULT);
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				showSettingJDialog();
+			}
+		});
+		pnl10.setLayout(null);
+		pnl10.setBackground(COLOR_MENU_DEFAULT);
+		
+		JLabel lblCic = new JLabel("Cài đặt");
+		lblCic.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_settings_32px_1.png")));
+		lblCic.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCic.setForeground(Color.BLACK);
+		lblCic.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblCic.setBounds(25, 0, 175, 51);
+		pnl10.add(lblCic);
+		GroupLayout gl_pnlMenu = new GroupLayout(pnlMenu);
+		gl_pnlMenu.setHorizontalGroup(
+			gl_pnlMenu.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlMenu.createSequentialGroup()
+					.addGroup(gl_pnlMenu.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlMenu.createSequentialGroup()
+							.addGap(10)
+							.addGroup(gl_pnlMenu.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_pnlMenu.createSequentialGroup()
+									.addGap(51)
+									.addComponent(lblBookstore, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblLogo)
+								.addGroup(gl_pnlMenu.createSequentialGroup()
+									.addGap(10)
+									.addComponent(lblVersion, GroupLayout.PREFERRED_SIZE, 237, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_pnlMenu.createSequentialGroup()
+									.addGap(50)
+									.addComponent(lblManagerment, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE))))
+						.addComponent(pnlAvatar, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlMenuList, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnl8, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnl10, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
+		);
+		gl_pnlMenu.setVerticalGroup(
+			gl_pnlMenu.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlMenu.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_pnlMenu.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblBookstore, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_pnlMenu.createSequentialGroup()
+							.addGap(11)
+							.addComponent(lblLogo, GroupLayout.PREFERRED_SIZE, 67, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_pnlMenu.createSequentialGroup()
+							.addGap(69)
+							.addComponent(lblVersion))
+						.addGroup(gl_pnlMenu.createSequentialGroup()
+							.addGap(25)
+							.addComponent(lblManagerment, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)))
+					.addGap(1)
+					.addComponent(pnlAvatar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+					.addComponent(pnlMenuList, GroupLayout.PREFERRED_SIZE, 402, GroupLayout.PREFERRED_SIZE)
+					.addGap(18, 18, Short.MAX_VALUE)
+					.addComponent(pnl10, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(pnl8, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE)
+					.addGap(2))
+		);
+		pnlMenu.setLayout(gl_pnlMenu);
 		
 		JPanel pnlCenter = new JPanel();
 		pnlCenter.setBorder(new MatteBorder(0, 2, 0, 0, (Color) Color.DARK_GRAY));
@@ -565,32 +674,32 @@ public class MainJFrame3 extends JFrame {
 		pnlContent.setLayout(cardLayout);
 		
 		JLabel lblIcon = new JLabel("");
-		lblIcon.setIcon(new ImageIcon(MainJFrame3.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblIcon.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContent.add(lblIcon, "name_99788257003228");
-		
-//		JPanel panel = new JPanel();
-//		pnlContent.add(panel, "a");
 		setLocationRelativeTo(getOwner());
 		
+		showInfoAdmin();
+	}
+	
+	
+	public void showInfoAdmin()
+	{
+		Admin admin = AccountSave.getAdmin();
+		lblChucVu.setText(admin.getRoleTitle());
+		lblHoTen.setText(admin.getFullname());
 		
-//		//create the font
-//
-//		try {
-//		    //create the font to use. Specify the size!
-//		    Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File(getClass().getResource("/com/duan/library/OpenSans-Bold.ttf").getFile())).deriveFont(12f);
-//		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//		    //register the font
-//		    ge.registerFont(customFont);
-//		    //use the font
-//		    lblTitle.setFont(customFont);
-//		} catch (IOException e) {
-//		    e.printStackTrace();
-//		} catch(FontFormatException e) {
-//		    e.printStackTrace();
-//		}
-		
-		//addContainer();
+		//Set Avatar
+		if (admin.getImage() != null && admin.getImage().length() > 0)
+		{
+			lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/" + admin.getImage())));
+			SwingHelper.setAutoResizeIcon(lblAvatar);
+		}
+		else
+		{ //set avatar mặc định nếu admin không có image
+			lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/avatar-default.png")));
+			SwingHelper.setAutoResizeIcon(lblAvatar);
+		}
 	}
 	
 	public void addContainer()
@@ -699,5 +808,13 @@ public class MainJFrame3 extends JFrame {
 	public void showStatisticalJFrame()
 	{
 		setContainerShow(statisticalContainer);
+	}
+	
+	public void showSettingJDialog()
+	{
+		settingJDialog.setMainJFrame(this);
+		settingJDialog.setLocationRelativeTo(this);
+		settingJDialog.showDetail();
+		settingJDialog.setVisible(true);
 	}
 }

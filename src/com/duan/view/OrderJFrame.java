@@ -26,6 +26,7 @@ import com.duan.dao.OrderDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Order;
 
@@ -334,7 +335,7 @@ public class OrderJFrame extends JFrame {
 				}
 				
 				String admin = AdminDAO.findByID(order.getAdminId()).getUsername();
-				String createdDate = DateHelper.dateToString(order.getDateCreated(), "dd/MM/yyyy");
+				String createdDate = DateHelper.dateToString(order.getDateCreated(), SettingSave.getSetting().getDateFormat());
 				
 				Object[] rowData = {order.getId(), user, admin, "", "", createdDate};
 				model.addRow(rowData);

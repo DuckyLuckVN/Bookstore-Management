@@ -24,6 +24,7 @@ import com.duan.dao.RentBookDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 import com.duan.model.RentBook;
@@ -423,12 +424,12 @@ public class RentBookJFrame extends JFrame {
 			User user = UserDAO.findByID(rb.getUserId());
 			Admin admin = AdminDAO.findByID(rb.getAdminId());
 			
-			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), "dd/MM/yyyy");
+			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), SettingSave.getSetting().getDateFormat());
 			String returnedDate = "Chưa có";
 			String status = rb.getTitleStatus();
 			if (rb.getReturnedDate() != null)
 			{
-				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), "dd/MM/yyyy");
+				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), SettingSave.getSetting().getDateFormat());
 			}
 			
 			String[] data = {rb.getId() + "", user.getUsername(), admin.getUsername(), createdDate, returnedDate, status};

@@ -31,6 +31,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.BookDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;
@@ -58,7 +59,7 @@ public class RentBookEditorJDialog extends JDialog {
 	private JTextField txtSDT;
 	private JTextField txtNgaySinh;
 	private JTextField txtSoLuong;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JTextField txtMaTaiKhoang;
 	private JButton btnConfirm;
 	private JComboBox cboStatus;
@@ -253,7 +254,7 @@ public class RentBookEditorJDialog extends JDialog {
 		scrollPane.setBounds(10, 270, 582, 138);
 		contentPane.add(scrollPane);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) 

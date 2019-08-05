@@ -13,6 +13,7 @@ import javax.swing.border.SoftBevelBorder;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 
@@ -242,7 +243,7 @@ public class BookDetailJFrame extends JFrame {
 	
 	public void setDetail(Book book) throws SQLException
 	{
-		String price = DataHelper.getFormatForMoney(book.getPrice()) + " đ";
+		String price = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 		String publisher = book.getPublisher() + " (" + book.getPublicationYear() + ")";
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
 		

@@ -23,6 +23,7 @@ import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 
@@ -199,6 +200,7 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
+					System.out.println(getBookSelected().getImage());
 					showEditorBook(getBookSelected());
 				} 
 				catch (SQLException e1) 
@@ -456,7 +458,7 @@ public class BookJFrame extends JFrame {
 		
 		for (Book e : listBook)
 		{
-			String price = DataHelper.getFormatForMoney(e.getPrice()) + " đ";
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
 			String[] rowData = 
 				{

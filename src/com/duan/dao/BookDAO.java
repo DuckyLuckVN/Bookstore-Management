@@ -178,11 +178,6 @@ public class BookDAO
     
     public static void main(String[] args) throws SQLException 
     {
-    	List<Location> list = new ArrayList<Location>();
-    	list.add(new Location("A1", "Kệ A1", 100, ""));
-    	list.add(new Location("A2", "Kệ A2", 120, ""));
-    	list.add(new Location("A3", "Kệ A3", 130, ""));
-    	List<Location> listAll = LocationDAO.getAll();
-    	System.out.println(listAll.size());
+    	System.out.println(BookDAO.findByID("JH42").getImage());
     }
 }

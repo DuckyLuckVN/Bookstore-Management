@@ -37,6 +37,7 @@ import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 
 import javax.swing.JTextArea;
+import javax.swing.JProgressBar;
 
 /*
  * 15/05/2019
@@ -46,20 +47,28 @@ import javax.swing.JTextArea;
 public class LoginJFrame extends JDialog 
 {
 	private JPanel contentPane;
+	private JLabel lblLogo;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
+	private JPanel pnlWelcome;
+	
 	public int posX = 0;
 	public int posY = 0;
 	
 	private final JPanel contentPanel = new JPanel();
+	private JButton btnLogin;
 
 
-	public static void main(String[] args) {
-		try {
+	public static void main(String[] args) 
+	{
+		try 
+		{
 			LoginJFrame dialog = new LoginJFrame();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			//new MessageJDialog(null, "Đã có lỗi sảy ra!", e.getMessage(), "Đã Hiểu", MessageJDialog.TYPE_ICON_ERROR).setVisible(true);
 			e.printStackTrace();
 		}
@@ -156,7 +165,7 @@ public class LoginJFrame extends JDialog
 		txtUsername.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-
+				
 			}
 		});
 		txtUsername.setHorizontalAlignment(SwingConstants.LEFT);
@@ -188,20 +197,12 @@ public class LoginJFrame extends JDialog
 		txtPassword.setBounds(10, 124, 321, 46);
 		pnlForm.add(txtPassword);
 		
-		JButton btnLogin = new JButton("Đăng Nhập");
+		btnLogin = new JButton("Đăng Nhập");
 		btnLogin.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				//xu ly
-				
-				//day la model admin sau khi da dang nhap
-				Admin admin = new Admin();
-				//luu lai
-				
-				//cuoi cung phai chay 2 thang nay
-				AccountSave.setAdmin(admin);
-				active();
+				animationWelcome();
 			}
 		});
 		btnLogin.addMouseListener(new MouseAdapter() {
@@ -224,11 +225,11 @@ public class LoginJFrame extends JDialog
 		btnLogin.setBounds(399, 438, 335, 51);
 		contentPane.add(btnLogin);
 		
-		JLabel lblLogo = new JLabel("");
-		lblLogo.setBounds(460, 23, 211, 213);
+		lblLogo = new JLabel("");
+		lblLogo.setBounds(396, 23, 341, 258);
 //		ImageIcon icon = new ImageIcon(new ImageIcon(LoginJFrame.class.getResource("/com/daihao/icon/avatar-icon.png")).getImage().getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(), Image.SCALE_SMOOTH));
-		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/avatar-icon.png")));
-		SwingHelper.setAutoResizeIcon(lblLogo);
+		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/giphy (1).gif")));
+		SwingHelper.setAutoResizeIcon(lblLogo, Image.SCALE_DEFAULT);
 		contentPane.add(lblLogo);
 		
 		JPanel panel = new JPanel();
@@ -254,7 +255,64 @@ public class LoginJFrame extends JDialog
 		lblManagerment.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblManagerment.setBounds(111, 68, 286, 57);
 		panel.add(lblManagerment);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setForeground(new Color(60, 179, 113));
+		progressBar.setBounds(0, 486, 386, 14);
+		panel.add(progressBar);
+		
+		pnlWelcome = new JPanel();
+		pnlWelcome.setOpaque(false);
+		pnlWelcome.setBackground(new Color(0, 0, 0));
+		pnlWelcome.setBounds(12, 151, 366, 14);
+		panel.add(pnlWelcome);
+		pnlWelcome.setLayout(null);
+		
+		JLabel lblWelcome = new JLabel("");
+		lblWelcome.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/KindlyWickedHoki-max-1mb.gif")));
+		lblWelcome.setBounds(12, 32, 342, 108);
+		SwingHelper.setAutoResizeIcon(lblWelcome, Image.SCALE_DEFAULT);
+		pnlWelcome.add(lblWelcome);
+		
+		JLabel lblNguyniHo = new JLabel("Đào Quang Tiến");
+		lblNguyniHo.setForeground(new Color(255, 255, 255));
+		lblNguyniHo.setFont(new Font("Tahoma", Font.BOLD, 34));
+		lblNguyniHo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNguyniHo.setBounds(0, 132, 354, 58);
+		pnlWelcome.add(lblNguyniHo);
+		
+		JLabel lblPhnMmQun = new JLabel("Phần mềm quản lý nhà sách chuyên nghiệp");
+		lblPhnMmQun.setBounds(40, 110, 342, 29);
+		panel.add(lblPhnMmQun);
+		lblPhnMmQun.setForeground(new Color(255, 255, 255));
+		lblPhnMmQun.setFont(new Font("Tahoma", Font.BOLD, 15));
 		setLocationRelativeTo(getOwner());
+	}
+	
+	public void animationWelcome()
+	{
+		int maxHeight = 332;
+		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/sunrise-400.gif")));
+		getContentPane().remove(btnLogin);
+
+		txtUsername.setEnabled(false);
+		txtPassword.setEnabled(false);
+		
+		SwingHelper.setAutoResizeIcon(lblLogo, Image.SCALE_DEFAULT);
+		new Thread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				while (true)
+				{
+					int pnlHeight = pnlWelcome.getHeight();
+					pnlWelcome.setSize(pnlWelcome.getWidth(), pnlHeight+1);
+					if (pnlHeight + 1 >= maxHeight)
+						break;
+					try {Thread.sleep(15);} catch (InterruptedException e) {e.printStackTrace();}}
+			}
+		}).start();
 	}
 	
 	public void active()

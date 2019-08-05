@@ -29,6 +29,7 @@ import com.duan.dao.OrderDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
@@ -307,7 +308,7 @@ public class OrderEditorJDialog extends JDialog {
 	//Cập nhật lại giá từ từ danh sách ở bảng đang có
 	public void updatePriceTotal()
 	{
-		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + " đ");
+		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + SettingSave.getSetting().getMoneySymbol());
 	}
 	
 	

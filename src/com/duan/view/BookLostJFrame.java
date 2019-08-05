@@ -29,6 +29,7 @@ import com.duan.dao.RentBookDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.BookLost;
 import com.duan.model.Order;
@@ -328,12 +329,12 @@ public class BookLostJFrame extends JFrame {
 			{
 				String userUsername = UserDAO.findByID(RentBookDAO.findById( bookLost.getRentbookId() ).getUserId() ).getUsername();
 				String adminUsername = AdminDAO.findByID(bookLost.getAdminId()).getUsername();
-				String createdDate = DateHelper.dateToString(bookLost.getCreatedDate(), "dd/MM/yyyy");
+				String createdDate = DateHelper.dateToString(bookLost.getCreatedDate(), SettingSave.getSetting().getDateFormat());
 				
 				double totalCost = BookLostDetailDAO.getTotalCost(bookLost.getRentbookId());
 				int totalLost = BookLostDetailDAO.getTotalLost(bookLost.getRentbookId());
 				
-				String totalLost_str = DataHelper.getFormatForMoney(totalCost) + "đ";
+				String totalLost_str = DataHelper.getFormatForMoney(totalCost) + SettingSave.getSetting().getMoneySymbol();
 				
 				Object[] rowData = {bookLost.getRentbookId(), userUsername, adminUsername, createdDate, totalLost, totalLost_str};
 				model.addRow(rowData);

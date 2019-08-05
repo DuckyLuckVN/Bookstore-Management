@@ -29,6 +29,7 @@ import com.duan.dao.StorageDetailDao;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 import com.duan.model.Book;
@@ -299,6 +300,7 @@ public class StorageJFrame extends JFrame {
 		scrollPane_1.setViewportView(tblBook);
 		
 		tblStorage = new CustomJTableRed();
+		tblStorage.setShowHorizontalLines(true);
 		tblStorage.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -367,19 +369,19 @@ public class StorageJFrame extends JFrame {
 					.addGap(2)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(8)
 									.addComponent(lblGhiCh)
 									.addGap(25)
 									.addComponent(txtDescription, GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
 									.addGap(2))
-								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+								.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 									.addGap(8)
 									.addComponent(lblChnSch)
 									.addGap(10)
 									.addComponent(btnSelectBook, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
-									.addGap(377)
+									.addPreferredGap(ComponentPlacement.RELATED, 377, Short.MAX_VALUE)
 									.addComponent(btnDeleteBook, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 									.addGap(1))
 								.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE))
@@ -487,7 +489,7 @@ public class StorageJFrame extends JFrame {
 			Object[] rowData = {
 					bp.getBook().getId(),
 					bp.getBook().getTitle(),
-					DataHelper.getFormatForMoney(bp.getBook().getPrice()) + "đ",
+					DataHelper.getFormatForMoney(bp.getBook().getPrice()) + SettingSave.getSetting().getMoneySymbol(),
 					bp.getPrice(),
 					bp.getAmount()};
 			model.addRow(rowData);
@@ -509,7 +511,7 @@ public class StorageJFrame extends JFrame {
 					admin.getFullname() + " (" + admin.getUsername() + ")", 
 					StorageDetailDao.getTotalBook(storage.getId()),
 					storage.getDescription(),
-					DateHelper.dateToString(storage.getCreatedDate(), "dd-MM-yyyy")
+					DateHelper.dateToString(storage.getCreatedDate(), SettingSave.getSetting().getDateFormat())
 				};
 			
 			model.addRow(rowData);
