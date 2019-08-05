@@ -27,6 +27,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -35,6 +36,7 @@ import com.duan.dao.RentBookDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.Book;
 import com.duan.model.BookLost;
 import com.duan.model.BookProduct;
@@ -59,7 +61,7 @@ public class BookLostEditorJDialog extends JDialog {
 	private JTextField txtTaiKhoan;
 	private JTextField txtTongThue;
 	private JTextField txtAdmin;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JComboBox cboRentBookId;
 	private JLabel lblTotalCost;
 	
@@ -130,7 +132,7 @@ public class BookLostEditorJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 304, 496, 129);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.setRowHeight(30);
 		tblBook.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ", "ĐÃ THUÊ", "ĐÃ MẤT", "TIỀN PHẠT"}) 
@@ -331,9 +333,8 @@ public class BookLostEditorJDialog extends JDialog {
 			for (BookProduct bp : listBookProduct)
 			{
 				Book book = bp.getBook();
-				System.out.println(rentBookSelected.getId());
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getAmount();
-				String price_str = DataHelper.getFormatForMoney(bp.getPrice()) + "đ";
+				String price_str = DataHelper.getFormatForMoney(bp.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 				
 				Object[] rowData = {book.getId(), book.getTitle(), price_str, amountRented, bp.getAmount(), bp.getPrice()};
 				model.addRow(rowData);
@@ -444,7 +445,6 @@ public class BookLostEditorJDialog extends JDialog {
 				String cost_str = tblBook.getValueAt(i, 5).toString();
 				String book_id = tblBook.getValueAt(i, 0).toString();
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book_id).getAmount();
-				System.out.println(amountRented);
 				
 				
 				//CHECK SỐ LƯỢNG MẤT

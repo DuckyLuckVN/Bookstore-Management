@@ -18,11 +18,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 import com.duan.model.RentBook;
@@ -75,7 +77,7 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblRentBook;
+	private CustomJTableRed tblRentBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -358,7 +360,7 @@ public class RentBookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblRentBook = new JTable();
+		tblRentBook = new CustomJTableRed();
 		tblRentBook.setRowHeight(30);
 		tblRentBook.addKeyListener(new KeyAdapter() {
 			@Override
@@ -422,12 +424,12 @@ public class RentBookJFrame extends JFrame {
 			User user = UserDAO.findByID(rb.getUserId());
 			Admin admin = AdminDAO.findByID(rb.getAdminId());
 			
-			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), "dd/MM/yyyy");
+			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), SettingSave.getSetting().getDateFormat());
 			String returnedDate = "Chưa có";
 			String status = rb.getTitleStatus();
 			if (rb.getReturnedDate() != null)
 			{
-				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), "dd/MM/yyyy");
+				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), SettingSave.getSetting().getDateFormat());
 			}
 			
 			String[] data = {rb.getId() + "", user.getUsername(), admin.getUsername(), createdDate, returnedDate, status};

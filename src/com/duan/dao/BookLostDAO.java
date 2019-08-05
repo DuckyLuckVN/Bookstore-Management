@@ -122,7 +122,6 @@ public class BookLostDAO
     public static boolean delete(int rentbook_id) throws SQLException
     {
         String sql = "DELETE FROM BOOK_LOST Where rentbook_id = ?";
-        
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, rentbook_id);
         int count = pre.executeUpdate();
         return count > 0;

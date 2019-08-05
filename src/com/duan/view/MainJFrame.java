@@ -10,6 +10,8 @@ import javax.swing.border.EmptyBorder;
 import com.duan.helper.ComponentResizer;
 import com.duan.helper.SwingHelper;
 
+import diu.swe.habib.JPanelSlider.JPanelSlider;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -56,12 +58,12 @@ public class MainJFrame extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
 	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
-	private static final Color COLOR_MENU_CLICKED = new Color(255, 234, 167);
-	private static final Border BORDER_HIGHLIGHT = new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 69, 0));
+	private static final Color COLOR_MENU_CLICKED = new Color(24, 232, 226);
+	private static final Border BORDER_HIGHLIGHT = new MatteBorder(0, 7, 0, 0, (Color) new Color(255, 24, 70));
 
 	private JPanel contentPane;
 	private SwingHelper sHelper = new SwingHelper();
-	private JPanel pnlContent;
+	private JPanelSlider pnlContent;
 	private JPanel pnl1;
 	private JPanel pnl2;
 	private JPanel pnl3;
@@ -69,6 +71,8 @@ public class MainJFrame extends JFrame {
 	private JPanel pnl5;
 	private JPanel pnl6;
 	private JPanel pnl7;
+	private JPanel pnl9;
+	private Container containerSelected = null;
 	
 	private int posX;
 	private int posY;
@@ -76,6 +80,7 @@ public class MainJFrame extends JFrame {
 	
 	
 	private BorderLayout borderLayout = new BorderLayout(0, 0);
+	private CardLayout cardLayout = new CardLayout(0, 0);
 	
 	private BookJFrame bookJFrame = new BookJFrame();
 	private LoginJFrame loginJFrame = new LoginJFrame();
@@ -84,6 +89,8 @@ public class MainJFrame extends JFrame {
 	private UserJFrame userJFrame = new UserJFrame();
 	private AdminJFrame adminJFrame = new AdminJFrame();
 	private StatisticalJFrame statisticalJFrame = new StatisticalJFrame();
+	private BookLostJFrame bookLostJFrame = new BookLostJFrame();
+	private StorageJFrame storageJFrame = new StorageJFrame();
 	
 	//Khai báo container
 	private Container bookContainer = bookJFrame.getContentPane();
@@ -91,7 +98,9 @@ public class MainJFrame extends JFrame {
 	private Container sellBookContainer = sellBookJFrame.getContentPane();
 	private Container userContainer = userJFrame.getContentPane();
 	private Container adminContainer = adminJFrame.getContentPane();
-	private Container statisticalContainer = new StatisticalJFrame().getContentPane();
+	private Container statisticalContainer = statisticalJFrame.getContentPane();
+	private Container bookLostContainer = bookLostJFrame.getContentPane();
+	private Container storageContainer = storageJFrame.getContentPane();
 	
 	public static void main(String[] args)
 	{
@@ -102,6 +111,7 @@ public class MainJFrame extends JFrame {
 				try 
 				{
 					MainJFrame frame = new MainJFrame();
+					frame.addContainer();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -150,7 +160,7 @@ public class MainJFrame extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 1093, 687);
+		setBounds(100, 100, 1093, 773);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		setContentPane(contentPane);
@@ -160,7 +170,7 @@ public class MainJFrame extends JFrame {
 		pnlMenu.setBackground(COLOR_MENU_DEFAULT);
 		
 		JPanel pnlMenuList = new JPanel();
-		pnlMenuList.setBounds(0, 114, 280, 454);
+		pnlMenuList.setBounds(0, 114, 280, 525);
 		pnlMenuList.setBackground(COLOR_MENU_DEFAULT);
 		pnlMenuList.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -196,52 +206,13 @@ public class MainJFrame extends JFrame {
 		pnl1.setBackground(COLOR_MENU_DEFAULT);
 		pnl1.setLayout(null);
 		
-		JLabel lblTItle1 = new JLabel("Kho sách");
+		JLabel lblTItle1 = new JLabel("Sách");
 		lblTItle1.setForeground(new Color(0, 0, 0));
 		lblTItle1.setBounds(22, 0, 178, 66);
 		lblTItle1.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
 		lblTItle1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblTItle1.setHorizontalAlignment(SwingConstants.LEFT);
 		pnl1.add(lblTItle1);
-		
-		pnl2 = new JPanel();
-		pnlMenuList.add(pnl2);
-		pnl2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		pnl2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) 
-			{
-				if (pnl2.getBackground() != COLOR_MENU_CLICKED)
-				{
-					sHelper.changeBackground(pnl2, COLOR_MENU_HOVER);
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) 
-			{
-				if (pnl2.getBackground() != COLOR_MENU_CLICKED)
-				{
-					sHelper.changeBackground(pnl2, COLOR_MENU_DEFAULT);
-				}
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) 
-			{
-				setBackgroundMenuClicked(pnl2);
-				showRentBookJFrame();
-				setHighlightMenu(pnl2);
-			}
-		});
-		pnl2.setBackground(COLOR_MENU_DEFAULT);
-		pnl2.setLayout(null);
-		
-		JLabel lblKhchHng = new JLabel("Thuê sách");
-		lblKhchHng.setForeground(new Color(0, 0, 0));
-		lblKhchHng.setBounds(22, 0, 178, 66);
-		lblKhchHng.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
-		lblKhchHng.setHorizontalAlignment(SwingConstants.LEFT);
-		lblKhchHng.setFont(new Font("Tahoma", Font.BOLD, 13));
-		pnl2.add(lblKhchHng);
 		
 		pnl3 = new JPanel();
 		pnlMenuList.add(pnl3);
@@ -282,6 +253,84 @@ public class MainJFrame extends JFrame {
 		lblNhnVin.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl3.add(lblNhnVin);
 		
+		pnl2 = new JPanel();
+		pnlMenuList.add(pnl2);
+		pnl2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		pnl2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) 
+			{
+				if (pnl2.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl2, COLOR_MENU_HOVER);
+				}
+			}
+			@Override
+			public void mouseExited(MouseEvent e) 
+			{
+				if (pnl2.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl2, COLOR_MENU_DEFAULT);
+				}
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				setBackgroundMenuClicked(pnl2);
+				showRentBookJFrame();
+				setHighlightMenu(pnl2);
+			}
+		});
+		pnl2.setBackground(COLOR_MENU_DEFAULT);
+		pnl2.setLayout(null);
+		
+		JLabel lblKhchHng = new JLabel("Thuê sách");
+		lblKhchHng.setForeground(new Color(0, 0, 0));
+		lblKhchHng.setBounds(22, 0, 178, 66);
+		lblKhchHng.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
+		lblKhchHng.setHorizontalAlignment(SwingConstants.LEFT);
+		lblKhchHng.setFont(new Font("Tahoma", Font.BOLD, 13));
+		pnl2.add(lblKhchHng);
+		
+		pnl4 = new JPanel();
+		pnlMenuList.add(pnl4);
+		pnl4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		pnl4.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) 
+			{
+				if (pnl4.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl4, COLOR_MENU_HOVER);
+				}
+			}
+			@Override
+			public void mouseExited(MouseEvent e) 
+			{
+				if (pnl4.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl4, COLOR_MENU_DEFAULT);
+				}
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				setBackgroundMenuClicked(pnl4);
+				showLostBookJFrame();
+				setHighlightMenu(pnl4);
+			}
+		});
+		pnl4.setBackground(COLOR_MENU_DEFAULT);
+		pnl4.setLayout(null);
+		
+		JLabel lblHan = new JLabel("Mất sách");
+		lblHan.setForeground(new Color(0, 0, 0));
+		lblHan.setBounds(22, 0, 178, 66);
+		lblHan.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8-health-book-32.png")));
+		lblHan.setHorizontalAlignment(SwingConstants.LEFT);
+		lblHan.setFont(new Font("Tahoma", Font.BOLD, 13));
+		pnl4.add(lblHan);
+		
 		pnl7 = new JPanel();
 		pnlMenuList.add(pnl7);
 		pnl7.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -320,44 +369,6 @@ public class MainJFrame extends JFrame {
 		lblCuHnh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCuHnh.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl7.add(lblCuHnh);
-		
-		pnl4 = new JPanel();
-		pnlMenuList.add(pnl4);
-		pnl4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		pnl4.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) 
-			{
-				if (pnl4.getBackground() != COLOR_MENU_CLICKED)
-				{
-					sHelper.changeBackground(pnl4, COLOR_MENU_HOVER);
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) 
-			{
-				if (pnl4.getBackground() != COLOR_MENU_CLICKED)
-				{
-					sHelper.changeBackground(pnl4, COLOR_MENU_DEFAULT);
-				}
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) 
-			{
-				setBackgroundMenuClicked(pnl4);
-				setHighlightMenu(pnl4);
-			}
-		});
-		pnl4.setBackground(COLOR_MENU_DEFAULT);
-		pnl4.setLayout(null);
-		
-		JLabel lblHan = new JLabel("Mất sách");
-		lblHan.setForeground(new Color(0, 0, 0));
-		lblHan.setBounds(22, 0, 178, 66);
-		lblHan.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_generic_book_file_type_32px_3.png")));
-		lblHan.setHorizontalAlignment(SwingConstants.LEFT);
-		lblHan.setFont(new Font("Tahoma", Font.BOLD, 13));
-		pnl4.add(lblHan);
 		
 		pnl5 = new JPanel();
 		pnlMenuList.add(pnl5);
@@ -443,7 +454,7 @@ public class MainJFrame extends JFrame {
 		pnl6.add(lblNhnVin_1);
 		
 		JPanel pnl8 = new JPanel();
-		pnl8.setBounds(0, 586, 280, 51);
+		pnl8.setBounds(0, 657, 280, 51);
 		pnl8.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		pnl8.addMouseListener(new MouseAdapter() {
 			@Override
@@ -485,6 +496,48 @@ public class MainJFrame extends JFrame {
 		pnlMenu.setLayout(null);
 		pnlMenu.add(pnl8);
 		pnlMenu.add(pnlMenuList);
+		
+		pnl9 = new JPanel();
+		pnl9.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		pnl9.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent arg0) 
+			{
+				if (pnl9.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl9, COLOR_MENU_HOVER);
+				}
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) 
+			{
+				if (pnl9.getBackground() != COLOR_MENU_CLICKED)
+				{
+					sHelper.changeBackground(pnl9, COLOR_MENU_DEFAULT);
+				}
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				setBackgroundMenuClicked(pnl9);
+				showStorageJFrame();
+				setHighlightMenu(pnl9);
+			}
+			
+		});
+		pnl9.setLayout(null);
+		pnl9.setBackground(COLOR_MENU_DEFAULT);
+		pnlMenuList.add(pnl9);
+		
+		JLabel lblNhpKho = new JLabel(" Nhập kho");
+		lblNhpKho.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")));
+		lblNhpKho.setHorizontalAlignment(SwingConstants.LEFT);
+		lblNhpKho.setForeground(Color.BLACK);
+		lblNhpKho.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblNhpKho.setBounds(22, 0, 178, 66);
+		pnl9.add(lblNhpKho);
 		pnlMenu.add(lblLogo);
 		pnlMenu.add(lblBookstore);
 		
@@ -506,15 +559,18 @@ public class MainJFrame extends JFrame {
 		contentPane.add(pnlCenter, BorderLayout.CENTER);
 		pnlCenter.setLayout(new BorderLayout(0, 0));
 		
-		pnlContent = new JPanel();
+		pnlContent = new JPanelSlider();
 		pnlContent.setBackground(new Color(251, 251, 250));
 		pnlCenter.add(pnlContent, BorderLayout.CENTER);
-		pnlContent.setLayout(new CardLayout(0, 0));
+		pnlContent.setLayout(cardLayout);
 		
-		JLabel iconContent = new JLabel("");
-		iconContent.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlContent.add(iconContent, "name_113229955950600");
-		sHelper.setAutoResizeIcon_PreferredSize(iconContent);
+		JLabel lblIcon = new JLabel("");
+		lblIcon.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
+		pnlContent.add(lblIcon, "name_99788257003228");
+		
+//		JPanel panel = new JPanel();
+//		pnlContent.add(panel, "a");
 		setLocationRelativeTo(getOwner());
 		
 		
@@ -533,7 +589,20 @@ public class MainJFrame extends JFrame {
 //		} catch(FontFormatException e) {
 //		    e.printStackTrace();
 //		}
-
+		
+		//addContainer();
+	}
+	
+	public void addContainer()
+	{
+		pnlContent.add(adminContainer, "1");
+		pnlContent.add(bookContainer, "2");
+		pnlContent.add(rentbContainer, "3");
+		pnlContent.add(sellBookContainer, "4");
+		pnlContent.add(statisticalContainer, "5");
+		pnlContent.add(userContainer, "6");
+		pnlContent.add(bookLostContainer, "7");
+		pnlContent.add(storageContainer, "8");
 	}
 	
 	//Hàm này sẽ set border các panel menu lại thành null và set border cho jpanel truyền vào là BORDER_HIGHLIGHT
@@ -546,6 +615,7 @@ public class MainJFrame extends JFrame {
 		pnl5.setBorder(null);
 		pnl6.setBorder(null);
 		pnl7.setBorder(null);
+		pnl9.setBorder(null);
 		pnl.setBorder(BORDER_HIGHLIGHT);
 	}
 	
@@ -558,16 +628,23 @@ public class MainJFrame extends JFrame {
 		pnl5.setBackground(COLOR_MENU_DEFAULT);
 		pnl6.setBackground(COLOR_MENU_DEFAULT);
 		pnl7.setBackground(COLOR_MENU_DEFAULT);
+		pnl9.setBackground(COLOR_MENU_DEFAULT);
 		pnl.setBackground(COLOR_MENU_CLICKED);
 	}
 	
 	//Hiển thị nội dung chính panel ở giữa, dựa vào Container truyền vào
 	public void setContainerShow(Container container)
 	{
-		pnlContent.removeAll();
-		pnlContent.add(container);
-		pnlContent.repaint();
-		pnlContent.revalidate();
+//		pnlContent.removeAll();
+//		pnlContent.add(container);
+//		pnlContent.repaint();
+//		pnlContent.revalidate();
+		
+		if (containerSelected != container)
+		{
+			containerSelected = container;
+			pnlContent.nextPanel(15, 15, container, true);
+		}
 	}
 	
 	public void showBookJFrame()
@@ -580,6 +657,13 @@ public class MainJFrame extends JFrame {
 	{
 		dispose();
 		loginJFrame.setVisible(true);
+	}
+	
+	public void showLostBookJFrame()
+	{
+		bookLostJFrame.getDataTolist();
+		bookLostJFrame.fillToTable();
+		setContainerShow(bookLostContainer);
 	}
 	
 	public void showRentBookJFrame()
@@ -600,6 +684,11 @@ public class MainJFrame extends JFrame {
 //		userJFrame.setLocationRelativeTo(this);
 //		userJFrame.setVisible(true);
 		setContainerShow(userContainer);
+	}
+	
+	public void showStorageJFrame()
+	{
+		setContainerShow(storageContainer);
 	}
 	
 	public void showAdminJFrame()

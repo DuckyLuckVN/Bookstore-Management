@@ -57,7 +57,7 @@ public class CategoryJDialog extends JDialog {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LocationJDialog frame = new LocationJDialog();
+					CategoryJDialog frame = new CategoryJDialog();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

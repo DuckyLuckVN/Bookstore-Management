@@ -21,12 +21,15 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
@@ -59,7 +62,7 @@ public class OrderEditorJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JLabel lblPriceTotal;
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
@@ -144,7 +147,7 @@ public class OrderEditorJDialog extends JDialog {
 		scrollPane.setBounds(14, 103, 512, 235);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.setRowHeight(25);
 		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG"}) {
@@ -183,8 +186,8 @@ public class OrderEditorJDialog extends JDialog {
 				}
 			}
 		});
-		tblBook.getColumnModel().getColumn(0).setPreferredWidth(10);
-		tblBook.getColumnModel().getColumn(1).setPreferredWidth(180);
+		tblBook.getColumnModel().getColumn(0).setPreferredWidth(30);
+		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
 		
 		JButton btnDelete = new JButton("Xóa");
@@ -305,7 +308,7 @@ public class OrderEditorJDialog extends JDialog {
 	//Cập nhật lại giá từ từ danh sách ở bảng đang có
 	public void updatePriceTotal()
 	{
-		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + " đ");
+		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + SettingSave.getSetting().getMoneySymbol());
 	}
 	
 	

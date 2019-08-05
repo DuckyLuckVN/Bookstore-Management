@@ -19,9 +19,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 
@@ -37,9 +39,12 @@ import java.awt.Dimension;
 import javax.swing.JButton;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Color;
@@ -55,6 +60,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.border.TitledBorder;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
 
 public class BookJFrame extends JFrame {
 
@@ -73,7 +80,7 @@ public class BookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblBook;
+	private CustomJTableRed tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -92,6 +99,10 @@ public class BookJFrame extends JFrame {
 	private Book book;
 	private int indexSelect = -1;
 	private JButton btnNhpKho;
+	private JPopupMenu popupMenu;
+	private JMenuItem mntmXemChiTit;
+	private JMenuItem mntmSa;
+	private JMenuItem mntmXa;
 
 	public static void main(String[] args) 
 	{
@@ -189,6 +200,7 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
+					System.out.println(getBookSelected().getImage());
 					showEditorBook(getBookSelected());
 				} 
 				catch (SQLException e1) 
@@ -247,6 +259,17 @@ public class BookJFrame extends JFrame {
 		textField.setColumns(10);
 		
 		btnNhpKho = new JButton("Nhập kho");
+		
+		popupMenu = new JPopupMenu();
+		
+		mntmXemChiTit = new JMenuItem("Xem chi tiết");
+		popupMenu.add(mntmXemChiTit);
+		
+		mntmSa = new JMenuItem("Sửa");
+		popupMenu.add(mntmSa);
+		
+		mntmXa = new JMenuItem("Xóa");
+		popupMenu.add(mntmXa);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -302,6 +325,7 @@ public class BookJFrame extends JFrame {
 					indexSelect = 0;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -317,6 +341,7 @@ public class BookJFrame extends JFrame {
 					indexSelect--;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -333,6 +358,7 @@ public class BookJFrame extends JFrame {
 					indexSelect++;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -349,12 +375,15 @@ public class BookJFrame extends JFrame {
 					indexSelect = rowCount - 1;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableRed();
+		tblBook.setShowHorizontalLines(false);
+		tblBook.setShowVerticalLines(true);
 		tblBook.setDragEnabled(true);
 		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.addKeyListener(new KeyAdapter() {
@@ -376,6 +405,10 @@ public class BookJFrame extends JFrame {
 				if (e.getClickCount() >= 2)
 				{
 					showBookDetail();
+				}
+				if (indexSelect != -1 && SwingUtilities.isRightMouseButton(e))
+				{
+					popupMenu.show(tblBook, e.getX(), e.getY());
 				}
 			}
 		});
@@ -425,7 +458,7 @@ public class BookJFrame extends JFrame {
 		
 		for (Book e : listBook)
 		{
-			String price = DataHelper.getFormatForMoney(e.getPrice()) + " đ";
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
 			String[] rowData = 
 				{
@@ -438,6 +471,20 @@ public class BookJFrame extends JFrame {
 					e.getDescription(), 
 				};
 			
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
+			model.addRow(rowData);
 			model.addRow(rowData);
 		}
 		
@@ -520,6 +567,8 @@ public class BookJFrame extends JFrame {
 	{
 		indexSelect = tblBook.getSelectedRow();
 		setControllModeTo_Editable();
+		Rectangle cellRect = tblBook.getCellRect(indexSelect, 0, true);
+		tblBook.scrollRectToVisible(cellRect);
 	}
 	
 	
@@ -551,5 +600,22 @@ public class BookJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }

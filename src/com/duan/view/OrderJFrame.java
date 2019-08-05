@@ -20,10 +20,13 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.UserDAO;
+import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Order;
 
@@ -51,7 +54,7 @@ import java.awt.event.KeyEvent;
 public class OrderJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tblOrder;
+	private CustomJTableRed tblOrder;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
 	private JButton btnRight;
@@ -168,7 +171,7 @@ public class OrderJFrame extends JFrame {
 		btnDelete.setIcon(new ImageIcon(OrderJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
 		pnlController.add(btnDelete);
 		
-		tblOrder = new JTable();
+		tblOrder = new CustomJTableRed();
 		tblOrder.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -332,7 +335,7 @@ public class OrderJFrame extends JFrame {
 				}
 				
 				String admin = AdminDAO.findByID(order.getAdminId()).getUsername();
-				String createdDate = DateHelper.dateToString(order.getDateCreated(), "dd/MM/yyyy");
+				String createdDate = DateHelper.dateToString(order.getDateCreated(), SettingSave.getSetting().getDateFormat());
 				
 				Object[] rowData = {order.getId(), user, admin, "", "", createdDate};
 				model.addRow(rowData);
@@ -370,6 +373,7 @@ public class OrderJFrame extends JFrame {
 	//Sự kiện được gọi khi nhấn nút 'Thêm mới' nó sẽ mở ra một cửa sổ để nhập thông tin order vào
 	private void showInsertOrder()
 	{
+		insertOrderJDialog.setLocationRelativeTo(this);
 		insertOrderJDialog.setEditMode(false);
 		insertOrderJDialog.setOrderJFrame(this);
 		insertOrderJDialog.setVisible(true);
@@ -378,10 +382,19 @@ public class OrderJFrame extends JFrame {
 	//Mở ra một cửa sổ để chỉnh sửa thông tin order đang chọn
 	private void showEditOrder()
 	{
-		editOrderJDialog.setEditMode(true);
-		editOrderJDialog.setOrderJFrame(this);
-		editOrderJDialog.setOrderModel(listOrder.get(indexSelected));
-		editOrderJDialog.setVisible(true);
+		try 
+		{
+			editOrderJDialog.setLocationRelativeTo(this);
+			editOrderJDialog.setEditMode(true);
+			editOrderJDialog.setOrderJFrame(this);
+			Order order = OrderDAO.findByID(DataHelper.getInt(tblOrder.getValueAt(indexSelected, 0).toString()));
+			editOrderJDialog.setOrderModel(listOrder.get(indexSelected));
+			editOrderJDialog.setVisible(true);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	//Hàm này sẽ dc gọi khi có 1 dòng trong bảng dc chọn vào
