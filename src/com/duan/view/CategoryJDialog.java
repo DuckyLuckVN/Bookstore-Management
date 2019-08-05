@@ -37,15 +37,49 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
 
 public class CategoryJDialog extends JDialog {
-	String head[]= {"Mã thể loại","Tên thể loại","Ghi chú"};
-	DefaultTableModel model = new DefaultTableModel(head, 0);
-
+	String header[]= {"Mã thể loại","Tên thể loại","Ghi chú"};
+	DefaultTableModel model = new DefaultTableModel(header, 0);
+	public void CategoryJDialog() {
+		LoadDataToJtable();
+	}
+	public void LoadDataToJtable() {
+		// TODO Auto-generated method stub
+		Connection conn = null;
+    	java.sql.Statement st = null;
+    	ResultSet rs = null;
+    	try {
+		 	conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
+			String sql = "select * from CATEGORY";
+			if (txtTenTheLoai.getText().length() > 0) {
+				   sql = sql + " where category_title like '%" + txtTenTheLoai.getText() + "%'";
+}
+			st = conn.createStatement();
+			rs = st.executeQuery(sql);
+			Vector data = null;
+			model.setRowCount(0);
+			 while (rs.next()) {
+				   data = new Vector();
+				   data.add(rs.getString(1));
+				   data.add(rs.getString(2));
+				   data.add(rs.getString(3));
+				   model.addRow(data);
+				 }
+			 tblCategory.setModel(model);conn.close();
+		} catch (Exception e) {
+			 System.out.println(e);
+		} 
+	}
+	//truy xuất dữ liệu của bảng category
+   
 	private JPanel contentPane;
 	private JTable tblCategory;
 	private JTextField txtMaTheLoai;
@@ -57,7 +91,7 @@ public class CategoryJDialog extends JDialog {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LocationJDialog frame = new LocationJDialog();
+					CategoryJDialog frame = new CategoryJDialog();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,7 +101,7 @@ public class CategoryJDialog extends JDialog {
 	}
 
 	public CategoryJDialog() 
-	{
+	{		
 		setModal(true);
 		setResizable(false);
 		setTitle("Quản lý thể loại");
@@ -158,68 +192,120 @@ public class CategoryJDialog extends JDialog {
 		panel.add(txtGhiChu);
 		
 		JButton btnThm = new JButton(" Lưu");
-		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
-				if (ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				try {
-					String user="sa";
-					String pass = "123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql="insert into tblCategory scrollPane value(?,?,?)";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1,txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-				} catch (Exception e2) {
-					System.out.print(e);
-				}
-
-			}
-		});
 		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
 		btnThm.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		btnThm.setBounds(364, 57, 105, 38);
 		contentPane.add(btnThm);
 		
 		JButton btnCpNht = new JButton("Cập nhật");
-		btnCpNht.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					String user ="sa";
-					String pass ="123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore2";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql = "update tblCategory set uMaTheLoai=?, uTenTheLoai=?, uGhiChu=?";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1, txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-					con.close();
-					LoadDataToJTable();
-				} catch (Exception e) {
-					System.out.print(e);
-				}
-			}
-
-			private void LoadDataToJTable() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		
 		btnCpNht.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
 		btnCpNht.setBounds(364, 106, 105, 38);
 		contentPane.add(btnCpNht);
 		
 		JButton btnXa = new JButton("Xóa");
+		btnXa.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
+		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
+		btnXa.setBounds(364, 155, 105, 38);
+		contentPane.add(btnXa);
+		
+		JButton btn = new JButton(" Mới");
+		btn.setHorizontalAlignment(SwingConstants.LEFT);
+		btn.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
+		btn.setBounds(364, 8, 105, 38);
+		contentPane.add(btn);
+		setLocationRelativeTo(getOwner());
+		
+		//ĐỊNH NGHĨA NÚT CẬP NHẬT(update)
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					String user ="sa";
+					String pass ="123";
+					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore";
+					Connection con = DriverManager.getConnection(url, user, pass);
+					String sql = "update CATEGORY set category_description=?, category_title=? where Id=?" ;
+					PreparedStatement st = con.prepareStatement(sql);
+					st.setString(1, txtTenTheLoai.getText());
+					st.setString(2, txtGhiChu.getText());
+					st.setString(3, txtMaTheLoai.getText());
+					st.executeUpdate();
+					con.close();
+					LoadDataToJtable();
+				} catch (Exception e) {
+					System.out.print(e);
+				}
+			}
+		});
+		
+		//ĐỊNH NGHĨA NÚT MỚI
+		btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				txtMaTheLoai.setText("");
+				txtTenTheLoai.setText("");
+				txtGhiChu.setText("");
+				txtMaTheLoai.requestFocus();
+			}
+		});
+		
+		//ĐỊNH NGHĨA NÚT LƯU
+		btnThm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Nếu không nhập tên thể loại
+				if (txtTenTheLoai.getText().isEmpty()) {
+				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống tên thể loại");
+				 txtTenTheLoai.requestFocus();
+				 return;
+				}
+				// Nếu không nhập mã thể loại
+				if (txtMaTheLoai.getText().isEmpty()) {
+				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống mã thể loại");
+				 txtMaTheLoai.requestFocus();
+				 return;
+				}
+				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu ?", "Confirm", JOptionPane.YES_NO_OPTION);
+				// Trường hợp không lưu
+				 if (ret != JOptionPane.YES_OPTION) {
+				 return;
+				 }
+				// Câu lệnh insert
+				 String insert = "insert into CATEGORY values(?, ?, ?)";
+				 System.out.println(insert);
+				 Connection conn = null;
+				 PreparedStatement ps = null;
+				 try {
+					  conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
+					  ps = conn.prepareStatement(insert);
+					  ps.setString(1, txtMaTheLoai.getText());
+					  ps.setString(2, txtTenTheLoai.getText());
+					  ps.setString(3, txtGhiChu.getText());
+					  ret = ps.executeUpdate();
+					  if (ret != -1) {
+				              JOptionPane.showMessageDialog(rootPane, "Dữ liệu lưu thành công");
+						  }
+					  
+					  LoadDataToJtable();
+				} catch (Exception e2) {
+					 e2.printStackTrace();
+				}finally {
+					try {
+					    if (conn != null) {
+					     conn.close();
+					    }
+					    if (ps != null) {
+					     ps.close();
+					    }
+					   } catch (Exception ex2) {
+					    ex2.printStackTrace();
+					   }
+				}
+			}
+		});
+		
+		//ĐỊNH NGHĨA NÚT XÓA 
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
@@ -230,53 +316,17 @@ public class CategoryJDialog extends JDialog {
 				PreparedStatement ps = null;
                try {
             	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-            	   ps = c.prepareStatement("Delete From tblCategory where id = ?");
+            	   ps = c.prepareStatement("delete From CATEGORY where id= ?");
             	   ps.setString(1, txtMaTheLoai.getText());
             	   ret = ps.executeUpdate();
             	   if (ret != -1) {
-            		   JOptionPane.showMessageDialog(rootPane, "Thông đã được xóa");  
+            		   JOptionPane.showMessageDialog(rootPane, "Thể loại đã được xóa"); 
             	   }
+            	   LoadDataToJtable();
 			} catch (Exception ex) {
-				 ex.printStackTrace();
-			}finally {
-				try {
-					if (c != null) {
-					     c.close();
-					   }
-					if (ps != null) {
-					     ps.close();
-					   }
-				} catch (Exception ex2) {
-					   ex2.printStackTrace();
-				}
+				 System.out.println(ex);
 			}
 			}
 		});
-		btnXa.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
-		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
-		btnXa.setBounds(364, 155, 105, 38);
-		contentPane.add(btnXa);
-		
-		JButton btn = new JButton(" Mới");
-		btn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				txtMaTheLoai.setText("");
-				txtTenTheLoai.setText("");
-				txtGhiChu.setText("");
-				txtMaTheLoai.requestFocus();
-			}
-		});
-		btn.setHorizontalAlignment(SwingConstants.LEFT);
-		btn.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
-		btn.setBounds(364, 8, 105, 38);
-		contentPane.add(btn);
-		setLocationRelativeTo(getOwner());
-	}
-	
-	public void test()
-	{
-		txtGhiChu.getText();
-		//then 
 	}
 }
