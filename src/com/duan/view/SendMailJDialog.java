@@ -72,14 +72,14 @@ public class SendMailJDialog extends JDialog {
 		}
 		{
 			txtTaiKhoang = new JTextField();
-			txtTaiKhoang.setText("tiendqps08547@fpt.edu.vn");
+			txtTaiKhoang.setText("razzermkd@gmail.com");
 			txtTaiKhoang.setBounds(108, 11, 266, 24);
 			getContentPane().add(txtTaiKhoang);
 			txtTaiKhoang.setColumns(10);
 		}
 		{
 			txtMatKhau = new JPasswordField();
-			txtMatKhau.setText("quangtien");
+			txtMatKhau.setText("DaiHao@1998");
 			txtMatKhau.setColumns(10);
 			txtMatKhau.setBounds(108, 46, 266, 24);
 			getContentPane().add(txtMatKhau);
@@ -137,7 +137,7 @@ public class SendMailJDialog extends JDialog {
 					p.put("mail.smtp.starttls.enable", "true");
 					p.put("mail.smtp.host", "smtp.gmail.com");
 //					p.put("mail.smtp.port", 587);
-					p.put("mail.smtp.port", "587");
+					p.put("mail.smtp.port", 587);
 
 					Session s = Session.getInstance(p, new javax.mail.Authenticator() 
 					{
