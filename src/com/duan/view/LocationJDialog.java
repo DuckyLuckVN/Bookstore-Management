@@ -156,35 +156,39 @@ public class LocationJDialog extends JDialog {
 		pnlControll.setLayout(new GridLayout(0, 1, 0, 10));
 		
 		JButton btnThm = new JButton(" Lưu");
-		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
-				if (ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				try {
-					String user="sa";
-					String pass = "123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql="insert into tblCategory scrollPane value(?,?,?,?)";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1,txtMaKeSach.getText());
-					st.setString(2, txtTenKe.getText());
-					st.setString(3, txtSucChua.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-				} catch (Exception e2) {
-					System.out.print(e2);
-				}
-			}
-		});
 		pnlControll.add(btnThm);
 		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
 		btnThm.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		
 		JButton btnCpNht = new JButton("Cập nhật");
+		
+		pnlControll.add(btnCpNht);
+		btnCpNht.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
+		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JButton btnXa = new JButton("Xóa");
+		
+		pnlControll.add(btnXa);
+		btnXa.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
+		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
+		
+		JButton btnMi = new JButton(" Mới");
+		pnlControll.add(btnMi);
+		btnMi.setHorizontalAlignment(SwingConstants.LEFT);
+		btnMi.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Create.png")));
+		setLocationRelativeTo(getOwner());
+		
+		// ĐỊNH NGHĨA NÚT MỚI
+		btnMi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtMaKeSach.setText("");
+				txtTenKe.setText("");
+				txtGhiChu.setText("");
+				txtSucChua.setText("");
+				txtMaKeSach.requestFocus();
+			}
+		});
+		//ĐỊNH NGHĨA NÚT CẬP NHẬT
 		btnCpNht.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn cập nhật dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -195,9 +199,9 @@ public class LocationJDialog extends JDialog {
 					String user ="sa";
 					String pass ="123";
 					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore2";
+					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore";
 					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql = "update tblLocation set uMaKeSach=?, uTenKe=?, uSucChua=?, uGhiChu=?";
+					String sql = "update dbo.LOCATION set id=?, location_name=?, max_storage=?, description=?";
 					PreparedStatement st = con.prepareStatement(sql);
 					st.setString(1, txtMaKeSach.getText());
 					st.setString(2, txtTenKe.getText());
@@ -216,11 +220,32 @@ public class LocationJDialog extends JDialog {
 				
 			}
 		});
-		pnlControll.add(btnCpNht);
-		btnCpNht.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
-		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JButton btnXa = new JButton("Xóa");
+		//ĐỊNH NGHĨA NÚT LƯU
+		btnThm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
+				if (ret != JOptionPane.YES_OPTION) {
+					return;
+				}
+				try {
+					String user="sa";
+					String pass = "123";
+					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
+					Connection con = DriverManager.getConnection(url, user, pass);
+					String sql="insert into tblLocation scrollPane value(?,?,?,?)";
+					PreparedStatement st = con.prepareStatement(sql);
+					st.setString(1,txtMaKeSach.getText());
+					st.setString(2, txtTenKe.getText());
+					st.setString(3, txtSucChua.getText());
+					st.setString(3, txtGhiChu.getText());
+					st.executeUpdate();
+				} catch (Exception e2) {
+					System.out.print(e2);
+				}
+			}
+		});
+		//ĐỊNH NGHĨA NÚT XÓA 
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
@@ -253,23 +278,5 @@ public class LocationJDialog extends JDialog {
 			}
 			}
 		});
-		pnlControll.add(btnXa);
-		btnXa.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
-		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JButton btnMi = new JButton(" Mới");
-		btnMi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				txtMaKeSach.setText("");
-				txtTenKe.setText("");
-				txtGhiChu.setText("");
-				txtSucChua.setText("");
-				txtMaKeSach.requestFocus();
-			}
-		});
-		pnlControll.add(btnMi);
-		btnMi.setHorizontalAlignment(SwingConstants.LEFT);
-		btnMi.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Create.png")));
-		setLocationRelativeTo(getOwner());
 	}
 }
