@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -71,6 +72,9 @@ public class UserJFrame extends JFrame {
 	DefaultTableModel model = null ;
 	int index = -1;
 	User user;
+	JButton btnCpNht;
+	JButton btnThem;
+	JButton btnXa;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -78,6 +82,7 @@ public class UserJFrame extends JFrame {
 					System.out.println("OK");
 					UserJFrame frame = new UserJFrame();
 					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -88,6 +93,7 @@ public class UserJFrame extends JFrame {
 
 	public UserJFrame() 
 	{
+		
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(UserJFrame.class.getResource("/com/duan/icon/icons8_user_groups_64px.png")));
 		setTitle("Quản Lý Người Dùng");
@@ -166,7 +172,7 @@ public class UserJFrame extends JFrame {
 		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtUsername.setColumns(10);
 		
-		txtPassword = new JTextField();
+		txtPassword = new JPasswordField();
 		txtPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtPassword.setColumns(10);
 		
@@ -287,25 +293,13 @@ public class UserJFrame extends JFrame {
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
 		JButton btnTaoMoi = new JButton("Tạo mới");
-		btnTaoMoi.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) 
-			{
-				//goi ham can xy ly
-				txtUsername.setText("");
-				txtPassword.setText("");
-				txtFullname.setText("");
-				txtBirthDay.setDate(null);
-				txtEmail.setText("");
-				txtPhoneNum.setText("");
-				rdoNam.isSelected();
-			}
-		});
+		
 		btnTaoMoi.setHorizontalAlignment(SwingConstants.LEFT);
 		btnTaoMoi.setIcon(new ImageIcon(UserJFrame.class.getResource("/com/duan/icon/Create.png")));
 		btnTaoMoi.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnTaoMoi);
 		
-		JButton btnThem = new JButton(" Thêm");
+		btnThem = new JButton(" Thêm");
 		btnThem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
@@ -320,14 +314,23 @@ public class UserJFrame extends JFrame {
 		btnThem.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnThem);
 		
-		JButton btnCpNht = new JButton(" Cập nhật");
+		btnCpNht = new JButton(" Cập nhật");
 		btnCpNht.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
 				
 				if (checkForm()) 
 				{
+					if (index < 0) 
+					{
+						JOptionPane.showMessageDialog(null, "Chưa chọn user để cập nhật");
+						return;
+					}
 					update();
+					btnCpNht.setEnabled(false);
+					btnXa.setEnabled(false);
+					btnThem.setEnabled(false);
+					
 				}
 			}
 		});
@@ -336,7 +339,7 @@ public class UserJFrame extends JFrame {
 		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnCpNht);
 		
-		JButton btnXa = new JButton(" Xóa");
+		btnXa = new JButton(" Xóa");
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -353,7 +356,12 @@ public class UserJFrame extends JFrame {
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnXa);
 		
-		tblUser = new CustomJTableRed();
+		tblUser = new JTable();
+		tblUser.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
 		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢNG", "MẬT KHẨU", "HỌ TÊN", "NGÀY SINH", "EMAIL", "SỐ ĐIỆN THOẠI"}) 
 		{
 			public boolean isCellEditable(int row, int column) {
@@ -366,12 +374,37 @@ public class UserJFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent arg0) 
 			{
 				showdetail();
+				btnTaoMoi.setEnabled(true);
+				btnCpNht.setEnabled(true);
+				btnThem.setEnabled(true);
+				btnXa.setEnabled(true);
 			}
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
 		contentPane.setLayout(gl_contentPane);
 		loadListToUser();
+		btnCpNht.setEnabled(false);
+		btnThem.setEnabled(false);
+		btnXa.setEnabled(false);
+		btnTaoMoi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				//goi ham can xy ly
+				txtUsername.setText("");
+				txtPassword.setText("");
+				txtFullname.setText("");
+				txtBirthDay.setDate(null);
+				txtEmail.setText("");
+				txtPhoneNum.setText("");
+				rdoNam.isSelected();
+				btnTaoMoi.setEnabled(false);
+				btnCpNht.setEnabled(false);
+				btnThem.setEnabled(true);
+				btnXa.setEnabled(false);
+			}
+		});
+		
 	}
 	
 	public void loadListToUser()
@@ -416,7 +449,8 @@ public class UserJFrame extends JFrame {
 		txtBirthDay.setDate(user.getDateOfBirth());
 		txtEmail.setText(user.getEmail());
 		txtPhoneNum.setText(user.getPhoneNumber());
-		if (user.isSex() == true) 
+		boolean gt = user.isSex();
+		if (gt == true) 
 		{
 			rdoNam.setSelected(true);
 		}else 
@@ -495,34 +529,43 @@ public class UserJFrame extends JFrame {
 		Date ngaysinh = txtBirthDay.getDate();
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
-		boolean gioitinh = false;
+		boolean gioitinh = true;
 		if (gioitinh == true) 
 		{
-			rdoNam.isSelected();
+			rdoNam.setSelected(true);
 		}
 		else 
 		{
-			rdoNu.isSelected();
+			rdoNu.setSelected(true);
 		}
-		user = new User(0, taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		user = new User(0,taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
 		try 
 		{
 			if (dao.insert(user)) 
 			{
 				list.add(user);
-				JOptionPane.showMessageDialog(this, "Thêm thành công User có mã : " + user.getId());
-				fillToTable();
+				JOptionPane.showMessageDialog(this, "Thêm thành công User có tên : " + user.getFullname());
+				loadListToUser();
 				
 			}
 		} 
 		catch (SQLException e) {
+			if (e.getErrorCode() == 2627) 
+			{
+				JOptionPane.showMessageDialog(this, "ID này đã tồn tại!\n" + " Bạn cần Nhấn 'THÊM MỚI' để thêm USER mới");
+			}
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
 	public void update()
 	{
+//		index = tblUser.getSelectedRow();
+//		if (index < 0) 
+//		{
+//			return;
+//		}
+//		user = list.get(index);
 		dao = new UserDAO();
 		String taikhoan = txtUsername.getText();
 		String matkhau = txtPassword.getText();
@@ -531,24 +574,33 @@ public class UserJFrame extends JFrame {
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
 		boolean gioitinh = false;
-		if (gioitinh == true) 
+		if (rdoNam.isSelected()) 
 		{
-			rdoNam.isSelected();
+			gioitinh = true;
 		}
-		else 
+		if (rdoNu.isSelected()) 
 		{
-			rdoNu.isSelected();
+			gioitinh = false;
 		}
-		user = new User(0, taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		
+		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh,list.get(index).getCreatedDate() );
 		try 
 		{
-			if (dao.update(user, user.getId())) 
+			if (dao.update(user, list.get(index).getId())) 
 			{
 				list.set(index, user);
-				JOptionPane.showMessageDialog(this, "Cập nhật thành công USER có mã : "+ user.getId());
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công USER có mã : "+ list.get(index).getId());
 				fillToTable();
+				txtUsername.setText("");
+				txtPassword.setText("");
+				txtBirthDay.setDate(null);
+				txtEmail.setText("");
+				txtFullname.setText("");
+				txtPhoneNum.setText("");
+				
 			}
-		} catch (SQLException e) {
+		} catch (SQLException e) 
+		{
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -563,7 +615,7 @@ public class UserJFrame extends JFrame {
 		{
 			if (dao.delete(list.get(index).getId())) 
 			{
-				JOptionPane.showMessageDialog(this, "Xóa thành công USER có mã : "+list.get(index).getId());
+				JOptionPane.showMessageDialog(this, "Xóa thành công USER có mã : " + list.get(index).getId());
 				list.remove(index);
 				fillToTable();
 			}
@@ -587,13 +639,9 @@ public class UserJFrame extends JFrame {
             
             if (isFound) 
             {
-                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};
-                
+                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};                
                 model.addRow(rows);
             }
-
-        }
-        
+        }  
     }
-
 }

@@ -47,7 +47,7 @@ public class UserDAO
     public static boolean update(User user , int id) throws SQLException
     {
         String sql = "UPDATE [USER] SET username=?, password=?, fullname=?,"
-                + "date_of_birth=?, email=?, phone_number=?, sex=?, created_date Where id=?";
+                + "date_of_birth=?, email=?, phone_number=?, sex=?, created_date = ? Where id=?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
 								        		user.getUsername(), 
