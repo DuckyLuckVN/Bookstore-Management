@@ -45,11 +45,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-public class CategoryJDialog extends JDialog {
 	
+
+public class CategoryJDialog extends JDialog {
+
 	String header[]= {"MÃ THỂ LOẠI","TÊN THỂ LOẠI","GHI CHÚ"};
 	DefaultTableModel model = new DefaultTableModel(header, 0);
-	public void CategoryJDialog() {
+	public void CategoryJDialog() 
+	{
 		LoadDataToJtable();
 	}
 	// ĐỔ DỮ LIỆU LÊN BẢNG CATEGORY
@@ -222,7 +225,7 @@ public class CategoryJDialog extends JDialog {
 					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore";
 					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql = "update CATEGORY set category_description=?, category_title=? where Id=?" ;
+					String sql = "update CATEGORY set category_title=?, category_description=? where Id=?" ;
 					PreparedStatement st = con.prepareStatement(sql);
 					st.setString(1, txtTenTheLoai.getText());
 					st.setString(2, txtGhiChu.getText());
@@ -322,5 +325,6 @@ public class CategoryJDialog extends JDialog {
 			}
 			}
 		});
+		LoadDataToJtable();
 	}
 }
