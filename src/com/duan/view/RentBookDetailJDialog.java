@@ -52,9 +52,13 @@ import java.util.List;
 
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
+
+import com.duan.controller.ExportPDF;
 import com.duan.custom.CustomJTableBlue;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RentBookDetailJDialog extends JDialog {
 
@@ -71,6 +75,9 @@ public class RentBookDetailJDialog extends JDialog {
 	private JLabel lblTnhTrng;
 	private JLabel lblStatus;
 	private JButton btnGiMail;
+	private JLabel lblReturnedDate;
+	
+	private SendMailJDialog sendMailJDialog;
 
 	public static void main(String[] args) 
 	{
@@ -106,7 +113,7 @@ public class RentBookDetailJDialog extends JDialog {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 542, 354);
+		setBounds(100, 100, 542, 401);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -133,13 +140,13 @@ public class RentBookDetailJDialog extends JDialog {
 		lblAdmin = new JLabel("Đào Quang Tiến (quantienpoly)");
 		lblAdmin.setForeground(Color.DARK_GRAY);
 		lblAdmin.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblAdmin.setBounds(125, 75, 299, 21);
+		lblAdmin.setBounds(125, 109, 299, 21);
 		contentPane.add(lblAdmin);
 		
 		lblNhnVinBn = new JLabel("Nhân viên nhập:");
 		lblNhnVinBn.setForeground(Color.DARK_GRAY);
 		lblNhnVinBn.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNhnVinBn.setBounds(10, 75, 105, 21);
+		lblNhnVinBn.setBounds(10, 109, 105, 21);
 		contentPane.add(lblNhnVinBn);
 		
 		lblUser = new JLabel("Nguyễn Đại Hào (daihao12mc)");
@@ -149,7 +156,7 @@ public class RentBookDetailJDialog extends JDialog {
 		contentPane.add(lblUser);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 143, 516, 138);
+		scrollPane.setBounds(10, 173, 516, 156);
 		contentPane.add(scrollPane);
 		
 		tblOrderDetail = new CustomJTableBlue();
@@ -165,40 +172,79 @@ public class RentBookDetailJDialog extends JDialog {
 		tblOrderDetail.getColumnModel().getColumn(1).setPreferredWidth(180);;
 		scrollPane.setViewportView(tblOrderDetail);
 		
-		JButton btnPrint = new JButton("");
+		JButton btnPrint = new JButton("Xuất đơn");
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (ExportPDF.writeRentbook(rentBook))
+				{
+					ExportPDF.showPDFRentbook();
+				}
+			}
+		});
 		btnPrint.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnPrint.setIcon(new ImageIcon(RentBookDetailJDialog.class.getResource("/com/duan/icon/icons8_print_32px.png")));
 		btnPrint.setBounds(434, 11, 92, 87);
+		SwingHelper.setTextBelowIconButton(btnPrint);
 		contentPane.add(btnPrint);
 		
 		lblTngCng = new JLabel("Tổng cộng:");
 		lblTngCng.setForeground(Color.DARK_GRAY);
 		lblTngCng.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTngCng.setBounds(10, 292, 69, 21);
+		lblTngCng.setBounds(10, 340, 69, 21);
 		contentPane.add(lblTngCng);
 		
 		lblTotalBook = new JLabel("35 quyển");
 		lblTotalBook.setForeground(Color.BLUE);
 		lblTotalBook.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTotalBook.setBounds(89, 292, 169, 21);
+		lblTotalBook.setBounds(89, 340, 169, 21);
 		contentPane.add(lblTotalBook);
 		
 		lblTnhTrng = new JLabel("Tình trạng:");
 		lblTnhTrng.setForeground(Color.DARK_GRAY);
 		lblTnhTrng.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTnhTrng.setBounds(10, 107, 105, 21);
+		lblTnhTrng.setBounds(10, 141, 105, 21);
 		contentPane.add(lblTnhTrng);
 		
 		lblStatus = new JLabel("Đang thuê");
 		lblStatus.setForeground(Color.RED);
 		lblStatus.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblStatus.setBounds(125, 107, 299, 21);
+		lblStatus.setBounds(125, 141, 299, 21);
 		contentPane.add(lblStatus);
 		
 		btnGiMail = new JButton("Gửi mail");
+		btnGiMail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try 
+				{
+					User user = UserDAO.findByID(rentBook.getUserId());
+					sendMailJDialog = new SendMailJDialog(user.getEmail());
+					sendMailJDialog.setLocationRelativeTo(contentPane);
+					sendMailJDialog.setVisible(true);
+					
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
 		btnGiMail.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnGiMail.setBounds(434, 109, 89, 23);
 		contentPane.add(btnGiMail);
+		
+		JLabel lblNgyTr = new JLabel("Ngày trả:");
+		lblNgyTr.setForeground(Color.DARK_GRAY);
+		lblNgyTr.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblNgyTr.setBounds(10, 75, 105, 21);
+		contentPane.add(lblNgyTr);
+		
+		lblReturnedDate = new JLabel("12-05-2019");
+		lblReturnedDate.setForeground(Color.DARK_GRAY);
+		lblReturnedDate.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblReturnedDate.setBounds(125, 75, 299, 21);
+		contentPane.add(lblReturnedDate);
 	}
 	
 	public void setDetailModel(int rentbook_id)
@@ -231,27 +277,31 @@ public class RentBookDetailJDialog extends JDialog {
 	public void showDetail()
 	{
 		User user;
+		String createdDate;
+		String returnedDate;
 		try 
 		{
 			user = UserDAO.findByID(rentBook.getUserId());
 			Admin admin = AdminDAO.findByID(rentBook.getAdminId());
-			String createdDate = DateHelper.dateToString(rentBook.getCreatedDate(), SettingSave.getSetting().getDateFormat());
+			createdDate = DateHelper.dateToString(rentBook.getCreatedDate(), SettingSave.getSetting().getDateFormat());
 			
 			
 			setTitle("Chi tiết đơn thuê số: " + rentBook.getId());
 			
 			if (user != null)
-			{
 				lblUser.setText(user.getFullname() + " (" + user.getUsername() + ")");
-			}
 			else
-			{
 				lblUser.setText("Không có");
-			}
+			
+			if (rentBook.getReturnedDate() != null)
+				returnedDate = DateHelper.dateToString(rentBook.getReturnedDate(), SettingSave.getSetting().getDateFormat());
+			else
+				returnedDate = "Chưa có";
 			
 			lblCreatedDate.setText(createdDate);
 			lblAdmin.setText(admin.getFullname() + " (" + admin.getUsername() + ")");
 			lblTotalBook.setText(RentBookDetailDAO.getTotalBookRented(rentBook.getId()) + " quyển");
+			lblReturnedDate.setText(returnedDate);
 			
 			if(rentBook.getStatus() == 0)
 			{

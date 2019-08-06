@@ -12,15 +12,20 @@ public class Setting implements Serializable
 	private String moneySymbol = "đ";
 	private String dateFormat = "dd-MM-yyyy";
 	private String timeFormat = "hh:mm:ss";
-	
+	private String usernameEmail = "razzermkd@gmail.com";
+	private String passwordEmail = "123456789";
+	private int dayExpiration = 7;
 	
 	public Setting()
 	{
 		
 	}
+
+	
 	
 	public Setting(String hostDB, String portDB, String nameDB, String usernameDB, String passwordDB,
-			String moneySymbol, String dateFormat, String timeFormat) {
+			String moneySymbol, String dateFormat, String timeFormat, String usernameEmail, String passwordEmail,
+			int dayExpiration) {
 		super();
 		this.hostDB = hostDB;
 		this.portDB = portDB;
@@ -30,8 +35,43 @@ public class Setting implements Serializable
 		this.moneySymbol = moneySymbol;
 		this.dateFormat = dateFormat;
 		this.timeFormat = timeFormat;
+		this.usernameEmail = usernameEmail;
+		this.passwordEmail = passwordEmail;
+		this.dayExpiration = dayExpiration;
 	}
-	
+
+
+
+	public String getUsernameEmail() {
+		return usernameEmail;
+	}
+
+
+	public void setUsernameEmail(String usernameEmail) {
+		this.usernameEmail = usernameEmail;
+	}
+
+
+	public String getPasswordEmail() {
+		return passwordEmail;
+	}
+
+
+	public void setPasswordEmail(String passwordEmail) {
+		this.passwordEmail = passwordEmail;
+	}
+
+
+	public int getDayExpiration() {
+		return dayExpiration;
+	}
+
+
+	public void setDayExpiration(int dayExpiration) {
+		this.dayExpiration = dayExpiration;
+	}
+
+
 	public String getHostDB() {
 		return hostDB;
 	}

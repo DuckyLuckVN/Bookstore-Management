@@ -45,7 +45,7 @@ public class SettingSave
 		ObjectInputStream ois = null;
 		
 		
-		if (file.exists())
+		if (file.exists() && new File(PATH_SAVE_FILE).exists())
 		{
 			try 
 			{
@@ -57,6 +57,7 @@ public class SettingSave
 			} 
 			catch (IOException e) 
 			{
+
 				e.printStackTrace();
 			} 
 			catch (ClassNotFoundException e) 

@@ -7,16 +7,19 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
 import com.duan.dao.DBConnection;
+import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.main.Main;
 import com.duan.model.Setting;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -44,6 +47,9 @@ public class SettingJDialog extends JDialog {
 	private JComboBox cboTimeFormat;
 	private JComboBox cboDateFormat;
 	private MainJFrame2 mainJFrame;
+	private JTextField txtUsernameMail;
+	private JTextField txtPasswordEmail;
+	private JTextField txtDayExpiration;
 
 
 	public static void main(String[] args) 
@@ -72,7 +78,7 @@ public class SettingJDialog extends JDialog {
 		setTitle("Cài đặt");
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 387, 430);
+		setBounds(100, 100, 387, 602);
 		getContentPane().setLayout(null);
 		
 		JPanel pnlDB = new JPanel();
@@ -107,6 +113,7 @@ public class SettingJDialog extends JDialog {
 		pnlDB.add(txtPort);
 		
 		txtNameDB = new JTextField();
+		txtNameDB.setEditable(false);
 		txtNameDB.setColumns(10);
 		txtNameDB.setBounds(125, 56, 223, 24);
 		pnlDB.add(txtNameDB);
@@ -187,7 +194,7 @@ public class SettingJDialog extends JDialog {
 					saveSetting();
 			}
 		});
-		btnSave.setBounds(282, 357, 89, 25);
+		btnSave.setBounds(282, 538, 89, 25);
 		getContentPane().add(btnSave);
 		
 		JButton btnDefault = new JButton("Mặc định");
@@ -198,8 +205,61 @@ public class SettingJDialog extends JDialog {
 				showDetail();
 			}
 		});
-		btnDefault.setBounds(183, 357, 89, 25);
+		btnDefault.setBounds(183, 538, 89, 25);
 		getContentPane().add(btnDefault);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(null);
+		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "T\u00E0i kho\u1EA3ng Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(10, 357, 362, 97);
+		getContentPane().add(panel);
+		
+		JLabel lblTiKhonMail = new JLabel("Tài khoản mail:");
+		lblTiKhonMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblTiKhonMail.setBounds(10, 21, 105, 24);
+		panel.add(lblTiKhonMail);
+		
+		txtUsernameMail = new JTextField();
+		txtUsernameMail.setText("razzermkd@gmail.com");
+		txtUsernameMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtUsernameMail.setColumns(10);
+		txtUsernameMail.setBounds(125, 21, 227, 24);
+		panel.add(txtUsernameMail);
+		
+		JLabel lblMtKhuMail = new JLabel("Mật khẩu mail:");
+		lblMtKhuMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblMtKhuMail.setBounds(10, 56, 105, 24);
+		panel.add(lblMtKhuMail);
+		
+		txtPasswordEmail = new JPasswordField();
+		txtPasswordEmail.setText("123456789");
+		txtPasswordEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtPasswordEmail.setColumns(10);
+		txtPasswordEmail.setBounds(125, 56, 227, 24);
+		panel.add(txtPasswordEmail);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBounds(10, 465, 362, 62);
+		getContentPane().add(panel_1);
+		
+		JLabel lblHnThuSch = new JLabel("Hạn thuê sách:");
+		lblHnThuSch.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblHnThuSch.setBounds(10, 21, 105, 24);
+		panel_1.add(lblHnThuSch);
+		
+		txtDayExpiration = new JTextField();
+		txtDayExpiration.setText("17");
+		txtDayExpiration.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtDayExpiration.setColumns(10);
+		txtDayExpiration.setBounds(125, 21, 43, 24);
+		panel_1.add(txtDayExpiration);
+		
+		JLabel lblNgay = new JLabel("ngày");
+		lblNgay.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNgay.setBounds(178, 21, 43, 24);
+		panel_1.add(lblNgay);
 		
 		showDetail();
 	}
@@ -209,15 +269,25 @@ public class SettingJDialog extends JDialog {
 	{
 		//Nạp setting từ file vào
 		Setting setting = SettingSave.getSetting();
+		
+		//setting của database
 		txtHost.setText(setting.getHostDB());
-		txtMoneySymbol.setText(setting.getMoneySymbol());
 		txtNameDB.setText(setting.getNameDB());
 		txtPasswordDB.setText(setting.getPasswordDB());
 		txtPort.setText(setting.getPortDB());
 		txtUsernameDB.setText(setting.getUsernameDB());
 		
+		//setting của format
+		txtMoneySymbol.setText(setting.getMoneySymbol());
 		cboDateFormat.setSelectedItem(setting.getDateFormat());
 		cboTimeFormat.setSelectedItem(setting.getTimeFormat());
+		
+		//setting của email
+		txtUsernameMail.setText(setting.getUsernameEmail());
+		txtPasswordEmail.setText(setting.getPasswordEmail());
+		
+		//setting chung
+		txtDayExpiration.setText(setting.getDayExpiration() + "");
 	}
 	
 	//Thự hiện test connect tới máy chủ dc nhập từ form
@@ -246,17 +316,8 @@ public class SettingJDialog extends JDialog {
 	//Thực hiện lưu các Setting có trên form vào file
 	public void saveSetting()
 	{
-		boolean isConnected = false;
-		try 
-		{
-			isConnected = DBConnection.checkConnectionSQL(txtHost.getText(), txtNameDB.getText(), txtUsernameDB.getText(), txtPasswordDB.getText());
-		} 
-		catch (SQLException e) 
-		{
-			isConnected = false;
-		}
 		
-		if (isConnected == true)
+		if (validateAll())
 		{
 			//Tiến hành set Setting vào SettingSave và ghi ra file lưu trữ
 			SettingSave.setSetting(getSettingFromForm());
@@ -286,10 +347,64 @@ public class SettingJDialog extends JDialog {
 				dispose();
 			}
 		}
+	}
+	
+	
+	//Kiểm tra dữ liệu trên form có hợp lệ không
+	public boolean validateAll()
+	{
+		boolean isSuccess = true;
+		String msg = "";
+		
+		//CHECK kết nối Database
+		try {
+			isSuccess = DBConnection.checkConnectionSQL(txtHost.getText(), txtNameDB.getText(), txtUsernameDB.getText(), txtPasswordDB.getText());
+		} catch (SQLException e) {
+			isSuccess = false;
+			msg += "+ Không thể lưu thay đổi với cấu hình database sai, vui lòng kiểm tra lại";
+		}
+		
+		//BẮT LỖI ĐỂ TRỐNG!
+		if (txtUsernameMail.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Tài khoảng email không được để trống.\n";
+		}
 		else
 		{
-			JOptionPane.showMessageDialog(getContentPane(), "Không thể lưu thay đổi với cấu hình database sai, vui lòng kiểm tra lại");
+			//Kiểm tra tài khoảng email
+			if (DataHelper.isEmail(txtUsernameMail.getText()) == false)
+			{
+				isSuccess = false;
+				msg += "+ Tài khoảng email không hợp lệ.\n";
+			}
 		}
+		
+		//CHECK để trống mật khẩu email
+		if (txtPasswordEmail.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Mật khẩu email không được để trống\n";
+		}
+		
+		//CHECK ngày hết hạn
+		if (txtDayExpiration.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Ngày quá hạn không được để trống\n";
+		}
+		else if (DataHelper.isInteger(txtDayExpiration.getText()) == false || DataHelper.getInt(txtDayExpiration.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Ngày quá hạn phải là số và > 0\n";
+		}
+		
+		if (isSuccess == false)
+		{
+			JOptionPane.showMessageDialog(getContentPane(), "Đã có lỗi sảy ra:\n" + msg);
+		}
+			
+		return isSuccess;
 	}
 	
 	public void setMainJFrame(MainJFrame2 mainJFrame)
@@ -308,7 +423,10 @@ public class SettingJDialog extends JDialog {
 		String moneySymbol = txtMoneySymbol.getText();
 		String dateFormat = cboDateFormat.getSelectedItem().toString();
 		String timeFormat = cboTimeFormat.getSelectedItem().toString();
+		String usernameEmail = txtUsernameMail.getText();
+		String passwordEmail = txtPasswordEmail.getText();
+		int dayExpiration = DataHelper.getInt(txtDayExpiration.getText());
 		
-		return new Setting(host, port, nameDB, usernameDB, passwordDB, moneySymbol, dateFormat, timeFormat);
+		return new Setting(host, port, nameDB, usernameDB, passwordDB, moneySymbol, dateFormat, timeFormat, usernameEmail, passwordEmail, dayExpiration);
 	}
 }

@@ -22,6 +22,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JTextArea;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+
+import com.duan.helper.SettingSave;
+
 import javax.swing.border.LineBorder;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
@@ -52,7 +55,9 @@ public class SendMailJDialog extends JDialog {
 		txtDiaChi.setText(emailAddress);
 	}
 
-	public SendMailJDialog() {
+	public SendMailJDialog() 
+	{
+		setModal(true);
 		setResizable(false);
 		setTitle("Gửi mail");
 		setBounds(100, 100, 400, 386);
@@ -72,14 +77,16 @@ public class SendMailJDialog extends JDialog {
 		}
 		{
 			txtTaiKhoang = new JTextField();
-			txtTaiKhoang.setText("razzermkd@gmail.com");
+			txtTaiKhoang.setEditable(false);
+			txtTaiKhoang.setText(SettingSave.getSetting().getUsernameEmail());
 			txtTaiKhoang.setBounds(108, 11, 266, 24);
 			getContentPane().add(txtTaiKhoang);
 			txtTaiKhoang.setColumns(10);
 		}
 		{
 			txtMatKhau = new JPasswordField();
-			txtMatKhau.setText("DaiHao@1998");
+			txtMatKhau.setEditable(false);
+			txtMatKhau.setText(SettingSave.getSetting().getPasswordEmail());
 			txtMatKhau.setColumns(10);
 			txtMatKhau.setBounds(108, 46, 266, 24);
 			getContentPane().add(txtMatKhau);
@@ -92,6 +99,7 @@ public class SendMailJDialog extends JDialog {
 		}
 		{
 			txtDiaChi = new JTextField();
+			txtDiaChi.setEditable(false);
 			txtDiaChi.setColumns(10);
 			txtDiaChi.setBounds(108, 81, 266, 24);
 			getContentPane().add(txtDiaChi);

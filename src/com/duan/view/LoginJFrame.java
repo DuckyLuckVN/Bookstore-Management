@@ -257,7 +257,8 @@ public class LoginJFrame extends JDialog
 		panel.add(lblManagerment);
 		
 		JProgressBar progressBar = new JProgressBar();
-		progressBar.setForeground(new Color(60, 179, 113));
+		progressBar.setIndeterminate(true);
+		progressBar.setForeground(new Color(255, 69, 0));
 		progressBar.setBounds(0, 486, 386, 14);
 		panel.add(progressBar);
 		
@@ -280,6 +281,12 @@ public class LoginJFrame extends JDialog
 		lblNguyniHo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNguyniHo.setBounds(0, 132, 354, 58);
 		pnlWelcome.add(lblNguyniHo);
+		
+		JLabel lblangTiD = new JLabel("Đang tải dữ liệu...");
+		lblangTiD.setForeground(Color.WHITE);
+		lblangTiD.setHorizontalAlignment(SwingConstants.CENTER);
+		lblangTiD.setBounds(0, 295, 366, 28);
+		pnlWelcome.add(lblangTiD);
 		
 		JLabel lblPhnMmQun = new JLabel("Phần mềm quản lý nhà sách chuyên nghiệp");
 		lblPhnMmQun.setBounds(40, 110, 342, 29);
@@ -310,7 +317,7 @@ public class LoginJFrame extends JDialog
 					pnlWelcome.setSize(pnlWelcome.getWidth(), pnlHeight+1);
 					if (pnlHeight + 1 >= maxHeight)
 						break;
-					try {Thread.sleep(15);} catch (InterruptedException e) {e.printStackTrace();}}
+					try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}}
 			}
 		}).start();
 	}

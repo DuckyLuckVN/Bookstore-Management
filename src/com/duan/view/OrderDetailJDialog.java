@@ -49,9 +49,13 @@ import java.util.List;
 
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
+
+import com.duan.controller.ExportPDF;
 import com.duan.custom.CustomJTableBlue;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class OrderDetailJDialog extends JDialog {
 
@@ -159,10 +163,20 @@ public class OrderDetailJDialog extends JDialog {
 		tblOrderDetail.getColumnModel().getColumn(1).setPreferredWidth(180);;
 		scrollPane.setViewportView(tblOrderDetail);
 		
-		JButton btnPrint = new JButton("");
+		JButton btnPrint = new JButton("Xuất đơn");
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (ExportPDF.writeOrder(order))
+				{
+					ExportPDF.showPDFOrder();
+				}
+			}
+		});
 		btnPrint.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnPrint.setIcon(new ImageIcon(OrderDetailJDialog.class.getResource("/com/duan/icon/icons8_print_32px.png")));
 		btnPrint.setBounds(434, 11, 92, 87);
+		SwingHelper.setTextBelowIconButton(btnPrint);
 		contentPane.add(btnPrint);
 		
 		lblTngCng = new JLabel("Tổng cộng:");

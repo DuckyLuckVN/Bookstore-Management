@@ -56,9 +56,13 @@ import java.util.List;
 
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
+
+import com.duan.controller.ExportPDF;
 import com.duan.custom.CustomJTableBlue;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class BookLostDetailJDialog extends JDialog {
 
@@ -84,6 +88,7 @@ public class BookLostDetailJDialog extends JDialog {
 
 	
 	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
+	private SendMailJDialog sendMailJDialog;
 	private BookLost bookLost;
 	private RentBook rentBook;
 	
@@ -181,10 +186,20 @@ public class BookLostDetailJDialog extends JDialog {
 		tblDetail.getColumnModel().getColumn(3).setPreferredWidth(100);;
 		scrollPane.setViewportView(tblDetail);
 		
-		JButton btnPrint = new JButton("");
+		JButton btnPrint = new JButton("Xuất đơn");
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if(ExportPDF.writeBookLost(bookLost))
+				{
+					ExportPDF.showPDFBookLost();
+				}
+			}
+		});
 		btnPrint.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		btnPrint.setIcon(new ImageIcon(BookLostDetailJDialog.class.getResource("/com/duan/icon/icons8_print_32px.png")));
 		btnPrint.setBounds(587, 11, 92, 87);
+		SwingHelper.setTextBelowIconButton(btnPrint);
 		contentPane.add(btnPrint);
 		
 		lblTngCng = new JLabel("Tổng mất:");
@@ -212,6 +227,22 @@ public class BookLostDetailJDialog extends JDialog {
 		contentPane.add(lblStatus);
 		
 		btnGiMail = new JButton("Gửi mail");
+		btnGiMail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try 
+				{
+					User user = UserDAO.findByID(rentBook.getUserId());
+					sendMailJDialog = new SendMailJDialog(user.getEmail());
+					sendMailJDialog.setLocationRelativeTo(contentPane);
+					sendMailJDialog.setVisible(true);
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
 		btnGiMail.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnGiMail.setBounds(587, 109, 89, 23);
 		contentPane.add(btnGiMail);

@@ -385,7 +385,6 @@ public class BookJFrame extends JFrame {
 		tblBook.setShowHorizontalLines(false);
 		tblBook.setShowVerticalLines(true);
 		tblBook.setDragEnabled(true);
-		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -471,20 +470,6 @@ public class BookJFrame extends JFrame {
 					e.getDescription(), 
 				};
 			
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
-			model.addRow(rowData);
 			model.addRow(rowData);
 		}
 		
