@@ -108,6 +108,7 @@ public class MainJFrame2 extends JFrame {
 	private Container statisticalContainer = statisticalJFrame.getContentPane();
 	private Container bookLostContainer = bookLostJFrame.getContentPane();
 	private Container storageContainer = storageJFrame.getContentPane();
+	private JLabel lblBackgroundMain;
 	
 	public static void main(String[] args)
 	{
@@ -673,10 +674,10 @@ public class MainJFrame2 extends JFrame {
 		pnlCenter.add(pnlContent, BorderLayout.CENTER);
 		pnlContent.setLayout(cardLayout);
 		
-		JLabel lblIcon = new JLabel("");
-		lblIcon.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
-		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		pnlContent.add(lblIcon, "name_99788257003228");
+		lblBackgroundMain = new JLabel("");
+		lblBackgroundMain.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblBackgroundMain.setHorizontalAlignment(SwingConstants.CENTER);
+		pnlContent.add(lblBackgroundMain, "name_99788257003228");
 		setLocationRelativeTo(getOwner());
 		
 		showInfoAdmin();
@@ -704,6 +705,8 @@ public class MainJFrame2 extends JFrame {
 	
 	public void addContainer()
 	{
+		pnlContent.removeAll();
+		pnlContent.add(lblBackgroundMain);
 		pnlContent.add(adminContainer, "1");
 		pnlContent.add(bookContainer, "2");
 		pnlContent.add(rentbContainer, "3");

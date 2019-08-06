@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +13,7 @@ import javax.swing.border.SoftBevelBorder;
 
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.dao.LocationDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
@@ -33,7 +35,7 @@ import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 
-public class BookDetailJFrame extends JFrame {
+public class BookDetailJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JLabel lblMaSach;
@@ -47,6 +49,7 @@ public class BookDetailJFrame extends JFrame {
 	private JLabel lblDaBan;
 	private JLabel lblChoThue;
 	private JLabel lblImage;
+	private JLabel lblViTri;
 
 	public static void main(String[] args) 
 	{
@@ -54,7 +57,7 @@ public class BookDetailJFrame extends JFrame {
 		{
 			public void run() {
 				try {
-					BookDetailJFrame frame = new BookDetailJFrame();
+					BookDetailJDialog frame = new BookDetailJDialog();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -63,14 +66,15 @@ public class BookDetailJFrame extends JFrame {
 		});
 	}
 
-	public BookDetailJFrame(Component comp)
+	public BookDetailJDialog(Component comp)
 	{
 		this();
 		setLocationRelativeTo(comp);
 	}
-	public BookDetailJFrame() 
+	public BookDetailJDialog() 
 	{
-		setIconImage(Toolkit.getDefaultToolkit().getImage(BookDetailJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
+		setModal(true);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(BookDetailJDialog.class.getResource("/com/duan/icon/icons8_details_popup_50px_1.png")));
 		setTitle("Code Dạo Ký Sự");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -81,7 +85,7 @@ public class BookDetailJFrame extends JFrame {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 608, 355);
+		setBounds(100, 100, 608, 354);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -94,7 +98,7 @@ public class BookDetailJFrame extends JFrame {
 		contentPane.add(lblImage);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(252, 11, 340, 305);
+		panel_3.setBounds(252, 0, 340, 316);
 		contentPane.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -104,6 +108,7 @@ public class BookDetailJFrame extends JFrame {
 		fl_item0.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblMSch = new JLabel("Mã Sách:");
+		lblMSch.setForeground(Color.DARK_GRAY);
 		item0.add(lblMSch);
 		lblMSch.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMSch.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -118,6 +123,7 @@ public class BookDetailJFrame extends JFrame {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblTnSch_1 = new JLabel("Tên sách:");
+		lblTnSch_1.setForeground(Color.DARK_GRAY);
 		lblTnSch_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTnSch_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item1.add(lblTnSch_1);
@@ -132,6 +138,7 @@ public class BookDetailJFrame extends JFrame {
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblTcGi = new JLabel("Tác giả:");
+		lblTcGi.setForeground(Color.DARK_GRAY);
 		item2.add(lblTcGi);
 		lblTcGi.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTcGi.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -146,6 +153,7 @@ public class BookDetailJFrame extends JFrame {
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblXutBn = new JLabel("Thể loại:");
+		lblXutBn.setForeground(Color.DARK_GRAY);
 		lblXutBn.setHorizontalAlignment(SwingConstants.LEFT);
 		lblXutBn.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item3.add(lblXutBn);
@@ -160,6 +168,7 @@ public class BookDetailJFrame extends JFrame {
 		fl_item4.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblSTrang = new JLabel("Số trang:");
+		lblSTrang.setForeground(Color.DARK_GRAY);
 		lblSTrang.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSTrang.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item4.add(lblSTrang);
@@ -174,6 +183,7 @@ public class BookDetailJFrame extends JFrame {
 		fl_item5.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblSLng = new JLabel("Xuất bản:");
+		lblSLng.setForeground(Color.DARK_GRAY);
 		lblSLng.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSLng.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item5.add(lblSLng);
@@ -182,12 +192,28 @@ public class BookDetailJFrame extends JFrame {
 		lblXuatBan.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item5.add(lblXuatBan);
 		
+		JPanel item10 = new JPanel();
+		FlowLayout fl_item10 = (FlowLayout) item10.getLayout();
+		fl_item10.setAlignment(FlowLayout.LEFT);
+		panel_3.add(item10);
+		
+		JLabel lblVTr = new JLabel("Vị trí:");
+		lblVTr.setHorizontalAlignment(SwingConstants.LEFT);
+		lblVTr.setForeground(Color.DARK_GRAY);
+		lblVTr.setFont(new Font("Tahoma", Font.BOLD, 14));
+		item10.add(lblVTr);
+		
+		lblViTri = new JLabel("30 quyển");
+		lblViTri.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		item10.add(lblViTri);
+		
 		JPanel item6 = new JPanel();
 		panel_3.add(item6);
 		FlowLayout fl_item6 = (FlowLayout) item6.getLayout();
 		fl_item6.setAlignment(FlowLayout.LEFT);
 		
 		JLabel lblGiBn = new JLabel("Số lượng:");
+		lblGiBn.setForeground(Color.DARK_GRAY);
 		lblGiBn.setHorizontalAlignment(SwingConstants.LEFT);
 		lblGiBn.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item6.add(lblGiBn);
@@ -202,6 +228,7 @@ public class BookDetailJFrame extends JFrame {
 		panel_3.add(item7);
 		
 		JLabel lblGiBn_1 = new JLabel("Giá bán:");
+		lblGiBn_1.setForeground(Color.DARK_GRAY);
 		lblGiBn_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblGiBn_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item7.add(lblGiBn_1);
@@ -246,6 +273,7 @@ public class BookDetailJFrame extends JFrame {
 		String price = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 		String publisher = book.getPublisher() + " (" + book.getPublicationYear() + ")";
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
+		String locationTitle = LocationDAO.findByID(book.getLocationId()).getLocationName();
 		
 		lblMaSach.setText(book.getId());
 		lblTenSach.setText(book.getTitle());
@@ -254,6 +282,7 @@ public class BookDetailJFrame extends JFrame {
 		lblTrang.setText(book.getPageNum() + " trang");
 		lblXuatBan.setText(publisher);
 		lblSoLuong.setText(book.getAmount() + " quyển");
+		lblViTri.setText(locationTitle);
 		lblGia.setText(price);
 		lblDaBan.setText(BookDAO.getCountSold(book.getId()) + " quyển");
 		lblChoThue.setText(BookDAO.getCountBeingRented(book.getId()) + " quyển");

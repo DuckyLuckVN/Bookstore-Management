@@ -91,7 +91,7 @@ public class BookJFrame extends JFrame {
 	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
 	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
-	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame(this);
+	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
 	private JTextField textField;
 	
