@@ -582,7 +582,7 @@ public class UserJFrame extends JFrame {
 			gioitinh = false;
 		}
 		
-		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh,list.get(index).getCreatedDate() );
 		try 
 		{
 			if (dao.update(user, list.get(index).getId())) 
