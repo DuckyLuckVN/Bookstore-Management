@@ -46,28 +46,25 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class CategoryJDialog extends JDialog {
+	
 	String header[]= {"MÃ THỂ LOẠI","TÊN THỂ LOẠI","GHI CHÚ"};
 	DefaultTableModel model = new DefaultTableModel(header, 0);
 	public void CategoryJDialog() {
 		LoadDataToJtable();
 	}
+	// ĐỔ DỮ LIỆU LÊN BẢNG CATEGORY
 	public void LoadDataToJtable() {
-		// TODO Auto-generated method stub
 		Connection conn = null;
     	java.sql.Statement st = null;
     	ResultSet rs = null;
     	try {
+    		model.setRowCount(0);
 		 	conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
+		 	st = conn.createStatement();
 			String sql = "select * from CATEGORY";
-			if (txtTenTheLoai.getText().length() > 0) {
-				   sql = sql + " where category_title like '%" + txtTenTheLoai.getText() + "%'";
-}
-			st = conn.createStatement();
 			rs = st.executeQuery(sql);
-			Vector data = null;
-			model.setRowCount(0);
 			 while (rs.next()) {
-				   data = new Vector();
+				   Vector data = new Vector();
 				   data.add(rs.getString(1));
 				   data.add(rs.getString(2));
 				   data.add(rs.getString(3));
@@ -231,7 +228,6 @@ public class CategoryJDialog extends JDialog {
 					st.setString(2, txtGhiChu.getText());
 					st.setString(3, txtMaTheLoai.getText());
 					st.executeUpdate();
-					con.close();
 					LoadDataToJtable();
 				} catch (Exception e) {
 					System.out.print(e);
