@@ -66,6 +66,8 @@ public class OrderJFrame extends JFrame {
 	
 	private OrderEditorJDialog insertOrderJDialog = new OrderEditorJDialog();
 	private OrderEditorJDialog editOrderJDialog = new OrderEditorJDialog();
+	private OrderDetailJDialog orderDetailJDialog = new OrderDetailJDialog();
+	
 	private List<Order> listOrder;
 	private int indexSelected = -1;
 	
@@ -115,7 +117,7 @@ public class OrderJFrame extends JFrame {
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				
+				showOrderDetail();
 			}
 		});
 		btnDetail.setIcon(new ImageIcon(OrderJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px.png")));
@@ -185,6 +187,14 @@ public class OrderJFrame extends JFrame {
 			public void mouseReleased(MouseEvent arg0) 
 			{
 				eventTableSelectRow();
+			}
+			@Override
+			public void mouseClicked(MouseEvent evt) 
+			{
+				if (evt.getClickCount() >= 2 && indexSelected != -1)
+				{
+					showOrderDetail();
+				}
 			}
 		});
 		tblOrder.setRowHeight(35);
@@ -367,6 +377,20 @@ public class OrderJFrame extends JFrame {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	
+	//Hiển thị hộp thoại JDialog chi tiết thông tin về đơn hàng đang được chọn
+	private void showOrderDetail()
+	{
+		int order_id = DataHelper.getInt( tblOrder.getValueAt(indexSelected, 0).toString() );
+		orderDetailJDialog.setLocationRelativeTo(this);
+		orderDetailJDialog.setDetailModel(order_id);
+		orderDetailJDialog.showDetail();
+		orderDetailJDialog.fillToTable();
+		
+		orderDetailJDialog.setVisible(true);
+		
 	}
 	
 	

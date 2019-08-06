@@ -68,7 +68,7 @@ public class RentBookEditorJDialog extends JDialog {
 
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
-	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame();
+	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog();
 	private RentBookJFrame rentBookJFrame;
 	private boolean isEditMode = false;
 	

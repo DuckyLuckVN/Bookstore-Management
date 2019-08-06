@@ -265,10 +265,21 @@ public class SettingJDialog extends JDialog {
 			String msg = "Bạn cần phải reload lại ứng dụng để các tùy chỉnh này hoạt động chính xác!";
 			if (SwingHelper.showConfirm(getContentPane(), msg))
 			{
-				if (mainJFrame != null) {mainJFrame.dispose();}
-				
 				dispose();
-				Main.main(null);
+				
+				//Nếu setting này được bật từ MainJFRame thì khi save xong reload lại chỉ cần mở lại MainJFrame là dc, không cần login lại
+				if (mainJFrame != null) 
+				{
+					mainJFrame.dispose();
+					mainJFrame = new MainJFrame2();
+					mainJFrame.addContainer();
+					mainJFrame.setVisible(true);
+				}
+				else
+				{
+					Main.main(null);
+				}
+				
 			}
 			else
 			{

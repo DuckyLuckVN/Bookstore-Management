@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
+import com.duan.dao.RentBookDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
@@ -92,6 +93,8 @@ public class RentBookJFrame extends JFrame {
 	private FindRentBookJFrame findRentBookJFrame = new FindRentBookJFrame(this);
 	private RentBookEditorJDialog insertRentBookJDialog = new RentBookEditorJDialog(this);
 	private RentBookEditorJDialog editorRentbookJDialog = new RentBookEditorJDialog(this);
+	private RentBookDetailJDialog rentBookDetailJDialog = new RentBookDetailJDialog();
+	
 	private List<RentBook> listRentBook = new ArrayList<RentBook>();
 	private int indexSelect = -1;
 	
@@ -162,8 +165,9 @@ public class RentBookJFrame extends JFrame {
 		
 		btnDetail = new JButton("Xem chi tiết");
 		btnDetail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
+			public void actionPerformed(ActionEvent e) 
+			{
+				showRentBookDetail();
 			}
 		});
 		SwingHelper.setTextBelowIconButton(btnDetail);
@@ -506,6 +510,16 @@ public class RentBookJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	
+	public void showRentBookDetail()
+	{
+		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
+		rentBookDetailJDialog.setLocationRelativeTo(this);
+		rentBookDetailJDialog.setDetailModel(rentbook_id);
+		rentBookDetailJDialog.showDetail();
+		rentBookDetailJDialog.fillToTable();
+		rentBookDetailJDialog.setVisible(true);
 	}
 	
 	public void showInsertRentBook()

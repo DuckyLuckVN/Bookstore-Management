@@ -71,6 +71,8 @@ public class BookLostJFrame extends JFrame {
 	
 	private BookLostEditorJDialog insertBookLostJDialog = new BookLostEditorJDialog();
 	private BookLostEditorJDialog editBookLostEditorJDialog = new BookLostEditorJDialog();
+	private BookLostDetailJDialog bookLostDetailJDialog = new BookLostDetailJDialog();
+	
 	private List<BookLost> listBookLost;
 	private int indexSelected = -1;
 	
@@ -123,7 +125,7 @@ public class BookLostJFrame extends JFrame {
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				
+				showBookLostDetail();
 			}
 		});
 		btnDetail.setIcon(new ImageIcon(BookLostJFrame.class.getResource("/com/duan/icon/icons8_details_popup_50px.png")));
@@ -369,6 +371,16 @@ public class BookLostJFrame extends JFrame {
 		}
 	}
 	
+	//Hiển thị jdialog thông tin chi tiết về hóa đơn mất sách
+	private void showBookLostDetail()
+	{
+		int rentbook_id = DataHelper.getInt(tblBookLost.getValueAt(indexSelected, 0).toString());
+		bookLostDetailJDialog.setLocationRelativeTo(this);
+		bookLostDetailJDialog.setDetailModel(rentbook_id);
+		bookLostDetailJDialog.showDetail();
+		bookLostDetailJDialog.fillToTable();
+		bookLostDetailJDialog.setVisible(true);
+	}
 	
 	//Sự kiện được gọi khi nhấn nút 'Thêm mới' nó sẽ mở ra một cửa sổ để nhập thông tin order vào
 	private void showInsertBookLost()
