@@ -215,6 +215,7 @@ GO
 
 SELECT * FROM dbo.BOOK
 SELECT * FROM dbo.ORDER_DETAIL
+SELECT * FROM [ADMIN]
 GO
 
 
@@ -397,4 +398,24 @@ AS BEGIN
 		SUM(amount)
 	FROM STORAGE_DETAIL
 	WHERE storage_id = @storage_id
+END
+/****** Object:  StoredProcedure  [sp_getSumCountOrderSold]  Script Date: 8/07/2019 ******/
+--Trả về tổng số lượng sách đã bán
+GO
+CREATE PROC sp_getSumCountOrderSold (@order_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM ORDER_DETAIL
+	WHERE order_id = @order_id
+END
+/****** Object:  StoredProcedure  [sp_getSumPriceOrderSold]  Script Date: 8/07/2019 ******/
+--Trả về tổng số lượng sách đã bán
+GO
+CREATE PROC sp_getSumPriceOrderSold (@order_id INT)
+AS BEGIN
+	SELECT
+		SUM(price)
+	FROM ORDER_DETAIL
+	WHERE order_id = @order_id
 END

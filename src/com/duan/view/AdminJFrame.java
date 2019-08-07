@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -19,8 +20,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.dao.AdminDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -29,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Locale;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
@@ -44,6 +48,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.ButtonGroup;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AdminJFrame extends JFrame {
 
@@ -57,8 +63,14 @@ public class AdminJFrame extends JFrame {
 	private JTextField txtPhoneNum;
 	private JLabel lblAnh ;
 	private JComboBox cboChucVu;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private final ButtonGroup bgrSex = new ButtonGroup();
 	private File fileAnhDaChon = null;
+	private JButton btnNew;
+	private JButton btnSave;
+	private JButton btnUpdate;
+	private JButton btnDelete;
+	private JRadioButton rdoNam;
+	private JRadioButton rdoNu;
 
 	/**
 	 * Launch the application.
@@ -75,6 +87,7 @@ public class AdminJFrame extends JFrame {
 			}
 		});
 	}
+	int row = 0;
 
 	/**
 	 * Create the frame.
@@ -117,7 +130,7 @@ public class AdminJFrame extends JFrame {
 		});
 		txtFind.setColumns(10);
 		
-		JLabel lblTiKhong = new JLabel("Tài khoảng");
+		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		txtUsername = new JTextField();
@@ -160,63 +173,78 @@ public class AdminJFrame extends JFrame {
 		cboChucVu.setModel(new DefaultComboBoxModel(new String[] {"Nhân viên", "Quản Lý ", "Giám Đốc"}));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
-		JButton btnToMi = new JButton("Tạo mới");
-		btnToMi.setHorizontalAlignment(SwingConstants.LEFT);
-		btnToMi.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Create.png")));
-		btnToMi.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnToMi);
+		btnNew = new JButton("Tạo mới");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				setControllMode_insert();
+				unLockForm();
+			}
+		});
+		btnNew.setHorizontalAlignment(SwingConstants.LEFT);
+		btnNew.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Create.png")));
+		btnNew.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnNew);
 		
-		JButton btnThm = new JButton(" Thêm");
-		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
-		btnThm.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Accept.png")));
-		btnThm.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnThm);
+		btnSave = new JButton(" Thêm");
+		btnSave.setEnabled(false);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				insert();
+			}
+		});
+		btnSave.setHorizontalAlignment(SwingConstants.LEFT);
+		btnSave.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Accept.png")));
+		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnSave);
 		
-		JButton btnCpNht = new JButton(" Cập nhật");
-		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
-		btnCpNht.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Notes.png")));
-		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnCpNht);
+		btnUpdate = new JButton(" Cập nhật");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				update();	
+			}
+		});
+		btnUpdate.setEnabled(false);
+		btnUpdate.setHorizontalAlignment(SwingConstants.LEFT);
+		btnUpdate.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Notes.png")));
+		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnUpdate);
 		
-		JButton btnXa = new JButton(" Xóa");
-		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
-		btnXa.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Delete.png")));
-		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnXa);
+		btnDelete = new JButton(" Xóa");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				delete();
+				loadTable();
+			}
+		});
+		btnDelete.setEnabled(false);
+		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
+		btnDelete.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Delete.png")));
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnDelete);
 		
 		tblUser = new JTable();
-		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢNG", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
+		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢN", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
 		{
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
-		scrollPane.setViewportView(tblUser);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) 
+		tblUser.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
 			{
-				int index_cbo_selected = cboChucVu.getSelectedIndex();
-				int role;
-				switch (index_cbo_selected) {
-				case 0:
-					//Nhan Vien
-					role = 3;
-					break;
-				case 1:
-					//Quan ly
-					role = 2;
-					break;
-				case 2:
-					//Giam doc
-					role = 1;
-					break;
-				}
-				System.out.println();
+				setControllMode_edit();
+				if (arg0.getClickCount() == 2) {
+		            row = tblUser.getSelectedRow();
+		            if (row >= 0) {
+		                edit();
+		            }
+		        }
 			}
 		});
+		scrollPane.setViewportView(tblUser);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -227,9 +255,7 @@ public class AdminJFrame extends JFrame {
 					.addGap(1))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(btnNewButton)
-					.addPreferredGap(ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
+					.addContainerGap(386, Short.MAX_VALUE)
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE))
@@ -240,15 +266,10 @@ public class AdminJFrame extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(18)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNewButton)))
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
 		);
@@ -304,12 +325,12 @@ public class AdminJFrame extends JFrame {
 		JLabel lblGiiTnh = new JLabel("Giới tính");
 		lblGiiTnh.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JRadioButton rdoNam = new JRadioButton("Nam");
-		buttonGroup.add(rdoNam);
+		rdoNam = new JRadioButton("Nam");
+		bgrSex.add(rdoNam);
 		rdoNam.setSelected(true);
 		
-		JRadioButton rdoNu = new JRadioButton("Nữ");
-		buttonGroup.add(rdoNu);
+		rdoNu = new JRadioButton("Nữ");
+		bgrSex.add(rdoNu);
 		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
 		gl_pnlForm.setHorizontalGroup(
 			gl_pnlForm.createParallelGroup(Alignment.LEADING)
@@ -380,6 +401,8 @@ public class AdminJFrame extends JFrame {
 							.addComponent(cboChucVu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
 						.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 		);
+		loadTable();
+		lockForm();
 		panel.setLayout(null);
 		panel.add(lblAnh);
 		panel.add(btnChnnh);
@@ -392,4 +415,190 @@ public class AdminJFrame extends JFrame {
 	{
 		//lblAnh
 	}
+	
+	public void lockForm()
+	{
+		txtEmail.setEnabled(false);
+		txtFullname.setEnabled(false);
+		txtPassword.setEnabled(false);
+		txtPhoneNum.setEnabled(false);
+		txtUsername.setEnabled(false);
+		cboChucVu.setEnabled(false);
+		rdoNam.setEnabled(false);
+		rdoNu.setEnabled(false);
+	}
+	
+	public void unLockForm()
+	{
+		txtEmail.setEnabled(true);
+		txtFullname.setEnabled(true);
+		txtPassword.setEnabled(true);
+		txtPhoneNum.setEnabled(true);
+		txtUsername.setEnabled(true);
+		cboChucVu.setEnabled(true);
+		rdoNam.setEnabled(true);
+		rdoNu.setEnabled(true);
+	}
+	
+	public void clearForm()
+	{
+		txtEmail.setText("");
+		txtFullname.setText("");
+		txtPassword.setText("");
+		txtPhoneNum.setText("");
+		txtUsername.setText("");
+		rdoNam.setSelected(true);
+		cboChucVu.setSelectedIndex(0);
+	}
+	
+	public void setControllMode_Nothing()
+	{
+		btnNew.setEnabled(true);
+		btnDelete.setEnabled(false);
+		btnSave.setEnabled(false);
+		btnUpdate.setEnabled(false);
+	}
+	
+	public void setControllMode_edit() 
+	{
+		btnNew.setEnabled(true);
+		btnDelete.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnUpdate.setEnabled(true);
+	}
+	
+	public void setControllMode_insert()
+	{
+		btnNew.setEnabled(false);
+		btnDelete.setEnabled(false);
+		btnSave.setEnabled(true);
+		btnUpdate.setEnabled(false);
+	}
+	AdminDAO admimDao = new AdminDAO();
+	private void loadTable() {
+		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+		model.setRowCount(0);
+		try {
+			List<Admin> list = admimDao.getAllAdmin();
+			for (Admin admin : list) {
+				Object[] rowObjects = 
+					{
+							admin.getId(),
+							admin.getUsername(),
+							admin.getFullname(),
+							admin.getEmail(),
+							admin.getPhoneNumber(),
+							getRoleTitle(admin.getRole())
+					};
+				model.addRow(rowObjects);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	Admin getModel()
+	{
+		Admin admin = new Admin();
+		admin.setUsername(txtUsername.getText());
+		admin.setPassword(txtPassword.getText());
+		admin.setFullname(txtFullname.getText());
+		admin.setEmail(txtEmail.getText());
+		admin.setPhoneNumber(txtPhoneNum.getText());
+		boolean sex;
+		if (rdoNam.isSelected()) 
+		{
+			sex = true;
+			admin.setSex(sex);
+		} else if (rdoNu.isSelected()) {
+			sex = false;
+			admin.setSex(sex);
+		}
+		admin.setRole(cboChucVu.getSelectedIndex());
+		return admin;
+	}
+	
+	private void insert() 
+	{
+		Admin admin = getModel();
+		try {
+			admimDao.insert(admin);
+			clearForm();
+			loadTable();
+			setControllMode_Nothing();
+			lockForm();
+			JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thành công!");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thất bại!");
+			e.printStackTrace();
+		}
+	}
+	
+	public String getRoleTitle(int role) 
+	{
+		switch (role) 
+		{
+		case 0: return "Nhân viên";
+		case 1: return "Quản lý";
+		case 2: return "Giám đốc";
+		}
+		return "Không xác định";
+	}
+	
+	private void delete() {
+		Admin admin = getModel();
+		int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.row, 0)));
+		try {
+			admimDao.delete(id);
+			clearForm();
+			loadTable();
+			setControllMode_Nothing();
+			lockForm();
+			JOptionPane.showMessageDialog(contentPane, "Xóa tài khoản thành công!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(contentPane, "Xóa tài khoản thất bại!");
+		}
+	}
+
+	private void update() {
+		Admin admin = getModel();
+		int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.row, 0)));
+		try {
+			admimDao.update(admin, id);
+			clearForm();
+			loadTable();
+			setControllMode_Nothing();
+			JOptionPane.showMessageDialog(contentPane, "Cập nhật tài khoản thành công!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(contentPane, "Cập nhật tài khoản thất bại!");
+		}
+	}
+	
+	private void edit() 
+	{
+		try {
+            int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.row, 0)));
+            Admin model = admimDao.findByID(id);            
+            if (model != null) 
+            {
+                txtUsername.setText(model.getUsername());
+                txtPassword.setText(model.getPassword());
+                txtFullname.setText(model.getFullname());
+                txtEmail.setText(model.getEmail());
+                txtPhoneNum.setText(model.getPhoneNumber());
+                if (model.isSex() == true) {
+					rdoNam.setSelected(true);
+				} else {
+					rdoNu.setSelected(true);
+				}
+                cboChucVu.setSelectedItem(getRoleTitle(model.getRole()));
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+	}
+	
+	
 }

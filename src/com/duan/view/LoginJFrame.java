@@ -32,9 +32,14 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
+
+import com.duan.dao.AdminDAO;
+import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
+import com.duan.model.User;
 
 import javax.swing.JTextArea;
 
@@ -64,7 +69,29 @@ public class LoginJFrame extends JDialog
 			e.printStackTrace();
 		}
 	}
-
+	
+	boolean checkNullForm()
+	{
+		boolean isSuccess = true;
+		String msg = "";
+		
+		if (txtUsername.getText().length()== 0) 
+		{
+			isSuccess = false;
+			msg += "+ Tài khoản không được để trống!\n";
+		}
+		if (txtPassword.getText().length() == 0) 
+		{
+			isSuccess = false;
+			msg += "+ Mật khẩu không được để trống!\n";
+		}
+		
+		if (isSuccess == false)
+		{
+			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg);
+		}
+		return isSuccess;
+	}
 
 	public LoginJFrame() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -189,19 +216,44 @@ public class LoginJFrame extends JDialog
 		pnlForm.add(txtPassword);
 		
 		JButton btnLogin = new JButton("Đăng Nhập");
+		AdminDAO dao = new AdminDAO();
+		
 		btnLogin.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				//xu ly
-				
-				//day la model admin sau khi da dang nhap
-				Admin admin = new Admin();
-				//luu lai
-				
-				//cuoi cung phai chay 2 thang nay
-				AccountSave.setAdmin(admin);
-				active();
+				if (checkNullForm() == true) 
+				{
+					//xu ly
+					String username = txtUsername.getText();
+					String password = txtPassword.getText();
+					try {	
+						Admin admin = dao.findByUsername(username); 
+						if (admin != null) 
+						{
+							if (password.equals(admin.getPassword())) 
+							{
+								AccountSave.setAdmin(admin);
+								JOptionPane.showMessageDialog(contentPane, "Đăng nhập thành công!");
+								dispose();
+								active();
+							}
+							else 
+							{
+								JOptionPane.showMessageDialog(contentPane, "Mật khẩu không chính xác");
+								txtPassword.requestFocus();
+							}
+						}
+						else 
+						{
+							JOptionPane.showMessageDialog(contentPane, "Tài khoản này không tồn tại!");
+							txtUsername.requestFocus();
+						}
+					} catch (Exception e2) 
+					{
+						e2.printStackTrace();
+					}
+				}
 			}
 		});
 		btnLogin.addMouseListener(new MouseAdapter() {

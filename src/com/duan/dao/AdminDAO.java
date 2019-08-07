@@ -57,7 +57,7 @@ public class AdminDAO
         										ad.getRole(),
         										ad.isActive(),
         										ad.getCreatedDate(),
-        										id);
+        										ad.getId());
         int count = pre.executeUpdate();
         return count > 0;
     }
@@ -74,6 +74,17 @@ public class AdminDAO
     {
         String sql = "SELECT * FROM ADMIN Where id = ?";
         ResultSet rs = JDBCHelper.executeQuery(sql, id);
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        return null;
+    }
+    
+    public static Admin findByUsername(String username) throws SQLException
+    {
+        String sql = "SELECT * FROM ADMIN Where username = ?";
+        ResultSet rs = JDBCHelper.executeQuery(sql, username);
         if (rs.next())
         {
         	return readFromResultSet(rs);
