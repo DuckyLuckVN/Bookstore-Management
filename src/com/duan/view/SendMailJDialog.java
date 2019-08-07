@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -140,6 +141,9 @@ public class SendMailJDialog extends JDialog {
 			btnGiMail.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) 
 				{
+					if (checkFrom()) {
+					
+					
 					Properties p = new Properties();
 					p.put("mail.smtp.auth", "true");
 					p.put("mail.smtp.starttls.enable", "true");
@@ -157,7 +161,7 @@ public class SendMailJDialog extends JDialog {
 					});
 					
 					Message msg = new MimeMessage(s);
-
+					
 					try 
 					{
 						msg.setFrom(new InternetAddress(txtDiaChi.getText()));
@@ -172,10 +176,57 @@ public class SendMailJDialog extends JDialog {
 						System.out.println(ex.getMessage());
 					}
 				}
+				}
 			});
 			btnGiMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			btnGiMail.setBounds(108, 313, 266, 33);
 			getContentPane().add(btnGiMail);
 		}
 	}
+	
+	public boolean checkFrom() 
+	{
+		String msgString = "Đã có lỗi xảy ra : \n";
+		boolean loiRong = false;
+		if (txtTaiKhoang.getText().equals(""))
+		{	
+			msgString+="Tài khoản không được để trống !\n ";
+			loiRong = true;
+		}
+		if (txtMatKhau.getText().equals(""))
+		{	
+			msgString+="Mật khẩu không được để trống !\n";
+			loiRong = true;
+		}
+		if (txtDiaChi.getText().equals(""))
+		{	
+			msgString+="Địa chỉ không được để trống !\n";
+			loiRong = true;
+		}
+		else
+        {
+            if (!txtDiaChi.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
+            {
+                loiRong = true;
+                msgString+="Email không đúng định dạng ! \n";
+            }
+        }
+		if (txtTieuDe.getText().equals(""))
+		{	
+			msgString+="Tiêu đề không được để trống !\n";
+			loiRong = true;
+		}
+		if (txtNoiDung.getText().equals(""))
+		{	
+			msgString+="Nội dung không được để trống !";
+			loiRong = true;
+		}
+		if (loiRong == true) 
+		{
+			JOptionPane.showMessageDialog(this, msgString);
+			return false;
+		}
+		return true;
+	}
 }
+
