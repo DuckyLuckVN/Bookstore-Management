@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.OrderDAO;
+import com.duan.dao.OrderDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
@@ -340,14 +341,14 @@ public class OrderJFrame extends JFrame {
 			{
 				String user = "Không có";
 				if (UserDAO.findByID(order.getUserId()) != null)
-				{
 					user = UserDAO.findByID(order.getUserId()).getUsername();
-				}
 				
 				String admin = AdminDAO.findByID(order.getAdminId()).getUsername();
 				String createdDate = DateHelper.dateToString(order.getDateCreated(), SettingSave.getSetting().getDateFormat());
+				String totalPrice = DataHelper.getFormatForMoney(OrderDetailDAO.getTotalPrice(order.getId())) + SettingSave.getSetting().getMoneySymbol();
+				String totalAmount = OrderDetailDAO.getTotalAmountBook(order.getId()) + " quyển";
 				
-				Object[] rowData = {order.getId(), user, admin, "", "", createdDate};
+				Object[] rowData = {order.getId(), user, admin, totalAmount, totalPrice, createdDate};
 				model.addRow(rowData);
 			}
 			

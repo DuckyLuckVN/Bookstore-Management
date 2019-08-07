@@ -409,6 +409,27 @@ AS BEGIN
 END
 GO
 
+/****** Object:  StoredProcedure  [sp_getSumCountOrderSold]  Script Date: 8/07/2019 ******/
+--Trả về tổng số lượng sách đã bán
+CREATE PROC sp_getCountBookInOrder (@order_id INT)
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM ORDER_DETAIL
+	WHERE order_id = @order_id
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getSumPriceOrderSold]  Script Date: 8/07/2019 ******/
+--Trả về tổng số lượng sách đã bán
+CREATE PROC sp_getTotalPriceInOrder(@order_id INT)
+AS BEGIN
+	SELECT
+		SUM(price * amount)
+	FROM ORDER_DETAIL
+	WHERE order_id = @order_id
+END
+GO
 	
 
 SELECT * FROM dbo.BOOK

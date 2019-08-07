@@ -12,6 +12,7 @@ import com.duan.model.Book;
 import com.duan.model.BookProduct;
 import com.duan.model.Order;
 import com.duan.model.OrderDetail;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class OrderDetailDAO 
 {
@@ -91,6 +92,31 @@ public class OrderDetailDAO
     	
     	return list;
     }
+    
+    //Trả về tổng số tiền của đơn hàng có mã là @order_id
+    public static double getTotalPrice(int order_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getTotalPriceInOrder(?)}", order_id);
+
+    	if (rs.next())
+    	{
+    		return rs.getDouble(1);
+    	}
+    	return 0;
+    }
+    
+    //Trả về tổng số lượng sách của đơn hàng có mã là @order_id
+    public static int getTotalAmountBook(int order_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getCountBookInOrder(?)}", order_id);
+
+    	if (rs.next())
+    	{
+    		return rs.getInt(1);
+    	}
+    	return 0;
+    }
+    
     
     public static OrderDetail findByID(int order_id, String book_id) throws SQLException
     {

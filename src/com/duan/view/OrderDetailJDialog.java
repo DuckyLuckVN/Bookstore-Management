@@ -227,7 +227,8 @@ public class OrderDetailJDialog extends JDialog {
 			user = UserDAO.findByID(order.getUserId());
 			Admin admin = AdminDAO.findByID(order.getAdminId());
 			String createdDate = DateHelper.dateToString(order.getDateCreated(), SettingSave.getSetting().getDateFormat());
-			
+			String totalPrice = DataHelper.getFormatForMoney(OrderDetailDAO.getTotalPrice(order.getId())) + SettingSave.getSetting().getMoneySymbol();
+			//String totalAmount = DataHelper.getFormatForMoney(OrderDetailDAO.getTotalAmountBook(order.getId())) + SettingSave.getSetting().getMoneySymbol();
 			
 			setTitle("Chi tiết đơn hàng số: " + order.getId());
 			
@@ -242,7 +243,7 @@ public class OrderDetailJDialog extends JDialog {
 			
 			lblCreatedDate.setText(createdDate);
 			lblAdmin.setText(admin.getFullname() + " (" + admin.getUsername() + ")");
-			lblTotalPrice.setText("0đ");
+			lblTotalPrice.setText(totalPrice);
 		} 
 		catch (SQLException e) 
 		{

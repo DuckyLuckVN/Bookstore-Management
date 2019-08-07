@@ -160,8 +160,8 @@ public class ExportPDF
 			document.add(tblList);
 			
 			//Thông tin tổng kết
-			int totalBook = -1;
-			double totalPrice = 0;
+			int totalBook = OrderDetailDAO.getTotalAmountBook(order.getId());
+			double totalPrice =OrderDetailDAO.getTotalPrice(order.getId());
 			Font fontTotal = new Font(baseFont, 12, Font.BOLD, BaseColor.RED);
 			
 			//Tổng số lượng

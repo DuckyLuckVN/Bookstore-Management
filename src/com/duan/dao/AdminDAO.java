@@ -10,7 +10,7 @@ import com.duan.model.Admin;
 
 public class AdminDAO 
 {
-    public static ArrayList<Admin> getAllAdmin() throws SQLException
+    public static ArrayList<Admin> getAll() throws SQLException
     {
         ArrayList<Admin> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM ADMIN");
