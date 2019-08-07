@@ -21,12 +21,15 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
@@ -59,7 +62,7 @@ public class OrderEditorJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JLabel lblPriceTotal;
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
@@ -144,7 +147,7 @@ public class OrderEditorJDialog extends JDialog {
 		scrollPane.setBounds(14, 103, 512, 235);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.setRowHeight(25);
 		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG"}) {
@@ -183,8 +186,8 @@ public class OrderEditorJDialog extends JDialog {
 				}
 			}
 		});
-		tblBook.getColumnModel().getColumn(0).setPreferredWidth(10);
-		tblBook.getColumnModel().getColumn(1).setPreferredWidth(180);
+		tblBook.getColumnModel().getColumn(0).setPreferredWidth(30);
+		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
 		
 		JButton btnDelete = new JButton("Xóa");
@@ -233,7 +236,7 @@ public class OrderEditorJDialog extends JDialog {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if (checkErrorAll() == false)
+				if (validateAll())
 				{
 					if (isEditMode == false && insertOrder())
 					{
@@ -269,6 +272,7 @@ public class OrderEditorJDialog extends JDialog {
 			Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), price, product.getAmount()};
 			model.addRow(rowData);
 		}
+
 	}
 	
 	//Hàm này được gọi khi các row trong bảng bị thay đổi (thêm, xóa, cập nhật)
@@ -304,7 +308,7 @@ public class OrderEditorJDialog extends JDialog {
 	//Cập nhật lại giá từ từ danh sách ở bảng đang có
 	public void updatePriceTotal()
 	{
-		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + " đ");
+		lblPriceTotal.setText(DataHelper.getFormatForMoney(getPriceTotal()) + SettingSave.getSetting().getMoneySymbol());
 	}
 	
 	
@@ -400,10 +404,10 @@ public class OrderEditorJDialog extends JDialog {
 		this.orderJFrame = orderJFrame;
 	}
 	
-	//Kiểm tra bắt lỗi trước khi thực hiện, nếu có lỗi sẽ trả về TRUE
-	public boolean checkErrorAll()
+	//Kiểm tra bắt lỗi trước khi thực hiện, trả về TRUE nếu hợp lệ
+	public boolean validateAll()
 	{
-		boolean isError = true;
+		boolean isSuccess = true;
 		String msg = "";
 		
 		try 
@@ -411,7 +415,7 @@ public class OrderEditorJDialog extends JDialog {
 			//Lỗi chưa chọn sách
 			if (listBookProduct.size() == 0)
 			{
-				isError = true;
+				isSuccess = false;
 				msg += "+ Sách chưa được chọn, vui lòng chọn sách trước khi xác nhận \n";
 			}
 	
@@ -433,13 +437,9 @@ public class OrderEditorJDialog extends JDialog {
 					//NẾU EDIT MODE == FALSE (INSERT MODE) THÌ KIỂM TRA KIỂU NÀY
 					if (isEditMode == false)
 					{
-						if (amount <= amountAvailable)
+						if (amount > amountAvailable)
 						{
-							isError = false;
-						}
-						else
-						{
-							isError = true;
+							isSuccess = false;
 							msg += "+ [" + product.getBook().getId() + "] Không đủ sách để bán (chỉ còn: " + amountAvailable + " quyển, cần bán: " + amount + " quyển) \n";
 						}
 					}
@@ -459,13 +459,9 @@ public class OrderEditorJDialog extends JDialog {
 						int amountAvailableAfterUpdate = amountAvailable + amountProduct - product.getAmount();
 						System.out.println(amountAvailableAfterUpdate);
 						//Nếu số lượng sách tồn kho sau khi update (amountAvailableAfterUpdate) mà nhỏ hơn 0 thì => báo không đủ sách để đáp ứng
-						if (amountAvailableAfterUpdate >= 0)
+						if (amountAvailableAfterUpdate < 0)
 						{
-							isError = false;
-						}
-						else
-						{
-							isError = true;
+							isSuccess = false;
 							msg += "+ [" + product.getBook().getId() + "] Không đủ sách để thêm vào (chỉ còn: " + amountAvailable + " quyển, cần bổ sung: " + (product.getAmount() - amountProduct) + " quyển)\n";
 						}
 					}
@@ -473,7 +469,7 @@ public class OrderEditorJDialog extends JDialog {
 				}
 				else
 				{
-					isError = true;
+					isSuccess = false;
 					msg += "+ [" + product.getBook().getId() + "] Số lượng nhập vào phải là số và lớn hơn 0\n";
 				}
 			}
@@ -483,12 +479,12 @@ public class OrderEditorJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		
-		if (isError)
+		if (isSuccess == false)
 		{
 			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg);
 		}
 		
-		return isError;
+		return isSuccess;
 	}
 	
 	//Thêm Order vào Database

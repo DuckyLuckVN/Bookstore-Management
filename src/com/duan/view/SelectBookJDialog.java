@@ -13,6 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.BookDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.Book;
@@ -36,7 +37,7 @@ import java.awt.event.ActionEvent;
 public class SelectBookJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JLabel lblTmTheoTn;
 	private JTextField textField;
 	
@@ -84,7 +85,7 @@ public class SelectBookJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(5, 49, 425, 191);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.setRowHeight(25);
 		tblBook.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TIÊU ĐỀ", "GIÁ BÁN", "CHỌN"}) 
 		{
@@ -179,6 +180,7 @@ public class SelectBookJDialog extends JDialog {
 	public void setListBookSelected() throws SQLException
 	{
 		listBookSelected.clear();
+		listBookProduct.clear();
 
 		int rowCount = tblBook.getRowCount();
 		//Lặp duyệt qua từng dòng trong bảng
@@ -218,6 +220,11 @@ public class SelectBookJDialog extends JDialog {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setListBook(List<Book> listBook)
+	{
+		this.listBook = listBook;
 	}
 	
 	public void fillToTable()

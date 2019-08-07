@@ -3,20 +3,34 @@ package com.duan.view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JTextArea;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
+
+import com.duan.helper.SettingSave;
+
 import javax.swing.border.LineBorder;
 import java.awt.SystemColor;
+import java.awt.event.ActionListener;
+import java.util.Properties;
+import java.awt.event.ActionEvent;
 
 public class SendMailJDialog extends JDialog {
 	private JTextField txtTaiKhoang;
@@ -35,8 +49,16 @@ public class SendMailJDialog extends JDialog {
 			e.printStackTrace();
 		}
 	}
+	
+	public SendMailJDialog(String emailAddress) 
+	{
+		this();
+		txtDiaChi.setText(emailAddress);
+	}
 
-	public SendMailJDialog() {
+	public SendMailJDialog() 
+	{
+		setModal(true);
 		setResizable(false);
 		setTitle("Gửi mail");
 		setBounds(100, 100, 400, 386);
@@ -56,12 +78,16 @@ public class SendMailJDialog extends JDialog {
 		}
 		{
 			txtTaiKhoang = new JTextField();
+			txtTaiKhoang.setEditable(false);
+			txtTaiKhoang.setText(SettingSave.getSetting().getUsernameEmail());
 			txtTaiKhoang.setBounds(108, 11, 266, 24);
 			getContentPane().add(txtTaiKhoang);
 			txtTaiKhoang.setColumns(10);
 		}
 		{
 			txtMatKhau = new JPasswordField();
+			txtMatKhau.setEditable(false);
+			txtMatKhau.setText(SettingSave.getSetting().getPasswordEmail());
 			txtMatKhau.setColumns(10);
 			txtMatKhau.setBounds(108, 46, 266, 24);
 			getContentPane().add(txtMatKhau);
@@ -74,6 +100,7 @@ public class SendMailJDialog extends JDialog {
 		}
 		{
 			txtDiaChi = new JTextField();
+			txtDiaChi.setEditable(false);
 			txtDiaChi.setColumns(10);
 			txtDiaChi.setBounds(108, 81, 266, 24);
 			getContentPane().add(txtDiaChi);
@@ -111,9 +138,95 @@ public class SendMailJDialog extends JDialog {
 		getContentPane().add(txtNoiDung);
 		{
 			JButton btnGiMail = new JButton("Gửi mail");
+			btnGiMail.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) 
+				{
+					if (checkFrom()) {
+					
+					
+					Properties p = new Properties();
+					p.put("mail.smtp.auth", "true");
+					p.put("mail.smtp.starttls.enable", "true");
+					p.put("mail.smtp.host", "smtp.gmail.com");
+//					p.put("mail.smtp.port", 587);
+					p.put("mail.smtp.port", 587);
+
+					Session s = Session.getInstance(p, new javax.mail.Authenticator() 
+					{
+						protected PasswordAuthentication getPasswordAuthentication() 
+						{
+							return new PasswordAuthentication(txtTaiKhoang.getText(), txtMatKhau.getText());
+//							return new PasswordAuthentication("tiendqps08547@fpt.edu.vn", "quangtien");
+						}
+					});
+					
+					Message msg = new MimeMessage(s);
+					
+					try 
+					{
+						msg.setFrom(new InternetAddress(txtDiaChi.getText()));
+						msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(txtDiaChi.getText()));
+						msg.setSubject(txtTieuDe.getText());
+						msg.setText(txtNoiDung.getText());
+						Transport.send(msg);
+					} 
+					catch (MessagingException ex) 
+					{
+						ex.printStackTrace();
+						System.out.println(ex.getMessage());
+					}
+				}
+				}
+			});
 			btnGiMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 			btnGiMail.setBounds(108, 313, 266, 33);
 			getContentPane().add(btnGiMail);
 		}
 	}
+	
+	public boolean checkFrom() 
+	{
+		String msgString = "Đã có lỗi xảy ra : \n";
+		boolean loiRong = false;
+		if (txtTaiKhoang.getText().equals(""))
+		{	
+			msgString+="Tài khoản không được để trống !\n ";
+			loiRong = true;
+		}
+		if (txtMatKhau.getText().equals(""))
+		{	
+			msgString+="Mật khẩu không được để trống !\n";
+			loiRong = true;
+		}
+		if (txtDiaChi.getText().equals(""))
+		{	
+			msgString+="Địa chỉ không được để trống !\n";
+			loiRong = true;
+		}
+		else
+        {
+            if (!txtDiaChi.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
+            {
+                loiRong = true;
+                msgString+="Email không đúng định dạng ! \n";
+            }
+        }
+		if (txtTieuDe.getText().equals(""))
+		{	
+			msgString+="Tiêu đề không được để trống !\n";
+			loiRong = true;
+		}
+		if (txtNoiDung.getText().equals(""))
+		{	
+			msgString+="Nội dung không được để trống !";
+			loiRong = true;
+		}
+		if (loiRong == true) 
+		{
+			JOptionPane.showMessageDialog(this, msgString);
+			return false;
+		}
+		return true;
+	}
 }
+

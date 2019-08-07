@@ -136,8 +136,15 @@ public class Admin
 	}
 	
 	
-
-    
-    
+	public String getRoleTitle()
+	{
+		switch (role) 
+		{
+		case 0: return "Giám đốc";
+		case 1: return "Quản lý";
+		case 2: return "Nhân viên";
+		}
+		return "Không xác định";
+	}
     
 }

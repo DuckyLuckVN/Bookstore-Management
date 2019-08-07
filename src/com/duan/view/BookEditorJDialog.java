@@ -113,6 +113,7 @@ public class BookEditorJDialog extends JDialog {
 	
 	private void init()
 	{
+		setModal(true);
 		setTitle("Thêm sách");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(BookEditorJDialog.class.getResource("/com/duan/icon/icons8_edit_property_50px.png")));
 		try {

@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.User;
@@ -40,7 +41,7 @@ public class SelectUserJDialog extends JDialog {
 	public static final int STATUS_SELECTED = 1;
 	
 	private JPanel contentPane;
-	private JTable tblUser;
+	private CustomJTableBlue tblUser;
 	private JLabel lblTmTheoTn;
 	private JTextField textField;
 	
@@ -86,7 +87,7 @@ public class SelectUserJDialog extends JDialog {
 		scrollPane.setBounds(5, 48, 356, 218);
 		contentPane.add(scrollPane);
 		
-		tblUser = new JTable();
+		tblUser = new CustomJTableBlue();
 		tblUser.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) 

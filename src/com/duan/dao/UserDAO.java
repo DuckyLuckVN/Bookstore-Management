@@ -25,6 +25,22 @@ public class UserDAO
 
     }
     
+    public static ArrayList<User> search(String keyword) throws SQLException
+    {
+        ArrayList<User> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [USER] WHERE username LIKE ? OR fullname LIKE ?", 
+        													"%" + keyword + "%", 
+        													"%" + keyword + "%");
+        
+        while (rs.next())
+        {
+        	User e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+
+    }
+    
     public static boolean insert(User user ) throws SQLException
     {
         String sql = "INSERT INTO [USER] Values(?, ?, ?, ?, ?, ?, ?, ?)";
@@ -47,7 +63,7 @@ public class UserDAO
     public static boolean update(User user , int id) throws SQLException
     {
         String sql = "UPDATE [USER] SET username=?, password=?, fullname=?,"
-                + "date_of_birth=?, email=?, phone_number=?, sex=?, created_date Where id=?";
+                + "date_of_birth=?, email=?, phone_number=?, sex=?, created_date = ? Where id=?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
 								        		user.getUsername(), 
@@ -78,6 +94,18 @@ public class UserDAO
     {
         String sql = "SELECT * FROM [USER] WHERE id = ?";
         ResultSet rs = JDBCHelper.executeQuery(sql, id);
+        
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        return null;
+    }
+    
+    public static User findByUsername(String username) throws SQLException
+    {
+        String sql = "SELECT * FROM [USER] WHERE username = ?";
+        ResultSet rs = JDBCHelper.executeQuery(sql, username);
         
         if (rs.next())
         {
