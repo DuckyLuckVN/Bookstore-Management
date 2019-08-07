@@ -50,6 +50,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JFormattedTextField;
 
 public class UserJFrame extends JFrame {
 
@@ -127,14 +128,17 @@ public class UserJFrame extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
 			{
-				fillToTableSearch();
+				loadListToUser();
+				fillToTable();
 			}
 		});
 		txtsearch.setColumns(10);
+		
+		JButton btnNewButton = new JButton("New button");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
@@ -144,7 +148,9 @@ public class UserJFrame extends JFrame {
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap())
+					.addGap(18)
+					.addComponent(btnNewButton)
+					.addGap(285))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -155,7 +161,9 @@ public class UserJFrame extends JFrame {
 							.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+									.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+									.addComponent(btnNewButton))
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED))
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -345,7 +353,12 @@ public class UserJFrame extends JFrame {
 				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa?", "Thông báo", JOptionPane.YES_NO_OPTION);
 				if (luachon == JOptionPane.YES_OPTION) 
 				{
-					delete();
+					try {
+						delete();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				
 			}
@@ -411,7 +424,7 @@ public class UserJFrame extends JFrame {
 		try 
 		{
 			dao = new UserDAO();
-			list = dao.getAll();
+			list = dao.search(txtsearch.getText());
 			if (list.size() > 0) 
 			{
 				fillToTable();
@@ -606,10 +619,10 @@ public class UserJFrame extends JFrame {
 		
 	}
 	
-	public void delete()
+	public void delete() throws SQLException
 	{
 		dao = new UserDAO();
-		
+		list = dao.search(txtsearch.getText());
 		try 
 		{
 			if (dao.delete(list.get(index).getId())) 
@@ -624,23 +637,25 @@ public class UserJFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
-	public void fillToTableSearch()
-    {
-        
-        model = (DefaultTableModel) tblUser.getModel();
-        model.setRowCount(0);
-        
-        for (User user : list) 
-        {
-            boolean isFound = Pattern.compile("^(?i)[([\\w\\s][\\p{L}\\s])]*" + txtsearch.getText() + "[([\\w\\s][\\p{L}\\s])]*$", 
-					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(user.getFullname()).matches();
-            
-            if (isFound) 
-            {
-                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};                
-                model.addRow(rows);
-            }
-        }  
-    }
+//	
+//	public void fillToTableSearch()
+//    {
+//		index = tblUser.getSelectedRow();
+//		
+//        
+//        model = (DefaultTableModel) tblUser.getModel();
+//        model.setRowCount(0);
+//        
+//        for (User user : list) 
+//        {
+//            boolean isFound = Pattern.compile("^(?i)[([\\w\\s][\\p{L}\\s])]*" + txtsearch.getText() + "[([\\w\\s][\\p{L}\\s])]*$", 
+//					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(user.getFullname()).matches();
+//            
+//            if (isFound) 
+//            {
+//                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};                
+//                model.addRow(rows);
+//            }
+//        }  
+//    }
 }

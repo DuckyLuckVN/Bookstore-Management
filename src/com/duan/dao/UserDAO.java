@@ -25,6 +25,22 @@ public class UserDAO
 
     }
     
+    public static ArrayList<User> search(String keyword) throws SQLException
+    {
+        ArrayList<User> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [USER] WHERE username LIKE ? OR fullname LIKE ?", 
+        													"%" + keyword + "%", 
+        													"%" + keyword + "%");
+        
+        while (rs.next())
+        {
+        	User e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+
+    }
+    
     public static boolean insert(User user ) throws SQLException
     {
         String sql = "INSERT INTO [USER] Values(?, ?, ?, ?, ?, ?, ?, ?)";
