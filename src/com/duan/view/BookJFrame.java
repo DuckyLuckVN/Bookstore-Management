@@ -19,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.controller.ExportExcel;
 import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
@@ -37,6 +38,8 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
@@ -57,11 +60,14 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
+import java.awt.Desktop;
 
 public class BookJFrame extends JFrame {
 
@@ -102,7 +108,7 @@ public class BookJFrame extends JFrame {
 	private JMenuItem mntmXemChiTit;
 	private JMenuItem mntmSa;
 	private JMenuItem mntmXa;
-	private JButton btnXutExcel;
+	private JButton btnExportExcel;
 
 	public static void main(String[] args) 
 	{
@@ -386,8 +392,33 @@ public class BookJFrame extends JFrame {
 		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
 		
-		btnXutExcel = new JButton("Xuất Excel");
-		btnXutExcel.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
+		btnExportExcel = new JButton("Xuất Excel");
+		btnExportExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try {
+				JFileChooser chooser = new JFileChooser();
+				int status = chooser.showOpenDialog(contentPane);
+				
+				if (status == chooser.APPROVE_OPTION)
+				{
+					String path = chooser.getSelectedFile().getAbsoluteFile().toString();
+					File file = new File(path + ".xls");
+					if (ExportExcel.writeBook(file, BookDAO.getAll()))
+					{
+						Desktop.getDesktop().open(file);
+					}
+				}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnExportExcel.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -398,7 +429,7 @@ public class BookJFrame extends JFrame {
 							.addGap(4)
 							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
 							.addGap(402)
-							.addComponent(btnXutExcel))
+							.addComponent(btnExportExcel))
 						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
 					.addGap(6)
 					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
@@ -417,7 +448,7 @@ public class BookJFrame extends JFrame {
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(1)
 									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-								.addComponent(btnXutExcel))
+								.addComponent(btnExportExcel))
 							.addGap(6)
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))

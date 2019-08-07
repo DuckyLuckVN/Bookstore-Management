@@ -229,6 +229,7 @@ public class ExportExcel
 			sheet.autoSizeColumn(8);
 			sheet.autoSizeColumn(9);
 			sheet.autoSizeColumn(10);
+			sheet.autoSizeColumn(11);
 			
 			//Tiến hành ghi file
 			FileOutputStream fos = new FileOutputStream(file);

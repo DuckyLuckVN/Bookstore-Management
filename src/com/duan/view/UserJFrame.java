@@ -56,7 +56,7 @@ import javax.swing.JFormattedTextField;
 public class UserJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tblUser;
+	private CustomJTableRed tblUser;
 	private JTextField txtsearch;
 	private JTextField txtUsername;
 	private JTextField txtPassword;
@@ -369,7 +369,8 @@ public class UserJFrame extends JFrame {
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnXa);
 		
-		tblUser = new JTable();
+		tblUser = new CustomJTableRed();
+		tblUser.setRowHeight(30);
 		tblUser.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {

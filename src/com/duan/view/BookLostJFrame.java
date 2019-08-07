@@ -195,6 +195,14 @@ public class BookLostJFrame extends JFrame {
 			{
 				eventTableSelectRow();
 			}
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				if (e.getClickCount() >= 2)
+				{
+					showBookLostDetail();
+				}
+			}
 		});
 		tblBookLost.setRowHeight(35);
 		tblBookLost.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN THUÊ", "TK THUÊ", "NV BÁO MẤT", "NGÀY BÁO MẤT", "TỔNG SÁCH MẤT", "TỔNG TIỀN PHẠT"}) 

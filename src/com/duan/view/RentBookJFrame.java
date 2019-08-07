@@ -384,7 +384,7 @@ public class RentBookJFrame extends JFrame {
 			{
 				if (e.getClickCount() >= 2)
 				{
-					//showBookDetail();
+					showRentBookDetail();
 				}
 			}
 		});
