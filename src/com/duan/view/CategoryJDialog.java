@@ -159,26 +159,8 @@ public class CategoryJDialog extends JDialog {
 		
 		JButton btnThm = new JButton(" Lưu");
 		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
-				if (ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				try {
-					String user="sa";
-					String pass = "123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql="insert into tblCategory scrollPane value(?,?,?)";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1,txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-				} catch (Exception e2) {
-					System.out.print(e);
-				}
+			public void actionPerformed(ActionEvent e) 
+			{
 
 			}
 		});
@@ -190,29 +172,9 @@ public class CategoryJDialog extends JDialog {
 		JButton btnCpNht = new JButton("Cập nhật");
 		btnCpNht.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					String user ="sa";
-					String pass ="123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore2";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql = "update tblCategory set uMaTheLoai=?, uTenTheLoai=?, uGhiChu=?";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1, txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-					con.close();
-					LoadDataToJTable();
-				} catch (Exception e) {
-					System.out.print(e);
-				}
+
 			}
 
-			private void LoadDataToJTable() {
-				// TODO Auto-generated method stub
-				
-			}
 		});
 		btnCpNht.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
@@ -222,34 +184,8 @@ public class CategoryJDialog extends JDialog {
 		JButton btnXa = new JButton("Xóa");
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
-				if(ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				Connection c = null;
-				PreparedStatement ps = null;
-               try {
-            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-            	   ps = c.prepareStatement("Delete From tblCategory where id = ?");
-            	   ps.setString(1, txtMaTheLoai.getText());
-            	   ret = ps.executeUpdate();
-            	   if (ret != -1) {
-            		   JOptionPane.showMessageDialog(rootPane, "Thông đã được xóa");  
-            	   }
-			} catch (Exception ex) {
-				 ex.printStackTrace();
-			}finally {
-				try {
-					if (c != null) {
-					     c.close();
-					   }
-					if (ps != null) {
-					     ps.close();
-					   }
-				} catch (Exception ex2) {
-					   ex2.printStackTrace();
-				}
-			}
+
+
 			}
 		});
 		btnXa.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
@@ -277,6 +213,5 @@ public class CategoryJDialog extends JDialog {
 	public void test()
 	{
 		txtGhiChu.getText();
-		//then 
 	}
 }
