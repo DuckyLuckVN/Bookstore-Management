@@ -219,6 +219,10 @@ public class CategoryJDialog extends JDialog {
 		//ĐỊNH NGHĨA NÚT CẬP NHẬT(update)
 		btnCpNht.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn cập nhật không ?", "Chọn", JOptionPane.YES_NO_OPTION);
+				if(ret != JOptionPane.YES_OPTION) {
+					return;
+				}
 				try {
 					String user ="sa";
 					String pass ="123";
@@ -230,7 +234,10 @@ public class CategoryJDialog extends JDialog {
 					st.setString(1, txtTenTheLoai.getText());
 					st.setString(2, txtGhiChu.getText());
 					st.setString(3, txtMaTheLoai.getText());
-					st.executeUpdate();
+					ret = st.executeUpdate();
+					if (ret != -1) {
+			              JOptionPane.showMessageDialog(rootPane, "Cập nhật dữ liệu thành công");
+					  }
 					LoadDataToJtable();
 				} catch (Exception e) {
 					System.out.print(e);
@@ -269,6 +276,9 @@ public class CategoryJDialog extends JDialog {
 				 if (ret != JOptionPane.YES_OPTION) {
 				 return;
 				 }
+				 //trường hợp trùng mã thể loại
+				 
+				 
 				// Câu lệnh insert
 				 String insert = "insert into CATEGORY values(?, ?, ?)";
 				 System.out.println(insert);
@@ -287,6 +297,9 @@ public class CategoryJDialog extends JDialog {
 					  LoadDataToJtable();
 				} catch (Exception e2) {
 					 e2.printStackTrace();
+					 if (((SQLException) e2).getErrorCode() == 2627) {
+						JOptionPane.showMessageDialog(rootPane, "Mã thể loại đã tồn tại");
+					 }
 				}finally {
 					try {
 					    if (conn != null) {
@@ -316,10 +329,10 @@ public class CategoryJDialog extends JDialog {
             	   ps = c.prepareStatement("delete from CATEGORY where id= ?");
             	   ps.setString(1, txtMaTheLoai.getText());
             	   ret = ps.executeUpdate();
-            	   if (ret != -1) {
-            		   JOptionPane.showMessageDialog(rootPane, "Thể loại đã được xóa"); 
-            	   }
             	   LoadDataToJtable();
+            	   if (ret != -1) {
+            		   JOptionPane.showMessageDialog(rootPane, "Dữ liệu đã được xóa"); 
+            	   }
 			} catch (Exception ex) {
 				 System.out.println(ex);
 			}

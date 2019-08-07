@@ -40,10 +40,41 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Vector;
 import java.awt.event.ActionEvent;
 
 public class LocationJDialog extends JDialog {
+	String header[]= {"MÃ KỆ SÁCH","TÊN KỆ","SỨC CHỨA","GHI CHÚ"};
+	DefaultTableModel model = new DefaultTableModel(header, 0);
+	public void CategoryJDialog() 
+	{
+		LoadDataToJtable();
+	}
+	// ĐỔ DỮ LIỆU LÊN BẢNG LOCATION
+	public void LoadDataToJtable() {
+		Connection conn = null;
+    	java.sql.Statement st = null;
+    	ResultSet rs = null;
+    	try {
+    		model.setRowCount(0);
+		 	conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
+		 	st = conn.createStatement();
+			String sql = "select * from LOCATION";
+			rs = st.executeQuery(sql);
+			 while (rs.next()) {
+				   Vector data = new Vector();
+				   data.add(rs.getString(1));
+				   data.add(rs.getString(2));
+				   data.add(rs.getString(3));
+				   data.add(rs.getString(4));
+				   model.addRow(data);
+				 }
+			 tblLocation.setModel(model);conn.close();
+		} catch (Exception e) {
+			 System.out.println(e);
+		} 
+	}
 
 	private JPanel contentPane;
 	private JTable tblLocation;
@@ -180,37 +211,31 @@ public class LocationJDialog extends JDialog {
 		
 		//ĐỊNH NGHĨA NÚT lƯU
 		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
+				// Nếu không nhập tên kệ
+				if (txtTenKe.getText().isEmpty()) {
+				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống tên kệ");
+				 txtTenKe.requestFocus();
+				 return;
+				}
 				// Nếu không nhập mã kệ sách
 				if (txtMaKeSach.getText().isEmpty()) {
 				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống mã kệ sách");
 				 txtMaKeSach.requestFocus();
 				 return;
 				}
-				//nếu không nhập tên kệ
-				if (txtTenKe.getText().isEmpty()) {
-					 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống tên kệ");
-					 txtTenKe.requestFocus();
-					 return;
-					}
-				//nếu không nhập sức chứa
-				if (txtSucChua.getText().isEmpty()) {
-					 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống sức chứa");
-					 txtSucChua.requestFocus();
-					 return;
-					}
 				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu ?", "Confirm", JOptionPane.YES_NO_OPTION);
 				// Trường hợp không lưu
 				 if (ret != JOptionPane.YES_OPTION) {
 				 return;
 				 }
-				//CÂU LỆNH INSERT
-				String insert = "insert into LOCATION values(?, ?, ?, ?)";
+				// Câu lệnh insert
+				 String insert = "insert into LOCATION values(?, ?, ?, ?)";
 				 System.out.println(insert);
 				 Connection conn = null;
 				 PreparedStatement ps = null;
 				 try {
-					 conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
+					  conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
 					  ps = conn.prepareStatement(insert);
 					  ps.setString(1, txtMaKeSach.getText());
 					  ps.setString(2, txtTenKe.getText());
@@ -221,8 +246,11 @@ public class LocationJDialog extends JDialog {
 				              JOptionPane.showMessageDialog(rootPane, "Dữ liệu lưu thành công");
 						  }
 					  LoadDataToJtable();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (Exception e2) {
+					 e2.printStackTrace();
+					 if (((SQLException) e2).getErrorCode() == 2627) {
+							JOptionPane.showMessageDialog(rootPane, "Mã thể loại đã tồn tại");
+						 }
 				}finally {
 					try {
 					    if (conn != null) {
@@ -238,28 +266,28 @@ public class LocationJDialog extends JDialog {
 			}
 		});
 		//ĐỊNH NGHĨA NÚT XÓA 
-				btnXa.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
-						if(ret != JOptionPane.YES_OPTION) {
-							return;
-						}
-						Connection c = null;
-						PreparedStatement ps = null;
-		               try {
-		            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-		            	   ps = c.prepareStatement("delete from LOCATION where id= ?");
-		            	   ps.setString(1, txtMaKeSach.getText());
-		            	   ret = ps.executeUpdate();
-		            	   if (ret != -1) {
-		            		   JOptionPane.showMessageDialog(rootPane, "Thể loại đã được xóa"); 
-		            	   }
-		            	   LoadDataToJtable();
-					} catch (Exception ex) {
-						 System.out.println(ex);
-					}
-					}
-				});
+		btnXa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
+				if(ret != JOptionPane.YES_OPTION) {
+					return;
+				}
+				Connection c = null;
+				PreparedStatement ps = null;
+               try {
+            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
+            	   ps = c.prepareStatement("delete from LOCATION where id= ?");
+            	   ps.setString(1, txtMaKeSach.getText());
+            	   ret = ps.executeUpdate();
+            	   LoadDataToJtable();
+            	   if (ret != -1) {
+            		   JOptionPane.showMessageDialog(rootPane, "Dữ liệu đã được xóa"); 
+            	   }
+			} catch (Exception ex) {
+				 System.out.println(ex);
+			}
+			}
+		});
 				//ĐỊNH NGHĨA NÚT MỚI 
 				btnMi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -272,9 +300,9 @@ public class LocationJDialog extends JDialog {
 				});
 				//ĐỊNH NGHĨA NÚT CẬP NHẬT
 				btnCpNht.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn cập nhật dữ liệu ?", "Confirm", JOptionPane.YES_NO_OPTION);
-						if (ret != JOptionPane.YES_OPTION) {
+					public void actionPerformed(ActionEvent arg0) {
+						int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn cập nhật không ?", "Chọn", JOptionPane.YES_NO_OPTION);
+						if(ret != JOptionPane.YES_OPTION) {
 							return;
 						}
 						try {
@@ -283,56 +311,24 @@ public class LocationJDialog extends JDialog {
 							Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 							String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore";
 							Connection con = DriverManager.getConnection(url, user, pass);
-							String sql = "update LOCATION set location_name=?, max_storage=?, description=? where id=?";
+							String sql = "update LOCATION set location_name=?, max_storage=?,description=? where id=?" ;
 							PreparedStatement st = con.prepareStatement(sql);
 							st.setString(1, txtTenKe.getText());
 							st.setString(2, txtSucChua.getText());
 							st.setString(3, txtGhiChu.getText());
 							st.setString(4, txtMaKeSach.getText());
-							st.executeUpdate();
-							con.close();
+							ret = st.executeUpdate();
+							if (ret != -1) {
+					              JOptionPane.showMessageDialog(rootPane, "Cập nhật dữ liệu thành công");
+							  }
 							LoadDataToJtable();
-						} catch (Exception ex) {
-							System.out.print(ex);
+						} catch (Exception e) {
+							System.out.print(e);
 						}
 					}
 				});
+				LoadDataToJtable();
 	}
-	//ĐỌC DỮ LIỆU TỪ BẢNG LOCATION
-	String header[]= {"Mã Kệ Sách","Tên kệ","Sức chứa","Ghi chú"};
-	DefaultTableModel model = new DefaultTableModel(header, 0);
 	
-	public void CategoryJDialog() {
-		LoadDataToJtable();
-	}
-
-	public void LoadDataToJtable() {
-		Connection conn = null;
-    	java.sql.Statement st = null;
-    	ResultSet rs = null;
-    	try {
-    		conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
-			String sql = "select * from LOCATION";
-			if (txtTenKe.getText().length() > 0) {
-				   sql = sql + " where location_name like '%" + txtTenKe.getText() + "%'";
-			}
-				   st = conn.createStatement();
-					rs = st.executeQuery(sql);
-					Vector data = null;
-					model.setRowCount(0);
-					 while (rs.next()) {
-						   data = new Vector();
-						   data.add(rs.getString(1));
-						   data.add(rs.getString(2));
-						   data.add(rs.getString(3));
-						   data.add(rs.getString(4));
-						   model.addRow(data);
-						 }
-					 tblLocation.setModel(model);conn.close();
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-		
-	}
 }
 
