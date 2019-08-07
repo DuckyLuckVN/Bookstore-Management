@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="src/com/duan/library/sqljdbc41.jar"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar" sourcepath="jgoodies-forms-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="src/com/duan/library/JPanelSlider.jar"/>
-	<classpathentry kind="lib" path="C:/JAVA NETBEAN/Tài Liệu JAVA3/JAVA3_SOF203/JAVA3_SOF203/src/Labs/Lab8/javax.mail.jar"/>
 	<classpathentry kind="lib" path="src/com/duan/library/activation.jar"/>
 	<classpathentry kind="lib" path="src/com/duan/library/javax.mail.jar"/>
 	<classpathentry kind="output" path="bin"/>
