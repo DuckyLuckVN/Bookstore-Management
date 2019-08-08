@@ -62,6 +62,7 @@ public class LoginJFrame extends JDialog
 	
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
+	private JProgressBar proLoading;
 
 
 	public static void main(String[] args) 
@@ -224,7 +225,7 @@ public class LoginJFrame extends JDialog
 		txtPassword.setBounds(10, 124, 321, 46);
 		pnlForm.add(txtPassword);
 		
-		JButton btnLogin = new JButton("Đăng Nhập");
+		btnLogin = new JButton("Đăng Nhập");
 		AdminDAO dao = new AdminDAO();
 		
 		btnLogin = new JButton("Đăng Nhập");
@@ -245,7 +246,6 @@ public class LoginJFrame extends JDialog
 							{
 								AccountSave.setAdmin(admin);
 								JOptionPane.showMessageDialog(contentPane, "Đăng nhập thành công!");
-								dispose();
 								active();
 							}
 							else 
@@ -264,7 +264,6 @@ public class LoginJFrame extends JDialog
 						e2.printStackTrace();
 					}
 				}
-				animationWelcome();
 			}
 		});
 		btnLogin.addMouseListener(new MouseAdapter() {
@@ -318,12 +317,11 @@ public class LoginJFrame extends JDialog
 		lblManagerment.setBounds(111, 68, 286, 57);
 		panel.add(lblManagerment);
 		
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setBorder(null);
-		progressBar.setIndeterminate(true);
-		progressBar.setForeground(new Color(255, 69, 0));
-		progressBar.setBounds(0, 492, 386, 8);
-		panel.add(progressBar);
+		proLoading = new JProgressBar();
+		proLoading.setBorder(null);
+		proLoading.setForeground(new Color(255, 69, 0));
+		proLoading.setBounds(0, 492, 386, 8);
+		panel.add(proLoading);
 		
 		pnlWelcome = new JPanel();
 		pnlWelcome.setOpaque(false);
@@ -385,8 +383,52 @@ public class LoginJFrame extends JDialog
 		}).start();
 	}
 	
+	//Chạy processbar để kích hoạt
+	public void runProcessBar()
+	{
+		new Thread(new Runnable() 
+		{
+			int maxValue = proLoading.getMaximum();
+			@Override
+			public void run() 
+			{
+				try 
+				{
+					while (true)
+					{
+						int value = proLoading.getValue();
+						if (value < maxValue)
+						{
+							proLoading.setValue(++value);
+							Thread.sleep(45);
+						}
+						else
+						{
+							dispose();
+							showMainJFrame();
+							break;
+						}
+					}
+				} 
+				catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	public void showMainJFrame()
+	{
+		MainJFrame2 mainJFrame = new MainJFrame2();
+		mainJFrame.addContainer();
+		mainJFrame.setVisible(true);
+	}
+	
+	//Goi ham nay khi login thanh cong
 	public void active()
 	{
-		//Goi ham nay khi login thanh cong
+		animationWelcome();
+		runProcessBar();
 	}
 }

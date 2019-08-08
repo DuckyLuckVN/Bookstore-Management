@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
@@ -249,7 +250,7 @@ public class AdminJFrame extends JFrame {
 		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		pnlController.add(btnDelete);
 		
-		tblUser = new JTable();
+		tblUser = new CustomJTableRed();
 		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢN", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
 		{
 			public boolean isCellEditable(int row, int column) {
@@ -548,7 +549,7 @@ public class AdminJFrame extends JFrame {
 		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
 		model.setRowCount(0);
 		try {
-			List<Admin> list = admimDao.getAllAdmin();
+			List<Admin> list = admimDao.getAll();
 			for (Admin admin : list) {
 				Object[] rowObjects = 
 					{
