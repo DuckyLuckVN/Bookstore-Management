@@ -768,6 +768,7 @@ public class MainJFrame2 extends JFrame {
 	public void logout()
 	{
 		dispose();
+		AccountSave.setAdmin(null);
 		loginJFrame.setVisible(true);
 	}
 	

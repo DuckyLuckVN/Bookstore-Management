@@ -251,6 +251,7 @@ public class AdminJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		tblUser = new CustomJTableRed();
+		tblUser.setRowHeight(30);
 		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢN", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
 		{
 			public boolean isCellEditable(int row, int column) {

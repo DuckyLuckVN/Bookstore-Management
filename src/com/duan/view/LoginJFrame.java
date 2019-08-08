@@ -63,6 +63,8 @@ public class LoginJFrame extends JDialog
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
 	private JProgressBar proLoading;
+	private Admin admin;
+	private JLabel lblWelcomeName;
 
 
 	public static void main(String[] args) 
@@ -239,7 +241,7 @@ public class LoginJFrame extends JDialog
 					String username = txtUsername.getText();
 					String password = txtPassword.getText();
 					try {	
-						Admin admin = dao.findByUsername(username); 
+						admin = dao.findByUsername(username); 
 						if (admin != null) 
 						{
 							if (password.equals(admin.getPassword())) 
@@ -336,18 +338,18 @@ public class LoginJFrame extends JDialog
 		SwingHelper.setAutoResizeIcon(lblWelcome, Image.SCALE_DEFAULT);
 		pnlWelcome.add(lblWelcome);
 		
-		JLabel lblNguyniHo = new JLabel("Đào Quang Tiến");
-		lblNguyniHo.setForeground(new Color(255, 255, 255));
-		lblNguyniHo.setFont(new Font("Tahoma", Font.BOLD, 34));
-		lblNguyniHo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNguyniHo.setBounds(0, 132, 354, 58);
-		pnlWelcome.add(lblNguyniHo);
+		lblWelcomeName = new JLabel("Đào Quang Tiến");
+		lblWelcomeName.setForeground(new Color(255, 255, 255));
+		lblWelcomeName.setFont(new Font("Tahoma", Font.BOLD, 34));
+		lblWelcomeName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeName.setBounds(0, 132, 354, 58);
+		pnlWelcome.add(lblWelcomeName);
 		
-		JLabel lblangTiD = new JLabel("Đang tải dữ liệu...");
-		lblangTiD.setForeground(Color.WHITE);
-		lblangTiD.setHorizontalAlignment(SwingConstants.CENTER);
-		lblangTiD.setBounds(0, 295, 366, 28);
-		pnlWelcome.add(lblangTiD);
+		JLabel lblLoading = new JLabel("Đang tải dữ liệu...");
+		lblLoading.setForeground(Color.WHITE);
+		lblLoading.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLoading.setBounds(0, 295, 366, 28);
+		pnlWelcome.add(lblLoading);
 		
 		JLabel lblPhnMmQun = new JLabel("Phần mềm quản lý nhà sách chuyên nghiệp");
 		lblPhnMmQun.setBounds(40, 110, 342, 29);
@@ -362,7 +364,8 @@ public class LoginJFrame extends JDialog
 		int maxHeight = 332;
 		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/sunrise-400.gif")));
 		getContentPane().remove(btnLogin);
-
+		
+		
 		txtUsername.setEnabled(false);
 		txtPassword.setEnabled(false);
 		
@@ -428,6 +431,8 @@ public class LoginJFrame extends JDialog
 	//Goi ham nay khi login thanh cong
 	public void active()
 	{
+		lblWelcomeName.setText(admin.getFullname());
+		AccountSave.setAdmin(admin);
 		animationWelcome();
 		runProcessBar();
 	}

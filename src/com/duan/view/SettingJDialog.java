@@ -260,7 +260,7 @@ public class SettingJDialog extends JDialog {
 		lblNgay.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblNgay.setBounds(178, 21, 43, 24);
 		panel_1.add(lblNgay);
-		
+		setLocationRelativeTo(getOwner());
 		showDetail();
 	}
 	
