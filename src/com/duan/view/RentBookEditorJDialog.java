@@ -31,6 +31,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.BookDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;
@@ -58,7 +59,7 @@ public class RentBookEditorJDialog extends JDialog {
 	private JTextField txtSDT;
 	private JTextField txtNgaySinh;
 	private JTextField txtSoLuong;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JTextField txtMaTaiKhoang;
 	private JButton btnConfirm;
 	private JComboBox cboStatus;
@@ -67,13 +68,14 @@ public class RentBookEditorJDialog extends JDialog {
 
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
-	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame();
+	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog();
 	private RentBookJFrame rentBookJFrame;
 	private boolean isEditMode = false;
 	
 	private RentBook rentBook;
 	private User userSelect;
-	private List<Book> listBook = new ArrayList<Book>();
+	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
+	private List<BookProduct> listBookProductEdit = new ArrayList<BookProduct>();
 	
 	public static void main(String[] args) 
 	{
@@ -206,7 +208,7 @@ public class RentBookEditorJDialog extends JDialog {
 			{
 				try 
 				{
-					if (validateTable())
+					if (validateAll())
 					{
 						//Nếu không phải là edit mode thì tiến hành insert
 						if (isEditMode == false)
@@ -252,7 +254,7 @@ public class RentBookEditorJDialog extends JDialog {
 		scrollPane.setBounds(10, 270, 582, 138);
 		contentPane.add(scrollPane);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) 
@@ -270,7 +272,7 @@ public class RentBookEditorJDialog extends JDialog {
 				}
 			}
 		});
-		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "ĐÃ TRẢ", "XÓA"}) {
+		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG", "XÓA"}) {
 			
 			//Column = 4 -> cột "XÓA"
 			public boolean isCellEditable(int row, int column) {
@@ -327,7 +329,7 @@ public class RentBookEditorJDialog extends JDialog {
 		btnDeleteBook.setBounds(503, 235, 89, 26);
 		contentPane.add(btnDeleteBook);
 		
-		JLabel lblMSTi = new JLabel("Mã số:");
+		JLabel lblMSTi = new JLabel("ID Tài khoảng:");
 		lblMSTi.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblMSTi.setBounds(10, 13, 104, 26);
 		contentPane.add(lblMSTi);
@@ -353,6 +355,18 @@ public class RentBookEditorJDialog extends JDialog {
 				{
 					updateAmountNumber();				}
 			}
+		}
+	}
+	
+	public void fillToTable()
+	{
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		for (BookProduct product : listBookProduct)
+		{
+			Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), product.getPrice(), product.getAmount(), false};
+			model.addRow(rowData);
 		}
 	}
 	
@@ -403,7 +417,7 @@ public class RentBookEditorJDialog extends JDialog {
 		//Kiểm tra sách đã được chọn
 		if (selectBookJDialog.getStatus() == selectBookJDialog.STATUS_SELECTED)
 		{
-			listBook = selectBookJDialog.getListBookSelected();
+			listBookProduct = selectBookJDialog.getListBookProductSelected();
 			fillToTable();
 			updateAmountNumber();
 		}
@@ -419,18 +433,6 @@ public class RentBookEditorJDialog extends JDialog {
 		bookDetailJFrame.setVisible(true);
 	}
 	
-	public void fillToTable()
-	{
-		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
-		model.setRowCount(0);
-		
-		for (Book book : listBook)
-		{
-			Object[] rowData = {book.getId(), book.getTitle(), book.getPrice(), 1, false};
-			model.addRow(rowData);
-		}
-		
-	}
 	
 	//Thực hiện insert dữ liệu vào bảng Rentbook
 	public void insertRentbook() throws SQLException
@@ -506,13 +508,13 @@ public class RentBookEditorJDialog extends JDialog {
 			if (isChecked)
 			{
 				model.removeRow(i);
-				listBook.remove(i);
+				listBookProduct.remove(i);
 			}
 		}
 	}
 	
-	//Tiến hành kiểm tra tất cả giá trị trong bảng sách, trả về TRUE nếu hợp lệ, FALSE nếu không hợp lệ.
-	public boolean validateTable() throws SQLException
+	//Tiến hành kiểm tra tất cả giá trị trong JDialog, trả về TRUE nếu hợp lệ, FALSE nếu không hợp lệ.
+	public boolean validateAll() throws SQLException
 	{
 		boolean isSuccess = true;
 		String msg = "";
@@ -652,15 +654,15 @@ public class RentBookEditorJDialog extends JDialog {
 	public List<BookProduct> getListBookProduct()
 	{
 		List<BookProduct> list = new ArrayList<BookProduct>();
-		for (int i = 0; i < listBook.size(); i++)
+		for (int i = 0; i < listBookProduct.size(); i++)
 		{
-			Book book = listBook.get(i);
+			Book book = listBookProduct.get(i).getBook();
 			int amount = DataHelper.getInt(tblBook.getValueAt(i, 3).toString());
-			BookProduct bookProduct = new BookProduct(book, amount, book.getPrice());
+			BookProduct bookProduct = new BookProduct(book, amount, listBookProduct.get(i).getPrice());
 			list.add(bookProduct);
 		}
+		System.out.println(list.size());
 		return list;
-		
 	}
 	
 	public void setEditModel(RentBook rentBook)
@@ -679,13 +681,9 @@ public class RentBookEditorJDialog extends JDialog {
 			cboStatus.setSelectedIndex(rentBook.getStatus());
 			
 			//Lấy về danh sách các sách chi tiết dựa vào mã số thuê @rentbook_id
-			List<BookProduct> list = RentBookDetailDAO.getListProducts(rentBook.getId());
+			this.listBookProduct = RentBookDetailDAO.getListProducts(rentBook.getId());
 			
-			for (BookProduct product : list)
-			{
-				Object[] rowData = {product.getBook().getId(), product.getBook().getTitle(), product.getPrice(), product.getAmount(), false};
-				model.addRow(rowData);
-			}
+			fillToTable();
 			updateAmountNumber();
 		} 
 		catch (SQLException e) 

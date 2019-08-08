@@ -43,9 +43,9 @@ public class RentBookDetailDAO
         return count > 0;
     }
     
-    public static RentBookDetail findById(int rentbook_id, int book_id) throws SQLException
+    public static RentBookDetail findById(int rentbook_id, String book_id) throws SQLException
     {
-    	String sql = "SELECT * FROM RENTBOOK_DETAIL WHERE rentbook_id=?, book_id=?";
+    	String sql = "SELECT * FROM RENTBOOK_DETAIL WHERE rentbook_id=? AND book_id=?";
     	ResultSet rs = JDBCHelper.executeQuery(sql, rentbook_id, book_id);
     	if (rs.next())
     	{
@@ -73,6 +73,39 @@ public class RentBookDetailDAO
     	}
     	
     	return list;
+    }
+    
+    public static List<Book> getListBook(int rentbook_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getRentBookDetail(?)}", rentbook_id);
+    	List<Book> list = new ArrayList<>();
+    	while (rs.next())
+    	{
+    		String book_id = rs.getString(1);
+    		Book book = BookDAO.findByID(book_id);
+    		
+    		list.add(book);
+    	}
+    	
+    	return list;
+    }
+    
+    //Trả về tổng số lượng sách đã thuê của đơn thuê có mã rentbook_id
+    public static int getTotalBookRented(int rentbook_id) throws SQLException
+    {
+    	ResultSet rs = JDBCHelper.executeQuery("{call sp_getTotalRentbook(?)}", rentbook_id);
+    	if (rs.next())
+    	{
+    		return rs.getInt(1);
+    	}
+    	
+    	return -1;
+    }
+    
+    //Xóa hết RentBookDetail có mã rentbook là rentbook_id
+    public static boolean delete(int rentbook_id) throws SQLException
+    {
+    	return JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=?", rentbook_id) > 0;
     }
     
     public static void main(String[] args) throws SQLException {

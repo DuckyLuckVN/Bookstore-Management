@@ -5,13 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import javax.swing.JOptionPane;
 import com.duan.helper.JDBCHelper;
 import com.duan.model.Admin;
 
 public class AdminDAO 
 {
-    public static ArrayList<Admin> getAllAdmin() throws SQLException
+    public static ArrayList<Admin> getAll() throws SQLException
     {
         ArrayList<Admin> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM ADMIN");

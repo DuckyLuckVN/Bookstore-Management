@@ -13,9 +13,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.BookDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.Book;
+import com.duan.model.BookProduct;
 
 import java.awt.Toolkit;
 import java.sql.SQLException;
@@ -35,7 +37,7 @@ import java.awt.event.ActionEvent;
 public class SelectBookJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private JTable tblBook;
+	private CustomJTableBlue tblBook;
 	private JLabel lblTmTheoTn;
 	private JTextField textField;
 	
@@ -45,6 +47,7 @@ public class SelectBookJDialog extends JDialog {
 	
 	private List<Book> listBookSelected = new ArrayList<Book>();
 	private List<Book> listBook;
+	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
 	
 	
 	public static void main(String[] args) 
@@ -82,7 +85,7 @@ public class SelectBookJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(5, 49, 425, 191);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableBlue();
 		tblBook.setRowHeight(25);
 		tblBook.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TIÊU ĐỀ", "GIÁ BÁN", "CHỌN"}) 
 		{
@@ -168,9 +171,16 @@ public class SelectBookJDialog extends JDialog {
 		return this.listBookSelected;
 	}
 	
+	//Trả về danh sách các sách được chọn nhưng dưới dạng model BookProduct (tiện cho việc xử lý ở các jframe khác)
+	public List<BookProduct> getListBookProductSelected()
+	{
+		return this.listBookProduct;
+	}
+	
 	public void setListBookSelected() throws SQLException
 	{
 		listBookSelected.clear();
+		listBookProduct.clear();
 
 		int rowCount = tblBook.getRowCount();
 		//Lặp duyệt qua từng dòng trong bảng
@@ -182,9 +192,18 @@ public class SelectBookJDialog extends JDialog {
 			//Nếu được check thì lấy thông tin model của sách đó bỏ vào listBookSelected
 			if (isChecked )
 			{
+				//lấy thông tin trên bảng
 				String bookId = tblBook.getValueAt(i, 0).toString();
 				Book bookSelected = BookDAO.findByID(bookId);
+				
+				//thêm vào listBook
 				listBookSelected.add(bookSelected);
+				
+				//Thêm vào listBook dưới dạng BookProduct
+				BookProduct product = new BookProduct(bookSelected, 1, bookSelected.getPrice());
+				listBookProduct.add(product);
+				
+				//Cập nhật lại trạng thái
 				status = STATUS_SELECTED;
 			}
 		}
@@ -201,6 +220,11 @@ public class SelectBookJDialog extends JDialog {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setListBook(List<Book> listBook)
+	{
+		this.listBook = listBook;
 	}
 	
 	public void fillToTable()

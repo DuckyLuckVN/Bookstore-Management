@@ -12,6 +12,8 @@ import java.text.DecimalFormat;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 public class DataHelper 
 {
 	public static final String[] EXTENSIONS_FILE_IMAGE = {".JPEG", ".TIFF", ".PNG", ".JPG", ".RAW"};
@@ -60,6 +62,13 @@ public class DataHelper
 			return false;
 		}
 		return false;
+	}
+	
+	//Kiểm tra xem chuỗi truyền vào có phải là helper hay không
+	public static boolean isEmail(String email)
+	{
+		String regex = "\\w+@\\w+(\\.\\w+){1,3}";
+		return email.matches(regex);
 	}
 	
 	//Lấy ra đường dẫn URL đến source project

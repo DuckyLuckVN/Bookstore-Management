@@ -18,11 +18,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
+import com.duan.dao.RentBookDetailDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 import com.duan.model.RentBook;
@@ -57,6 +60,7 @@ import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.TitledBorder;
 
 public class RentBookJFrame extends JFrame {
 
@@ -74,7 +78,7 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblRentBook;
+	private CustomJTableRed tblRentBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -89,6 +93,8 @@ public class RentBookJFrame extends JFrame {
 	private FindRentBookJFrame findRentBookJFrame = new FindRentBookJFrame(this);
 	private RentBookEditorJDialog insertRentBookJDialog = new RentBookEditorJDialog(this);
 	private RentBookEditorJDialog editorRentbookJDialog = new RentBookEditorJDialog(this);
+	private RentBookDetailJDialog rentBookDetailJDialog = new RentBookDetailJDialog();
+	
 	private List<RentBook> listRentBook = new ArrayList<RentBook>();
 	private int indexSelect = -1;
 	
@@ -153,14 +159,15 @@ public class RentBookJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
-		pnlController.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
 		btnDetail = new JButton("Xem chi tiết");
 		btnDetail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
+			public void actionPerformed(ActionEvent e) 
+			{
+				showRentBookDetail();
 			}
 		});
 		SwingHelper.setTextBelowIconButton(btnDetail);
@@ -228,6 +235,7 @@ public class RentBookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		pnlSelect = new JPanel();
 		
@@ -356,7 +364,7 @@ public class RentBookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblRentBook = new JTable();
+		tblRentBook = new CustomJTableRed();
 		tblRentBook.setRowHeight(30);
 		tblRentBook.addKeyListener(new KeyAdapter() {
 			@Override
@@ -376,7 +384,7 @@ public class RentBookJFrame extends JFrame {
 			{
 				if (e.getClickCount() >= 2)
 				{
-					//showBookDetail();
+					showRentBookDetail();
 				}
 			}
 		});
@@ -420,12 +428,12 @@ public class RentBookJFrame extends JFrame {
 			User user = UserDAO.findByID(rb.getUserId());
 			Admin admin = AdminDAO.findByID(rb.getAdminId());
 			
-			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), "dd/MM/yyyy");
+			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), SettingSave.getSetting().getDateFormat());
 			String returnedDate = "Chưa có";
 			String status = rb.getTitleStatus();
 			if (rb.getReturnedDate() != null)
 			{
-				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), "dd/MM/yyyy");
+				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), SettingSave.getSetting().getDateFormat());
 			}
 			
 			String[] data = {rb.getId() + "", user.getUsername(), admin.getUsername(), createdDate, returnedDate, status};
@@ -461,6 +469,7 @@ public class RentBookJFrame extends JFrame {
 	public void eventTableSelectRow()
 	{
 		indexSelect = tblRentBook.getSelectedRow();
+		
 		setControllModeTo_Editable();
 	}
 	
@@ -501,6 +510,16 @@ public class RentBookJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	
+	public void showRentBookDetail()
+	{
+		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
+		rentBookDetailJDialog.setLocationRelativeTo(this);
+		rentBookDetailJDialog.setDetailModel(rentbook_id);
+		rentBookDetailJDialog.showDetail();
+		rentBookDetailJDialog.fillToTable();
+		rentBookDetailJDialog.setVisible(true);
 	}
 	
 	public void showInsertRentBook()

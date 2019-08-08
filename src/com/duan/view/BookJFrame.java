@@ -19,9 +19,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.controller.ExportExcel;
+import com.duan.custom.CustomJTableRed;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 
@@ -35,11 +38,16 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Color;
@@ -52,8 +60,14 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.border.TitledBorder;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.Desktop;
 
 public class BookJFrame extends JFrame {
 
@@ -68,10 +82,11 @@ public class BookJFrame extends JFrame {
 	private JMenu mnExportTo;
 	private JMenuItem mntmCreateBackupFile;
 	private JPanel pnlController;
+	private JButton btnDetail;
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private JTable tblBook;
+	private CustomJTableRed tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -82,15 +97,18 @@ public class BookJFrame extends JFrame {
 	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
 	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
-	private BookDetailJFrame bookDetailJFrame = new BookDetailJFrame(this);
-	private JButton btnDetail;
+	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
 	private JTextField textField;
 	
 	private List<Book> listBook = new ArrayList<Book>();
 	private Book book;
 	private int indexSelect = -1;
-	private JButton btnNhpKho;
+	private JPopupMenu popupMenu;
+	private JMenuItem mntmXemChiTit;
+	private JMenuItem mntmSa;
+	private JMenuItem mntmXa;
+	private JButton btnExportExcel;
 
 	public static void main(String[] args) 
 	{
@@ -153,6 +171,7 @@ public class BookJFrame extends JFrame {
 		setContentPane(contentPane);
 		
 		pnlController = new JPanel();
+		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		pnlController.setPreferredSize(new Dimension(150, 5));
 		
@@ -187,6 +206,7 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
+					System.out.println(getBookSelected().getImage());
 					showEditorBook(getBookSelected());
 				} 
 				catch (SQLException e1) 
@@ -229,6 +249,7 @@ public class BookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		pnlSelect = new JPanel();
 		
@@ -243,42 +264,16 @@ public class BookJFrame extends JFrame {
 		textField.setBorder(null);
 		textField.setColumns(10);
 		
-		btnNhpKho = new JButton("Nhập kho");
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addComponent(pnlSelect, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
-							.addComponent(btnNhpKho, GroupLayout.PREFERRED_SIZE, 145, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNhpKho, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlSelect, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
-		);
+		popupMenu = new JPopupMenu();
+		
+		mntmXemChiTit = new JMenuItem("Xem chi tiết");
+		popupMenu.add(mntmXemChiTit);
+		
+		mntmSa = new JMenuItem("Sửa");
+		popupMenu.add(mntmSa);
+		
+		mntmXa = new JMenuItem("Xóa");
+		popupMenu.add(mntmXa);
 		pnlTime.setLayout(new BorderLayout(0, 0));
 		
 		JLabel lblTime = new JLabel("23:15");
@@ -299,6 +294,7 @@ public class BookJFrame extends JFrame {
 					indexSelect = 0;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -314,6 +310,7 @@ public class BookJFrame extends JFrame {
 					indexSelect--;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -330,6 +327,7 @@ public class BookJFrame extends JFrame {
 					indexSelect++;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
@@ -346,14 +344,16 @@ public class BookJFrame extends JFrame {
 					indexSelect = rowCount - 1;
 					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
 					setControllModeTo_Editable();
+					eventTableSelectRow();
 				}
 			}
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblBook = new JTable();
+		tblBook = new CustomJTableRed();
+		tblBook.setShowHorizontalLines(false);
+		tblBook.setShowVerticalLines(true);
 		tblBook.setDragEnabled(true);
-		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -374,6 +374,10 @@ public class BookJFrame extends JFrame {
 				{
 					showBookDetail();
 				}
+				if (indexSelect != -1 && SwingUtilities.isRightMouseButton(e))
+				{
+					popupMenu.show(tblBook, e.getX(), e.getY());
+				}
 			}
 		});
 		tblBook.setRowHeight(35);
@@ -387,6 +391,72 @@ public class BookJFrame extends JFrame {
 		tblBook.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		tblBook.getColumnModel().getColumn(1).setPreferredWidth(200);
 		scrollPane.setViewportView(tblBook);
+		
+		btnExportExcel = new JButton("Xuất Excel");
+		btnExportExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try {
+				JFileChooser chooser = new JFileChooser();
+				int status = chooser.showOpenDialog(contentPane);
+				
+				if (status == chooser.APPROVE_OPTION)
+				{
+					String path = chooser.getSelectedFile().getAbsoluteFile().toString();
+					File file = new File(path + ".xls");
+					if (ExportExcel.writeBook(file, BookDAO.getAll()))
+					{
+						Desktop.getDesktop().open(file);
+					}
+				}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnExportExcel.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
+							.addGap(4)
+							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+							.addGap(402)
+							.addComponent(btnExportExcel))
+						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
+					.addGap(6)
+					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
+					.addGap(6)
+					.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnExportExcel))
+							.addGap(6)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
+						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
+					.addGap(6)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(pnlSelect, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
+		);
 		contentPane.setLayout(gl_contentPane);
 		//setLocationRelativeTo(getOwner());
 		try 
@@ -422,7 +492,7 @@ public class BookJFrame extends JFrame {
 		
 		for (Book e : listBook)
 		{
-			String price = DataHelper.getFormatForMoney(e.getPrice()) + " đ";
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
 			String[] rowData = 
 				{
@@ -517,6 +587,8 @@ public class BookJFrame extends JFrame {
 	{
 		indexSelect = tblBook.getSelectedRow();
 		setControllModeTo_Editable();
+		Rectangle cellRect = tblBook.getCellRect(indexSelect, 0, true);
+		tblBook.scrollRectToVisible(cellRect);
 	}
 	
 	
@@ -548,5 +620,22 @@ public class BookJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }

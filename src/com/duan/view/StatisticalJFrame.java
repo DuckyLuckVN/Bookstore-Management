@@ -1,6 +1,7 @@
 package com.duan.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -19,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.SwingConstants;
+import java.awt.SystemColor;
 
 public class StatisticalJFrame extends JFrame {
 
@@ -52,7 +55,7 @@ public class StatisticalJFrame extends JFrame {
 		
 		setTitle("Thống Kê");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 764, 584);
+		setBounds(100, 100, 791, 584);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -60,6 +63,33 @@ public class StatisticalJFrame extends JFrame {
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
+		
+		JPanel panel = new JPanel();
+		tabbedPane.addTab("Thống Kê Chung", null, panel, null);
+		panel.setLayout(null);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(255, 228, 181));
+		panel_1.setBounds(28, 39, 342, 88);
+		panel.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel label = new JLabel("");
+		label.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_user_credentials_64px.png")));
+		label.setBounds(10, 11, 61, 61);
+		panel_1.add(label);
+		
+		JLabel lblSchNhp = new JLabel("Sách Đã Nhập:");
+		lblSchNhp.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSchNhp.setFont(new Font("Tahoma", Font.BOLD, 22));
+		lblSchNhp.setBounds(81, 11, 161, 61);
+		panel_1.add(lblSchNhp);
+		
+		JLabel label_1 = new JLabel("335");
+		label_1.setHorizontalAlignment(SwingConstants.LEFT);
+		label_1.setFont(new Font("Tahoma", Font.BOLD, 27));
+		label_1.setBounds(252, 11, 74, 61);
+		panel_1.add(label_1);
 		
 		JPanel pnlSachBan = new JPanel();
 		tabbedPane.addTab("Sách Bán", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_books_32px_1.png")), pnlSachBan, null);

@@ -30,6 +30,19 @@ public class RentBookDAO
         return list;
     }
     
+    public static ArrayList<RentBook> getAllReturned() throws SQLException
+    {
+        ArrayList<RentBook> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK WHERE status=1");
+
+        while (rs.next())
+        {
+        	RentBook e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+    }
+    
     public static boolean insert(RentBook rb) throws SQLException
     {
         String sql = "INSERT INTO RENTBOOK Values(?, ?, ?, ?, ?)";
@@ -79,7 +92,7 @@ public class RentBookDAO
     	if (RentBookDAO.findById(rb.getId()) != null)
     	{
     		//Xóa các dữ liệu cũ, insert dữ liệu mới
-    		JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=?", rb.getId());
+    		RentBookDetailDAO.delete(rb.getId());
     		update(rb, rb.getId());
     		for (BookProduct bp : list)
     		{

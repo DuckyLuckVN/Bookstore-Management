@@ -59,7 +59,7 @@ import java.awt.event.MouseEvent;
 public class AdminJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private JTable tblUser;
+	private CustomJTableRed tblUser;
 	private JTextField txtFind;
 	private JTextField txtUsername;
 	private JTextField txtPassword;
