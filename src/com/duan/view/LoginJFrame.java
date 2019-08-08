@@ -257,9 +257,10 @@ public class LoginJFrame extends JDialog
 		panel.add(lblManagerment);
 		
 		JProgressBar progressBar = new JProgressBar();
+		progressBar.setBorder(null);
 		progressBar.setIndeterminate(true);
 		progressBar.setForeground(new Color(255, 69, 0));
-		progressBar.setBounds(0, 486, 386, 14);
+		progressBar.setBounds(0, 492, 386, 8);
 		panel.add(progressBar);
 		
 		pnlWelcome = new JPanel();
