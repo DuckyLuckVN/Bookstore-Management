@@ -43,7 +43,7 @@ public class LocationDAO
     
     public static boolean update(Location e , String id) throws SQLException
     {
-        String sql = "UPDATE dbo.LOCATIOn SET id=?, location_name=?, max_storage=?, descriptipn=? WHERE id=?";
+        String sql = "UPDATE dbo.LOCATIOn SET id=?, location_name=?, max_storage=?, description=? WHERE id=?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
 								        		e.getId(),

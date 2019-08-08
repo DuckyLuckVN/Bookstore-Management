@@ -11,6 +11,11 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import com.duan.dao.CategoryDAO;
+import com.duan.model.Category;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+
 import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
@@ -41,17 +46,26 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class CategoryJDialog extends JDialog {
 	String head[]= {"Mã thể loại","Tên thể loại","Ghi chú"};
 	DefaultTableModel model = new DefaultTableModel(head, 0);
-
+	
 	private JPanel contentPane;
 	private JTable tblCategory;
 	private JTextField txtMaTheLoai;
 	private JTextField txtTenTheLoai;
 	private JTextArea txtGhiChu;
-
+	private JButton btnDelete;
+	private JButton btnUpdate;
+	private JButton btnSave;
+	private JButton btnNew;
+	
+	ArrayList<Category> list = new ArrayList<>();
+	CategoryDAO dao;
+	int index = -1;
 	public static void main(String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -100,13 +114,14 @@ public class CategoryJDialog extends JDialog {
 		panel.setLayout(null);
 		
 		tblCategory = new JTable();
-		tblCategory.addMouseListener(new MouseAdapter() {
+		tblCategory.addMouseListener(new MouseAdapter() 
+		{
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				int row = tblCategory.getSelectedRow();
-				txtMaTheLoai.setText(tblCategory.getValueAt(row, 0).toString());
-				txtTenTheLoai.setText(tblCategory.getValueAt(row, 1).toString());
-				txtGhiChu.setText(tblCategory.getValueAt(row, 2).toString());
+			public void mouseClicked(MouseEvent e) 
+			{
+				showDetail();
+				setControllMode_Edit();
+				unLockForm();
 			}
 		});
 		tblCategory.setModel(new DefaultTableModel(null, new String[] {"MÃ THỂ LOẠI", "TÊN THỂ LOẠI", "GHI CHÚ"})
@@ -130,12 +145,14 @@ public class CategoryJDialog extends JDialog {
 		panel.add(lblMThLoi);
 		
 		txtMaTheLoai = new JTextField();
+		txtMaTheLoai.setEnabled(false);
 		txtMaTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtMaTheLoai.setBounds(97, 11, 237, 33);
 		panel.add(txtMaTheLoai);
 		txtMaTheLoai.setColumns(10);
 		
 		txtTenTheLoai = new JTextField();
+		txtTenTheLoai.setEnabled(false);
 		txtTenTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtTenTheLoai.setColumns(10);
 		txtTenTheLoai.setBounds(97, 55, 237, 33);
@@ -152,131 +169,283 @@ public class CategoryJDialog extends JDialog {
 		panel.add(lblGhiCh);
 		
 		txtGhiChu = new JTextArea();
+		txtGhiChu.setEnabled(false);
 		txtGhiChu.setBorder(new LineBorder(SystemColor.controlShadow));
 		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtGhiChu.setBounds(97, 99, 237, 65);
 		panel.add(txtGhiChu);
 		
-		JButton btnThm = new JButton(" Lưu");
-		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu mới ?", "Confirm", JOptionPane.YES_NO_OPTION);
-				if (ret != JOptionPane.YES_OPTION) {
-					return;
+		btnSave = new JButton(" Lưu");
+		btnSave.setEnabled(false);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				if (checkForm()) 
+				{
+					insert();
+					setControllMode_Nothing();
+					clearForm();
+					lockForm();
 				}
-				try {
-					String user="sa";
-					String pass = "123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url = "jdbc:sqlserver://localhost:1433;databaseName=BookStore";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql="insert into tblCategory scrollPane value(?,?,?)";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1,txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-				} catch (Exception e2) {
-					System.out.print(e);
-				}
-
-			}
-		});
-		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
-		btnThm.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Accept.png")));
-		btnThm.setBounds(364, 57, 105, 38);
-		contentPane.add(btnThm);
-		
-		JButton btnCpNht = new JButton("Cập nhật");
-		btnCpNht.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					String user ="sa";
-					String pass ="123";
-					Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-					String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore2";
-					Connection con = DriverManager.getConnection(url, user, pass);
-					String sql = "update tblCategory set uMaTheLoai=?, uTenTheLoai=?, uGhiChu=?";
-					PreparedStatement st = con.prepareStatement(sql);
-					st.setString(1, txtMaTheLoai.getText());
-					st.setString(2, txtTenTheLoai.getText());
-					st.setString(3, txtGhiChu.getText());
-					st.executeUpdate();
-					con.close();
-					LoadDataToJTable();
-				} catch (Exception e) {
-					System.out.print(e);
-				}
-			}
-
-			private void LoadDataToJTable() {
-				// TODO Auto-generated method stub
 				
 			}
 		});
-		btnCpNht.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Notes.png")));
-		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
-		btnCpNht.setBounds(364, 106, 105, 38);
-		contentPane.add(btnCpNht);
+		btnSave.setHorizontalAlignment(SwingConstants.LEFT);
+		btnSave.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Accept.png")));
+		btnSave.setBounds(364, 57, 105, 38);
+		contentPane.add(btnSave);
 		
-		JButton btnXa = new JButton("Xóa");
-		btnXa.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
-				if(ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				Connection c = null;
-				PreparedStatement ps = null;
-               try {
-            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-            	   ps = c.prepareStatement("Delete From tblCategory where id = ?");
-            	   ps.setString(1, txtMaTheLoai.getText());
-            	   ret = ps.executeUpdate();
-            	   if (ret != -1) {
-            		   JOptionPane.showMessageDialog(rootPane, "Thông đã được xóa");  
-            	   }
-			} catch (Exception ex) {
-				 ex.printStackTrace();
-			}finally {
-				try {
-					if (c != null) {
-					     c.close();
-					   }
-					if (ps != null) {
-					     ps.close();
-					   }
-				} catch (Exception ex2) {
-					   ex2.printStackTrace();
-				}
-			}
-			}
-		});
-		btnXa.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
-		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
-		btnXa.setBounds(364, 155, 105, 38);
-		contentPane.add(btnXa);
-		
-		JButton btn = new JButton(" Mới");
-		btn.addActionListener(new ActionListener() {
+		btnUpdate = new JButton("Cập nhật");
+		btnUpdate.setEnabled(false);
+		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				txtMaTheLoai.setText("");
-				txtTenTheLoai.setText("");
-				txtGhiChu.setText("");
-				txtMaTheLoai.requestFocus();
+				if (checkForm()) 
+				{
+					update();
+					clearForm();
+					lockForm();
+					setControllMode_Nothing();
+				}
+			}
+
+		});
+		btnUpdate.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Notes.png")));
+		btnUpdate.setHorizontalAlignment(SwingConstants.LEFT);
+		btnUpdate.setBounds(364, 106, 105, 38);
+		contentPane.add(btnUpdate);
+		
+		btnDelete = new JButton("Xóa");
+		btnDelete.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa thể loại này không ?","Thông báo ",JOptionPane.YES_NO_OPTION);
+				if (luachon == JOptionPane.YES_OPTION) 
+				{
+						delete();
+						lockForm();	
+						clearForm();
+						setControllMode_Nothing();
+				}
 			}
 		});
-		btn.setHorizontalAlignment(SwingConstants.LEFT);
-		btn.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
-		btn.setBounds(364, 8, 105, 38);
-		contentPane.add(btn);
+		btnDelete.setEnabled(false);
+		btnDelete.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				
+			}
+		});
+		btnDelete.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
+		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
+		btnDelete.setBounds(364, 155, 105, 38);
+		contentPane.add(btnDelete);
+		
+		btnNew = new JButton(" Mới");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				unLockForm();
+				setControllMode_Insert();
+				clearForm();
+				
+			}
+		});
+		btnNew.setHorizontalAlignment(SwingConstants.LEFT);
+		btnNew.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
+		btnNew.setBounds(364, 8, 105, 38);
+		contentPane.add(btnNew);
 		setLocationRelativeTo(getOwner());
+		loadCategoryToList();
 	}
 	
 	public void test()
 	{
 		txtGhiChu.getText();
 		//then 
+	}
+	
+	public void loadCategoryToList() 
+	{
+		dao = new CategoryDAO();
+		try 
+		{
+			list = dao.getAll();
+			if (list.size() > 0) 
+			{
+				fillToTable();
+			}
+		} catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void fillToTable() 
+	{
+		model = (DefaultTableModel) tblCategory.getModel();
+		model.setRowCount(0);
+		for (Category category : list) 
+		{
+			Object[] rows = new Object[] {category.getId(),category.getCategoryTitle(),category.getCategoryDescription()};
+			model.addRow(rows);
+		}
+	}
+	
+	public void showDetail()
+	{
+		index = tblCategory.getSelectedRow();
+		if (index < 0 )
+		{
+			return;
+		}
+		Category category = list.get(index);
+		txtMaTheLoai.setText(category.getId());
+		txtTenTheLoai.setText(category.getCategoryTitle());
+		txtGhiChu.setText(category.getCategoryDescription());
+	}
+	
+	public boolean checkForm()
+	{
+		String msg="Đã có lỗi : \n";
+		boolean loiRong = false;
+		if (txtMaTheLoai.getText().equals(""))
+		{
+			msg+="\n Không được để trống mã thể loại !\n";
+			loiRong = true;
+		}
+		if (txtTenTheLoai.getText().equals("")) 
+		{
+			msg+="\n Không được để trống tên thể loại!\n";
+			loiRong = true;
+		}
+		if (loiRong == true) 
+		{
+			JOptionPane.showMessageDialog(this, msg);
+			return false;
+		}
+		
+		
+		return true;
+	}
+	public void insert()
+	{
+		dao = new CategoryDAO();
+		String id = txtMaTheLoai.getText();
+		String title = txtTenTheLoai.getText();
+		String decription = txtGhiChu.getText();
+		
+		Category category = new Category(id, title, decription);
+		try 
+		{
+			if (dao.insert(category)) 
+			{
+				JOptionPane.showMessageDialog(this, "Thêm thành công thể loại : " + txtTenTheLoai.getText());
+				list.add(category);
+				fillToTable();
+			}
+		} catch (SQLException e) 
+		{
+			if (e.getErrorCode() == 2627) 
+			{
+				JOptionPane.showMessageDialog(this, "Mã thể loại này  đã tồn tại!");
+			}
+			
+		}	
+	}
+	
+	public void update()
+	{
+		dao = new CategoryDAO();
+		String id = txtMaTheLoai.getText();
+		String title = txtTenTheLoai.getText();
+		String decription = txtGhiChu.getText();
+		
+		Category category = new Category(id, title, decription);
+		
+		try 
+		{
+			if (dao.update(category, id)) 
+			{
+				JOptionPane.showMessageDialog(this, "Sửa thành công thể loại có mã : " + list.get(index).getId());
+				list.set(index, category);
+				fillToTable();
+			}
+		} catch (SQLException e) 
+		{
+			if (e.getErrorCode() == 2627) 
+			{
+				JOptionPane.showMessageDialog(this, "Thể loại đã tồn tại!");
+			}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void delete() 
+	{
+		dao = new CategoryDAO();
+		String id = txtMaTheLoai.getText();
+		try 
+		{
+			if (dao.delete(id)) 
+			{
+				JOptionPane.showMessageDialog(this, "Xóa thành công thể loại có mã : " + list.get(index).getId());
+				list.remove(index);
+				fillToTable();
+			}
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void setControllMode_Nothing()
+	{
+		btnNew.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnDelete.setEnabled(false);
+		btnUpdate.setEnabled(false);
+	}
+	
+	public void setControllMode_Edit()
+	{
+		btnNew.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnDelete.setEnabled(true);
+		btnUpdate.setEnabled(true);
+	}
+	
+	public void setControllMode_Insert()
+	{
+		btnNew.setEnabled(false);
+		btnSave.setEnabled(true);
+		btnDelete.setEnabled(false);
+		btnUpdate.setEnabled(false);
+	}
+	
+	public void clearForm()
+	{
+		txtGhiChu.setText("");
+		txtMaTheLoai.setText("");
+		txtTenTheLoai.setText("");
+	}
+	
+	public void lockForm()
+	{
+		txtGhiChu.setEnabled(false);
+		txtMaTheLoai.setEnabled(false);
+		txtTenTheLoai.setEnabled(false);
+	}
+	
+	public void unLockForm()
+	{
+		txtGhiChu.setEnabled(true);
+		txtMaTheLoai.setEnabled(true);
+		txtTenTheLoai.setEnabled(true);
 	}
 }
