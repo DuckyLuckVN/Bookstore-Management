@@ -20,7 +20,8 @@ public class SwingHelper
 	public static void setAutoResizeIcon(JLabel label)
 	{
 		ImageIcon img = (ImageIcon) label.getIcon();
-		label.setIcon(new ImageIcon(img.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH)));
+		if (img != null)
+			label.setIcon(new ImageIcon(img.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH)));
 	}
 	
 	//Dùng để set Auto Resize icon vừa khít với size label có kèm theo kiểu Scale
