@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -160,7 +161,7 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(SwingHelper.showConfirm(contentPane, "Bạn có muốn xóa đơn hàng này?"))
+				if(MessageOptionPane.showConfirmDialog(contentPane, "Bạn có muốn xóa đơn hàng này?"))
 				{
 					try 
 					{

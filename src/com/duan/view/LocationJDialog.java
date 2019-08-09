@@ -11,6 +11,13 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import com.duan.custom.CustomJTableBlue;
+import com.duan.dao.LocationDAO;
+import com.duan.model.Location;
+
+import net.miginfocom.layout.LC;
+
 import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
@@ -39,10 +46,11 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LocationJDialog extends JDialog {
 	String header[]= {"MÃ KỆ SÁCH","TÊN KỆ","SỨC CHỨA","GHI CHÚ"};
@@ -77,18 +85,30 @@ public class LocationJDialog extends JDialog {
 	}
 
 	private JPanel contentPane;
-	private JTable tblLocation;
+	private CustomJTableBlue tblLocation;
 	private JTextField txtMaKeSach;
 	private JTextField txtTenKe;
 	private JTextField txtSucChua;
-
+	
+	LocationDAO dao;
+	ArrayList<Location> list = new ArrayList<>();
+	DefaultTableModel model;
+	int index = -1;
+	private JTextArea txtGhiChu;
+	JButton btnThm;
+	JButton btnCpNht;
+	JButton btnXa;
+	JButton btnMi;
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
+				try 
+				{
 					LocationJDialog frame = new LocationJDialog();
 					frame.setVisible(true);
-				} catch (Exception e) {
+				} catch (Exception e) 
+				{
 					e.printStackTrace();
 				}
 			}
@@ -122,7 +142,18 @@ public class LocationJDialog extends JDialog {
 		panel.setBounds(10, 8, 344, 208);
 		panel.setLayout(null);
 		
-		tblLocation = new JTable();
+		tblLocation = new CustomJTableBlue();
+		tblLocation.setRowHeight(30);
+		tblLocation.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				showDetail();
+				setControllMode_Edit();
+				unlockForm();
+				txtMaKeSach.setEditable(false);
+			}
+		});
 		tblLocation.setModel(new DefaultTableModel(null, new String[] {"MÃ KỆ SÁCH", "TÊN KỆ", "SỨC CHỨA", "GHI CHÚ"})
 		{
 			boolean[] columnEditables = new boolean[] {
@@ -165,7 +196,7 @@ public class LocationJDialog extends JDialog {
 		lblGhiCh.setBounds(10, 127, 77, 25);
 		panel.add(lblGhiCh);
 		
-		JTextArea txtGhiChu = new JTextArea();
+		txtGhiChu = new JTextArea();
 		txtGhiChu.setBorder(new LineBorder(SystemColor.controlShadow));
 		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtGhiChu.setBounds(97, 130, 237, 67);
@@ -188,146 +219,292 @@ public class LocationJDialog extends JDialog {
 		contentPane.add(pnlControll);
 		pnlControll.setLayout(new GridLayout(0, 1, 0, 10));
 		
-		JButton btnThm = new JButton(" Lưu");
+		btnThm = new JButton(" Lưu");
+		btnThm.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (checkForm()) 
+				{
+					insert();
+					clearForm();
+					setControllMode_Nothing();
+					lockForm();
+				}
+			}
+		});
 		pnlControll.add(btnThm);
 		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
 		btnThm.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		
-		JButton btnCpNht = new JButton("Cập nhật");
+		btnCpNht = new JButton("Cập nhật");
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				if (checkForm()) 
+				{
+					update();
+					clearForm();
+					lockForm();
+					setControllMode_Nothing();
+				}
+			}
+
+			private void LoadDataToJTable() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		pnlControll.add(btnCpNht);
 		btnCpNht.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JButton btnXa = new JButton("Xóa");
+		btnXa = new JButton("Xóa");
+		btnXa.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ? ","Thông báo",JOptionPane.YES_NO_OPTION);
+				if (luachon == JOptionPane.YES_OPTION) 
+				{
+					delete();
+					clearForm();
+					lockForm();
+					setControllMode_Nothing();
+				}
+				else 
+				{
+					fillToTable();
+				}
+			}
+		});
 		pnlControll.add(btnXa);
 		btnXa.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
 		
-		JButton btnMi = new JButton(" Mới");
+		btnMi = new JButton(" Mới");
+		btnMi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				clearForm();
+				setControllMode_Insert();
+				unlockForm();
+				tblLocation.setRequestFocusEnabled(false);
+			}
+		});
 		pnlControll.add(btnMi);
 		btnMi.setHorizontalAlignment(SwingConstants.LEFT);
 		btnMi.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Create.png")));
 		setLocationRelativeTo(getOwner());
+		loadLocationToList();
+		lockForm();
+		setControllMode_Nothing();
+	}
+	
+	public void loadLocationToList()
+	{
+		dao = new LocationDAO();
+		try 
+		{
+			list = dao.getAll();
+			if (list.size() > 0) 
+			{
+				fillToTable();
+			}
+		} catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void fillToTable()
+	{
+		model = (DefaultTableModel) tblLocation.getModel();
+		model.setRowCount(0);
+		for (Location lc : list) 
+		{
+			Object[] rows = new Object[] {lc.getId(),lc.getLocationName(),lc.getMaxStorage(),lc.getDescription()};
+			model.addRow(rows);
+		}
+	}
+	
+	public void showDetail()
+	{
+		index = tblLocation.getSelectedRow();
+		if (index < 0) 
+		{
+			return;
+		}
 		
-		//ĐỊNH NGHĨA NÚT lƯU
-		btnThm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Nếu không nhập tên kệ
-				if (txtTenKe.getText().isEmpty()) {
-				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống tên kệ");
-				 txtTenKe.requestFocus();
-				 return;
+		Location lc = list.get(index);
+		txtMaKeSach.setText(lc.getId());
+		txtTenKe.setText(lc.getLocationName());
+		txtSucChua.setText(lc.getMaxStorage()+"");
+		txtGhiChu.setText(lc.getDescription());
+	}
+	
+	public boolean checkForm()
+	{
+		String msg = "Đã có lỗi : \n";
+		boolean loiRong = false;
+		if (txtMaKeSach.getText().equals("")) 
+		{
+			msg+="Mã kệ sách không được để trống ! \n";
+			loiRong = true;
+		}
+		if (txtTenKe.getText().equals("")) 
+		{
+			msg+="Tên kệ sách không được để trống !\n";
+		}
+		
+		
+			try 
+			{
+				int succhua = Integer.parseInt(txtSucChua.getText());
+				if (txtSucChua.getText().equals("")) 
+				{
+					msg+="Sức chứ không được để trống !\n";
 				}
-				// Nếu không nhập mã kệ sách
-				if (txtMaKeSach.getText().isEmpty()) {
-				 JOptionPane.showMessageDialog(rootPane, "Không được bỏ trống mã kệ sách");
-				 txtMaKeSach.requestFocus();
-				 return;
+				if (succhua < 0) 
+				{
+					msg+="Sức chứa phải lớn hơn 0";
+					loiRong = true;
 				}
-				int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn lưu dữ liệu ?", "Confirm", JOptionPane.YES_NO_OPTION);
-				// Trường hợp không lưu
-				 if (ret != JOptionPane.YES_OPTION) {
-				 return;
-				 }
-				// Câu lệnh insert
-				 String insert = "insert into LOCATION values(?, ?, ?, ?)";
-				 System.out.println(insert);
-				 Connection conn = null;
-				 PreparedStatement ps = null;
-				 try {
-					  conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
-					  ps = conn.prepareStatement(insert);
-					  ps.setString(1, txtMaKeSach.getText());
-					  ps.setString(2, txtTenKe.getText());
-					  ps.setString(3, txtSucChua.getText());
-					  ps.setString(4, txtGhiChu.getText());
-					  ret = ps.executeUpdate();
-					  if (ret != -1) {
-				              JOptionPane.showMessageDialog(rootPane, "Dữ liệu lưu thành công");
-						  }
-					  LoadDataToJtable();
-				} catch (Exception e2) {
-					 e2.printStackTrace();
-					 if (((SQLException) e2).getErrorCode() == 2627) {
-							JOptionPane.showMessageDialog(rootPane, "Mã thể loại đã tồn tại");
-						 }
-				}finally {
-					try {
-					    if (conn != null) {
-					     conn.close();
-					    }
-					    if (ps != null) {
-					     ps.close();
-					    }
-					   } catch (Exception ex2) {
-					    ex2.printStackTrace();
-					   }
-				}
+				
 			}
-		});
-		//ĐỊNH NGHĨA NÚT XÓA 
-		btnXa.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int ret = JOptionPane.showConfirmDialog(rootPane, "bạn có muốn xóa không ?", "Chọn", JOptionPane.YES_NO_OPTION);
-				if(ret != JOptionPane.YES_OPTION) {
-					return;
-				}
-				Connection c = null;
-				PreparedStatement ps = null;
-               try {
-            	   c = DriverManager.getConnection("jdbc:sqlserver://localhost;DatabaseName=BookStore", "sa", "123");
-            	   ps = c.prepareStatement("delete from LOCATION where id= ?");
-            	   ps.setString(1, txtMaKeSach.getText());
-            	   ret = ps.executeUpdate();
-            	   LoadDataToJtable();
-            	   if (ret != -1) {
-            		   JOptionPane.showMessageDialog(rootPane, "Dữ liệu đã được xóa"); 
-            	   }
-			} catch (Exception ex) {
-				 System.out.println(ex);
+			catch (NumberFormatException e) 
+			{
+				msg+="Sức chứa không đúng dịnh dạng !";
+				loiRong = true;
 			}
+			
+		if (loiRong == true) 
+		{
+			JOptionPane.showMessageDialog(this, msg);
+			return false;
+		}	
+		return true;
+		
+	}
+	public void insert()
+	{
+		
+		dao = new LocationDAO();
+		String id = txtMaKeSach.getText();
+		String ten  = txtTenKe.getText();
+		int sucChua = Integer.parseInt(txtSucChua.getText());
+		String moTa = txtGhiChu.getText();
+		
+		Location lc = new Location(id, ten, sucChua, moTa);
+		try 
+		{
+			if (dao.insert(lc)) 
+			{
+				JOptionPane.showMessageDialog(this, "Thêm thành công mã kệ : " + txtMaKeSach.getText());
+				list.add(lc);
+				fillToTable();
 			}
-		});
-				//ĐỊNH NGHĨA NÚT MỚI 
-				btnMi.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						txtMaKeSach.setText("");
-						txtTenKe.setText("");
-						txtGhiChu.setText("");
-						txtSucChua.setText("");
-						txtMaKeSach.requestFocus();
-					}
-				});
-				//ĐỊNH NGHĨA NÚT CẬP NHẬT
-				btnCpNht.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						int ret = JOptionPane.showConfirmDialog(rootPane, "Bạn có muốn cập nhật không ?", "Chọn", JOptionPane.YES_NO_OPTION);
-						if(ret != JOptionPane.YES_OPTION) {
-							return;
-						}
-						try {
-							String user ="sa";
-							String pass ="123";
-							Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-							String url="jdbc:sqlserver://localhost:1433;databaseName=BookStore";
-							Connection con = DriverManager.getConnection(url, user, pass);
-							String sql = "update LOCATION set location_name=?, max_storage=?,description=? where id=?" ;
-							PreparedStatement st = con.prepareStatement(sql);
-							st.setString(1, txtTenKe.getText());
-							st.setString(2, txtSucChua.getText());
-							st.setString(3, txtGhiChu.getText());
-							st.setString(4, txtMaKeSach.getText());
-							ret = st.executeUpdate();
-							if (ret != -1) {
-					              JOptionPane.showMessageDialog(rootPane, "Cập nhật dữ liệu thành công");
-							  }
-							LoadDataToJtable();
-						} catch (Exception e) {
-							System.out.print(e);
-						}
-					}
-				});
-				LoadDataToJtable();
+		} catch (SQLException e) 
+		{
+//			if (e.getErrorCode() == 2627) 
+//			{
+//				JOptionPane.showMessageDialog(this, "Mã kệ này đã tồn tại !");
+//			}
+			e.printStackTrace();
+		}
+	}
+	
+	public void update ()
+	{
+		dao = new LocationDAO();
+		
+		String id = txtMaKeSach.getText();
+		String ten  = txtTenKe.getText();
+		int sucChua = Integer.parseInt(txtSucChua.getText());
+		String moTa = txtGhiChu.getText();
+		
+		Location lc = new Location(id, ten, sucChua, moTa);
+		try 
+		{
+			if (dao.update(lc, id)) 
+			{
+				JOptionPane.showMessageDialog(this, "Sửa thành công kệ có mã : " + list.get(index).getId());
+				list.set(index, lc);
+				fillToTable();
+				tblLocation.setRowSelectionInterval(index, index);
+			}
+		} catch (SQLException e) 
+		{
+			if (e.getErrorCode() == 2627) 
+			{
+				JOptionPane.showMessageDialog(this, "Mã kệ này đã tồn tại");
+			}
+			e.printStackTrace();
+		}
+	}
+	
+	public void delete()
+	{
+		dao = new LocationDAO();
+		try 
+		{
+			if (dao.delete(list.get(index).getId())) 
+			{
+					JOptionPane.showMessageDialog(this, "Xóa thành công kệ sách có mã : " + list.get(index).getId());
+					list.remove(index);
+					fillToTable();
+			}
+		} 
+		catch (SQLException e) 
+		{
+			JOptionPane.showMessageDialog(this	, "Không thể xóa mã kệ sách này");
+			
+		}
+	}
+	
+	public void lockForm()
+	{
+		txtMaKeSach.setEditable(false);
+		txtTenKe.setEditable(false);
+		txtSucChua.setEditable(false);
+		txtGhiChu.setEditable(false);
+	}
+	public void unlockForm() 
+	{
+		txtMaKeSach.setEditable(true);
+		txtTenKe.setEditable(true);
+		txtSucChua.setEditable(true);
+		txtGhiChu.setEditable(true);
+	}
+	public void setControllMode_Nothing()
+	{
+		btnMi.setEnabled(true);
+		btnThm.setEnabled(false);
+		btnXa.setEnabled(false);
+		btnCpNht.setEnabled(false);
+	}
+	public void setControllMode_Edit()
+	{
+		btnMi.setEnabled(true);
+		btnCpNht.setEnabled(true);
+		btnXa.setEnabled(true);
+		btnThm.setEnabled(false);
+	}
+	
+	public void setControllMode_Insert()
+	{
+		btnMi.setEnabled(false);
+		btnThm.setEnabled(true);
+		btnXa.setEnabled(false);
+		btnCpNht.setEnabled(false);
+	}
+	public void clearForm()
+	{
+		txtGhiChu.setText("");
+		txtMaKeSach.setText("");
+		txtSucChua.setText("");
+		txtTenKe.setText("");
 	}
 	
 }

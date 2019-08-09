@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -20,8 +21,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
+import com.duan.dao.AdminDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -30,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Locale;
 import java.awt.event.ActionEvent;
 import javax.swing.border.EtchedBorder;
@@ -38,13 +43,20 @@ import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
 
 import javax.swing.ButtonGroup;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AdminJFrame extends JFrame {
 
@@ -58,9 +70,20 @@ public class AdminJFrame extends JFrame {
 	private JTextField txtPhoneNum;
 	private JLabel lblAnh ;
 	private JComboBox cboChucVu;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private File fileAnhDaChon = null;
-
+	private final ButtonGroup bgrSex = new ButtonGroup();
+	private JButton btnNew;
+	private JButton btnSave;
+	private JButton btnUpdate;
+	private JButton btnDelete;
+	private JRadioButton rdoNam;
+	private JRadioButton rdoNu;
+	private JButton btnXoa;
+	private JButton btnChonanh;
+	
+	private File fileImageSelected;
+	private int index = -1;
+	private int indexSelectedLast = -1;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -106,6 +129,12 @@ public class AdminJFrame extends JFrame {
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		JLabel lblTmKim = new JLabel("Tìm kiếm");
+		lblTmKim.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				System.out.println("rdoNam isSelected: " + rdoNam.isSelected());
+			}
+		});
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		txtFind = new JTextField();
@@ -118,7 +147,7 @@ public class AdminJFrame extends JFrame {
 		});
 		txtFind.setColumns(10);
 		
-		JLabel lblTiKhong = new JLabel("Tài khoảng");
+		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		txtUsername = new JTextField();
@@ -158,66 +187,99 @@ public class AdminJFrame extends JFrame {
 		
 		cboChucVu = new JComboBox();
 		cboChucVu.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		cboChucVu.setModel(new DefaultComboBoxModel(new String[] {"Nhân viên", "Quản Lý ", "Giám Đốc"}));
+		cboChucVu.setModel(new DefaultComboBoxModel(new String[] {"Nhân Viên", "Quản Lý", "Giám Đốc"}));
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
-		JButton btnToMi = new JButton("Tạo mới");
-		btnToMi.setHorizontalAlignment(SwingConstants.LEFT);
-		btnToMi.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Create.png")));
-		btnToMi.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnToMi);
+		btnNew = new JButton("Tạo mới");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				setControllMode_insert();
+				unLockForm();
+				clearForm();
+			}
+		});
+		btnNew.setHorizontalAlignment(SwingConstants.LEFT);
+		btnNew.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Create.png")));
+		btnNew.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnNew);
 		
-		JButton btnThm = new JButton(" Thêm");
-		btnThm.setHorizontalAlignment(SwingConstants.LEFT);
-		btnThm.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Accept.png")));
-		btnThm.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnThm);
+		btnSave = new JButton(" Thêm");
+		btnSave.setEnabled(false);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (validateAll()) {
+					insert();
+				}
+			}
+		});
+		btnSave.setHorizontalAlignment(SwingConstants.LEFT);
+		btnSave.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Accept.png")));
+		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnSave);
 		
-		JButton btnCpNht = new JButton(" Cập nhật");
-		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
-		btnCpNht.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Notes.png")));
-		btnCpNht.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnCpNht);
+		btnUpdate = new JButton(" Cập nhật");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (validateAll()) {
+					update();
+				}
+			}
+		});
+		btnUpdate.setEnabled(false);
+		btnUpdate.setHorizontalAlignment(SwingConstants.LEFT);
+		btnUpdate.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Notes.png")));
+		btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnUpdate);
 		
-		JButton btnXa = new JButton(" Xóa");
-		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
-		btnXa.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Delete.png")));
-		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		pnlController.add(btnXa);
+		btnDelete = new JButton(" Xóa");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(contentPane, "Bạn thực sự muốn xóa tài khoản này?", 
+						"Quản lý người dùng", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE)== JOptionPane.YES_NO_OPTION) 
+				{
+					delete();
+					loadTable();
+				}
+				
+			}
+		});
+		btnDelete.setEnabled(false);
+		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
+		btnDelete.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/Delete.png")));
+		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		pnlController.add(btnDelete);
 		
 		tblUser = new CustomJTableRed();
-		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢNG", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
+		tblUser.setRowHeight(30);
+		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢN", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
 		{
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
-		scrollPane.setViewportView(tblUser);
-		
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) 
+		tblUser.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
 			{
-				int index_cbo_selected = cboChucVu.getSelectedIndex();
-				int role;
-				switch (index_cbo_selected) {
-				case 0:
-					//Nhan Vien
-					role = 3;
-					break;
-				case 1:
-					//Quan ly
-					role = 2;
-					break;
-				case 2:
-					//Giam doc
-					role = 1;
-					break;
-				}
-				System.out.println();
+				
 			}
 		});
+		tblUser.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) 
+			{
+				setControllMode_edit();
+				index = tblUser.getSelectedRow();
+				if (index >= 0) {
+					showDetail();
+				}
+			}
+		});
+		scrollPane.setViewportView(tblUser);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -228,9 +290,7 @@ public class AdminJFrame extends JFrame {
 					.addGap(1))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(btnNewButton)
-					.addPreferredGap(ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
+					.addContainerGap(386, Short.MAX_VALUE)
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE))
@@ -241,15 +301,10 @@ public class AdminJFrame extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(18)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNewButton)))
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
 		);
@@ -258,11 +313,6 @@ public class AdminJFrame extends JFrame {
 		
 		lblAnh = new JLabel("Không có ảnh");
 		lblAnh.setBounds(0, 0, 181, 235);
-		
-		
-		
-		//Set icon xong moi goi setAutoResizeIcon
-		lblAnh.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/image/S1e18_Waddles_stare.png")));
 		SwingHelper.setAutoResizeIcon(lblAnh);
 		
 		
@@ -271,8 +321,9 @@ public class AdminJFrame extends JFrame {
 		lblAnh.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		lblAnh.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		JButton btnChnnh = new JButton("Chọn ảnh");
-		btnChnnh.addActionListener(new ActionListener() {
+		btnChonanh = new JButton("Chọn ảnh");
+		btnChonanh.setEnabled(false);
+		btnChonanh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				JFileChooser chooser = new JFileChooser();
@@ -281,36 +332,44 @@ public class AdminJFrame extends JFrame {
 				if (status == JFileChooser.APPROVE_OPTION)
 				{
 					
-					System.out.println("Da94 chon file");
-					fileAnhDaChon = chooser.getSelectedFile();
-					System.out.println(fileAnhDaChon.getName());
-					String duongdanString = DataHelper.getRootSource() + "com/duan/image/";
-					
+					File file = chooser.getSelectedFile();
+					boolean hopLe = DataHelper.checkFileExtension(file.getName(), DataHelper.EXTENSIONS_FILE_IMAGE);
+					if (hopLe)
+					{
+						fileImageSelected = file;
+						setAvatar(fileImageSelected);
+					}
+					else
+					{
+						//File anh khong hop le, vui long chon lai
+					}
 				}
 				
 				
 			}
 		});
-		btnChnnh.setBounds(0, 246, 85, 37);
+		btnChonanh.setBounds(0, 246, 85, 37);
 		
-		JButton btnXa_1 = new JButton("Xóa");
-		btnXa_1.addActionListener(new ActionListener() {
+		btnXoa = new JButton("Xóa");
+		btnXoa.setEnabled(false);
+		btnXoa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				lblAnh.setIcon(null);
+				clearAvatar();
+				fileImageSelected = null;
 			}
 		});
-		btnXa_1.setBounds(96, 246, 85, 37);
+		btnXoa.setBounds(96, 246, 85, 37);
 		
 		JLabel lblGiiTnh = new JLabel("Giới tính");
 		lblGiiTnh.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		JRadioButton rdoNam = new JRadioButton("Nam");
-		buttonGroup.add(rdoNam);
+		rdoNam = new JRadioButton("Nam");
+		bgrSex.add(rdoNam);
 		rdoNam.setSelected(true);
 		
-		JRadioButton rdoNu = new JRadioButton("Nữ");
-		buttonGroup.add(rdoNu);
+		rdoNu = new JRadioButton("Nữ");
+		bgrSex.add(rdoNu);
 		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
 		gl_pnlForm.setHorizontalGroup(
 			gl_pnlForm.createParallelGroup(Alignment.LEADING)
@@ -381,16 +440,372 @@ public class AdminJFrame extends JFrame {
 							.addComponent(cboChucVu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
 						.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 		);
+		loadTable();
+		lockForm();
 		panel.setLayout(null);
 		panel.add(lblAnh);
-		panel.add(btnChnnh);
-		panel.add(btnXa_1);
+		panel.add(btnChonanh);
+		panel.add(btnXoa);
 		pnlForm.setLayout(gl_pnlForm);
 		contentPane.setLayout(gl_contentPane);
 	}
 	
-	public void test()
+	public void setAvatar(File file)
 	{
-		//lblAnh
+		if (file != null)
+		{
+			ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+			lblAnh.setText("");
+			lblAnh.setIcon(icon);
+			SwingHelper.setAutoResizeIcon(lblAnh);
+		}
+	}
+
+	public void setAvatar(String imgName)
+	{
+		URL urlImage = getClass().getResource("/com/duan/image/" + imgName);
+		if (urlImage != null)
+		{
+			lblAnh.setText("");
+			ImageIcon icon = new ImageIcon(urlImage);
+			lblAnh.setIcon(icon);
+			SwingHelper.setAutoResizeIcon(lblAnh);
+		}
+	}
+	
+	public void clearAvatar()
+	{
+		lblAnh.setIcon(null);
+		lblAnh.setText("Không có ảnh");
+	}
+	
+	
+	
+	public void lockForm()
+	{
+		txtEmail.setEnabled(false);
+		txtFullname.setEnabled(false);
+		txtPassword.setEnabled(false);
+		txtPhoneNum.setEnabled(false);
+		txtUsername.setEnabled(false);
+		cboChucVu.setEnabled(false);
+		rdoNam.setEnabled(false);
+		rdoNu.setEnabled(false);
+	}
+	
+	public void unLockForm()
+	{
+		txtEmail.setEnabled(true);
+		txtFullname.setEnabled(true);
+		txtPassword.setEnabled(true);
+		txtPhoneNum.setEnabled(true);
+		txtUsername.setEnabled(true);
+		cboChucVu.setEnabled(true);
+		rdoNam.setEnabled(true);
+		rdoNu.setEnabled(true);
+	}
+	
+	public void clearForm()
+	{
+		txtEmail.setText("");
+		txtFullname.setText("");
+		txtPassword.setText("");
+		txtPhoneNum.setText("");
+		txtUsername.setText("");
+		rdoNam.setSelected(true);
+		cboChucVu.setSelectedIndex(0);
+	}
+	
+	public void setControllMode_Nothing()
+	{
+		btnNew.setEnabled(true);
+		btnDelete.setEnabled(false);
+		btnSave.setEnabled(false);
+		btnUpdate.setEnabled(false);
+		btnChonanh.setEnabled(false);
+		btnXoa.setEnabled(false);
+	}
+	
+	public void setControllMode_edit() 
+	{
+		btnNew.setEnabled(true);
+		btnDelete.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnUpdate.setEnabled(true);
+		btnChonanh.setEnabled(true);
+		btnXoa.setEnabled(true);
+	}
+	
+	public void setControllMode_insert()
+	{
+		btnNew.setEnabled(true);
+		btnDelete.setEnabled(false);
+		btnSave.setEnabled(true);
+		btnUpdate.setEnabled(false);
+		btnChonanh.setEnabled(true);
+		btnXoa.setEnabled(true);
+	}
+	AdminDAO admimDao = new AdminDAO();
+	private void loadTable() 
+	{
+		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+		model.setRowCount(0);
+		try {
+			List<Admin> list = admimDao.getAll();
+			for (Admin admin : list) {
+				Object[] rowObjects = 
+					{
+							admin.getId(),
+							admin.getUsername(),
+							admin.getFullname(),
+							admin.getEmail(),
+							admin.getPhoneNumber(),
+							getRoleTitle(admin.getRole())
+					};
+				model.addRow(rowObjects);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
+	Admin getModel()
+	{
+		Admin admin = new Admin();
+		
+		try 
+		{
+			if (index != -1)
+			{
+				int id = Integer.parseInt(tblUser.getValueAt(tblUser.getSelectedRow(), 0).toString());
+				admin = AdminDAO.findByID(id);
+			}
+			
+			admin.setUsername(txtUsername.getText());
+			admin.setPassword(txtPassword.getText());
+			admin.setFullname(txtFullname.getText());
+			admin.setEmail(txtEmail.getText());
+			admin.setPhoneNumber(txtPhoneNum.getText());
+			
+			if (fileImageSelected != null)
+			{
+				admin.setImage(fileImageSelected.getName());
+			}
+			
+	
+			admin.setSex(rdoNam.isSelected());
+
+			
+			admin.setRole(Math.abs(cboChucVu.getSelectedIndex() - 2));
+			return admin;
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private void insert() 
+	{
+		Admin admin = getModel();
+		try {
+			boolean isSuccess = admimDao.insert(admin);
+			if (isSuccess)
+			{
+				clearForm();
+				loadTable();
+				setControllMode_Nothing();
+				lockForm();
+				
+				//Neu file anh da duoc chon thi bat dau ghi file vao source project
+				if (fileImageSelected != null)
+				{
+					//Lay ra mang byte tu file da chon
+					byte[] byteArrFileImage = DataHelper.getArrayByteFromFile(fileImageSelected);
+					
+					//Ghi file tu mang byte cua anh
+					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
+					fileImageSelected = null;
+				}
+				
+				MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			}
+		} 
+		catch (Exception e) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+			e.printStackTrace();
+		}
+	}
+	
+	public String getRoleTitle(int role) 
+	{
+		switch (role) 
+		{
+		case 0: return "Giám Đốc";
+		case 1: return "Quản Lý";
+		case 2: return "Nhân Viên";
+		}
+		return "Không xác định";
+	}
+	
+	private void delete() {
+		Admin admin = getModel();
+		int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.index, 0)));
+		try {
+			admimDao.delete(id);
+			clearForm();
+			loadTable();
+			setControllMode_Nothing();
+			lockForm();
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+		}
+	}
+
+	private void update() 
+	{
+		Admin admin = getModel();
+		int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.index, 0)));
+		try 
+		{
+			if (lblAnh.getIcon() == null)
+			{
+				admin.setImage(null);
+			}
+			else
+			{
+				if (fileImageSelected != null)
+				{
+					admin.setImage(fileImageSelected.getName());
+					
+					//Lay ra mang byte tu file da chon
+					byte[] byteArrFileImage = DataHelper.getArrayByteFromFile(fileImageSelected);
+					
+					//Ghi file tu mang byte cua anh
+					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
+					fileImageSelected = null;
+				}
+			}
+			
+			boolean isSuccess = admimDao.update(admin, id);
+			if (isSuccess)
+			{
+				clearForm();
+				loadTable();
+				setControllMode_edit();
+				
+				MessageOptionPane.showAlertDialog(contentPane, "Cập nhật tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			}
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			MessageOptionPane.showAlertDialog(contentPane, "Cập nhật tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+		}
+	}
+	
+	private void showDetail() 
+	{
+		unLockForm();
+		indexSelectedLast = tblUser.getSelectedRow();
+		try {
+            int id = Integer.parseInt(String.valueOf(tblUser.getValueAt(this.index, 0)));
+            Admin model = admimDao.findByID(id);            
+            if (model != null) 
+            {
+                txtUsername.setText(model.getUsername());
+                txtPassword.setText(model.getPassword()); 
+                txtFullname.setText(model.getFullname());
+                txtEmail.setText(model.getEmail());
+                txtPhoneNum.setText(model.getPhoneNumber());
+                
+                if (model.isSex() == true) {
+					rdoNam.setSelected(true);
+				} else {
+					rdoNu.setSelected(true);
+				}
+                
+                if (model.getImage() != null && model.getImage().length() > 0)
+                	setAvatar(model.getImage());
+                else
+                	clearAvatar();
+                
+                
+                cboChucVu.setSelectedItem(getRoleTitle(model.getRole()));
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+	}
+	
+	private boolean validateAll() {
+		if (txtUsername.getText().length() == 0) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Tài khoản không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
+			txtUsername.requestFocus();
+			return false;
+		}
+		else if (!txtUsername.getText().matches("^[0-9a-zA-Z\\p{L}]{1,}$")) {
+			MessageOptionPane.showAlertDialog(contentPane, "Tài khoản chỉ được nhập chữ hoặc số", MessageOptionPane.ICON_NAME_WARNING);
+			txtUsername.requestFocus();
+			return false;
+		}
+		else if (txtPassword.getText().length() == 0)
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
+			txtPassword.requestFocus();
+			return false;
+		}
+		else if (!txtPassword.getText().matches("^[0-9a-zA-Z\\p{L}]{1,}$")) {
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu chỉ được nhập chữ hoặc số", MessageOptionPane.ICON_NAME_WARNING);
+			txtPassword.requestFocus();
+			return false;
+		}
+		else if (txtPassword.getText().length() < 6 || txtPassword.getText().length() > 14) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu từ 6 - 14 ký tự", MessageOptionPane.ICON_NAME_WARNING);
+			txtPassword.requestFocus();
+			return false;
+		}
+		else if (txtUsername.getText().length() == 0) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Họ tên không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
+			txtFullname.requestFocus();
+			return false;
+		}
+		else if (!txtFullname.getText().matches("^[a-zA-Z\\p{L} ]{1,}$")) {
+			MessageOptionPane.showAlertDialog(contentPane, "Họ tên chỉ được nhập chữ", MessageOptionPane.ICON_NAME_WARNING);
+			txtFullname.requestFocus();
+			return false;
+		}
+		else if (txtEmail.getText().length() == 0) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Email không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
+			txtEmail.requestFocus();
+			return false;
+		}
+		else if (!txtEmail.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Email không đươc đúng định dạng", MessageOptionPane.ICON_NAME_WARNING);
+			txtEmail.requestFocus();
+			return false;
+		}
+		else if (txtPhoneNum.getText().length() == 0) 
+		{
+			MessageOptionPane.showAlertDialog(contentPane, "Số điện thoại không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
+			txtPhoneNum.requestFocus();
+			return false;
+		}
+		else if (!txtPhoneNum.getText().matches("[0-9]{10,}")) {
+			MessageOptionPane.showAlertDialog(contentPane, "Số điện thoại 10 số ", MessageOptionPane.ICON_NAME_WARNING);
+			txtPhoneNum.requestFocus();
+			return false;
+		}
+		return true;
 	}
 }

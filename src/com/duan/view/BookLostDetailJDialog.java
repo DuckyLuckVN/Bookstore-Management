@@ -343,8 +343,10 @@ public class BookLostDetailJDialog extends JDialog {
 			Admin bookLostAdmin =  AdminDAO.findByID(bookLost.getAdminId());
 			
 			createdDate = DateHelper.dateToString(rentBook.getCreatedDate(), SettingSave.getSetting().getDateFormat());
+			
 			//Lưu giá trị số sách mất / số sách đã thuê
 			bookLostNumber = BookLostDetailDAO.getTotalLost(rentBook.getId()) + "/" + RentBookDetailDAO.getTotalBookRented(rentBook.getId()) + " quyển";
+			
 			//Lưu tổng số tiền phạt
 			totalCost = DataHelper.getFormatForMoney(BookLostDetailDAO.getTotalCost(rentBook.getId())) + SettingSave.getSetting().getMoneySymbol();
 			

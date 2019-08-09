@@ -28,6 +28,7 @@ import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -267,13 +268,13 @@ public class BookLostEditorJDialog extends JDialog {
 						{
 							bookLostJFrame.getDataTolist();
 							bookLostJFrame.fillToTable();
-							JOptionPane.showMessageDialog(contentPane, "Đã báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!");
+							MessageOptionPane.showAlertDialog(contentPane, "Đã báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 						else if (isEditMode == true && updateBookLost())
 						{
 							bookLostJFrame.getDataTolist();
 							bookLostJFrame.fillToTable();
-							JOptionPane.showMessageDialog(contentPane, "Cập nhật báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!");
+							MessageOptionPane.showAlertDialog(contentPane, "Cập nhật báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					} 
 					catch (SQLException e1) 
@@ -487,7 +488,7 @@ public class BookLostEditorJDialog extends JDialog {
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra: \n" + msg);
+			MessageOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra: \n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 		
 		return isSuccess;
@@ -557,7 +558,7 @@ public class BookLostEditorJDialog extends JDialog {
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(contentPane, "Mã đơn thuê chưa được chọn");
+				MessageOptionPane.showAlertDialog(contentPane, "Mã đơn thuê chưa được chọn");
 			}
 		} 
 		catch (SQLException e) 

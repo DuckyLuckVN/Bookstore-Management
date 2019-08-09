@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableBlue;
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;
@@ -242,13 +243,13 @@ public class OrderEditorJDialog extends JDialog {
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
-						JOptionPane.showMessageDialog(contentPane, "Thêm hóa đơn mới thành công!");
+						MessageOptionPane.showAlertDialog(contentPane, "Thêm hóa đơn mới thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 					else if (isEditMode == true && updateOrder())
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
-						JOptionPane.showMessageDialog(contentPane, "Cập nhật lại hóa đơn số '" + order.getId() + "' thành công!");
+						MessageOptionPane.showAlertDialog(contentPane, "Cập nhật lại hóa đơn số '" + order.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 						
 				}
@@ -481,7 +482,7 @@ public class OrderEditorJDialog extends JDialog {
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg);
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 		
 		return isSuccess;

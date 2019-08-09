@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;
@@ -153,7 +154,7 @@ public class OrderJFrame extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(SwingHelper.showConfirm(contentPane, "Bạn có muốn xóa đơn hàng này?"))
+				if(MessageOptionPane.showConfirmDialog(contentPane, "Bạn có muốn xóa đơn hàng này?"))
 				{
 					try 
 					{

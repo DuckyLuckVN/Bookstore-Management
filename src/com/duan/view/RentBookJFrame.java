@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;
@@ -90,7 +91,6 @@ public class RentBookJFrame extends JFrame {
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnDetail;
 	
-	private FindRentBookJFrame findRentBookJFrame = new FindRentBookJFrame(this);
 	private RentBookEditorJDialog insertRentBookJDialog = new RentBookEditorJDialog(this);
 	private RentBookEditorJDialog editorRentbookJDialog = new RentBookEditorJDialog(this);
 	private RentBookDetailJDialog rentBookDetailJDialog = new RentBookDetailJDialog();
@@ -213,7 +213,7 @@ public class RentBookJFrame extends JFrame {
 			{
 				try
 				{
-					if (SwingHelper.showConfirm(contentPane, "Bạn có chắc muốn xóa không?"))
+					if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa không?"))
 					{
 						if (deleteRentBook())
 						{

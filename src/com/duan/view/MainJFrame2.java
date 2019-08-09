@@ -98,6 +98,7 @@ public class MainJFrame2 extends JFrame {
 	private BookLostJFrame bookLostJFrame = new BookLostJFrame();
 	private StorageJFrame storageJFrame = new StorageJFrame();
 	private SettingJDialog settingJDialog = new SettingJDialog();
+	private ProfileAdminJDialog profileAdminJDialog = new ProfileAdminJDialog();
 	
 	//Khai báo container
 	private Container bookContainer = bookJFrame.getContentPane();
@@ -554,6 +555,15 @@ public class MainJFrame2 extends JFrame {
 		pnlAvatar.setLayout(null);
 		
 		JLabel lblCicleAvatar = new JLabel("");
+		lblCicleAvatar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				showProfileAdmin();
+			}
+		});
+		lblCicleAvatar.setToolTipText("Thông tin chi tiết");
+		lblCicleAvatar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lblCicleAvatar.setBounds(10, 11, 73, 75);
 		pnlAvatar.add(lblCicleAvatar);
 		lblCicleAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/cicleAvatar.png")));
@@ -768,6 +778,7 @@ public class MainJFrame2 extends JFrame {
 	public void logout()
 	{
 		dispose();
+		AccountSave.setAdmin(null);
 		loginJFrame.setVisible(true);
 	}
 	
@@ -819,5 +830,13 @@ public class MainJFrame2 extends JFrame {
 		settingJDialog.setLocationRelativeTo(this);
 		settingJDialog.showDetail();
 		settingJDialog.setVisible(true);
+	}
+	
+	public void showProfileAdmin()
+	{
+		profileAdminJDialog = new ProfileAdminJDialog();
+		profileAdminJDialog.setLocationRelativeTo(contentPane);
+		profileAdminJDialog.setMainJFrame(this);
+		profileAdminJDialog.setVisible(true);
 	}
 }

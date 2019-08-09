@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableBlue;
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
@@ -200,7 +201,7 @@ public class StorageJFrame extends JFrame {
 							showDetail();
 						}
 						
-						JOptionPane.showMessageDialog(contentPane, "Đã thêm mới đơn nhập kho thành công!");
+						MessageOptionPane.showAlertDialog(contentPane, "Đã thêm mới đơn nhập kho thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 				}
 				catch (HeadlessException | SQLException e1) 
@@ -634,7 +635,7 @@ public class StorageJFrame extends JFrame {
 			}
 		}
 		
-		if (isSuccess == false) { JOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra: \n" + msg);}
+		if (isSuccess == false) { MessageOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra: \n" + msg, MessageOptionPane.ICON_NAME_WARNING);}
 		
 		return isSuccess;
 	}

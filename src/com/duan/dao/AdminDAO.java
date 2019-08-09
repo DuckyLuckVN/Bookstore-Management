@@ -25,7 +25,7 @@ public class AdminDAO
     
     public static boolean insert(Admin ad) throws SQLException
     {
-        String sql = "INSERT INTO ADMIN Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO [ADMIN] Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         									ad.getUsername(), 
         									ad.getPassword() , 
@@ -36,15 +36,15 @@ public class AdminDAO
         									ad.isSex(),
         									ad.getRole(), 
         									ad.isActive(),
-        									ad.getCreatedDate());
+        									new java.sql.Date(new Date().getTime()));
         int count = pre.executeUpdate();
         return count > 0;
     }
     
     public static boolean update(Admin ad , int id) throws SQLException
     {
-        String sql = "UPDATE ADMIN SET username=?, password=?, fullname=?, "
-                + "email=?, phone_number=?, image=?, sex=? role=?, isActive=? created_date=? Where id = ?";
+        String sql = "UPDATE [ADMIN] SET username=?, password=?, fullname=?, "
+                + "email=?, phone_number=?, image=?, sex=?, role=?, isActive=?, created_date=? Where id = ?";
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         										ad.getUsername(), 
         										ad.getPassword(),
@@ -63,7 +63,7 @@ public class AdminDAO
     
     public static boolean delete(int id) throws SQLException
     {
-        String sql = "DELETE FROM ADMIN Where id = ?";
+        String sql = "DELETE FROM [ADMIN] Where id = ?";
         PreparedStatement  pre = JDBCHelper.createPreparedStatement(sql, id);
         int count = pre.executeUpdate();
         return count > 0;
@@ -71,8 +71,19 @@ public class AdminDAO
     
     public static Admin findByID(int id) throws SQLException
     {
-        String sql = "SELECT * FROM ADMIN Where id = ?";
+        String sql = "SELECT * FROM [ADMIN] Where id = ?";
         ResultSet rs = JDBCHelper.executeQuery(sql, id);
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        return null;
+    }
+    
+    public static Admin findByUsername(String username) throws SQLException
+    {
+        String sql = "SELECT * FROM [ADMIN] Where username = ?";
+        ResultSet rs = JDBCHelper.executeQuery(sql, username);
         if (rs.next())
         {
         	return readFromResultSet(rs);

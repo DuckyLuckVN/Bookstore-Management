@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.duan.controller.ExportExcel;
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
@@ -96,7 +97,6 @@ public class BookJFrame extends JFrame {
 	
 	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
-	private FindBookJDialog findBookJDialog = new FindBookJDialog(this);
 	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
 	private JTextField textField;
@@ -226,13 +226,13 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					if (SwingHelper.showConfirm(contentPane, "Bạn có chắc muốn xóa sách này không?"))
+					if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
 					{
 						if (deleteBook())
 						{
 							getDataToList();
 							fillToTable();
-							JOptionPane.showMessageDialog(getContentPane(), "Đã xóa sách thành công!");
+							MessageOptionPane.showAlertDialog(getContentPane(), "Đã xóa sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					}
 				} 
@@ -448,7 +448,7 @@ public class BookJFrame extends JFrame {
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(1)
 									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
-								.addComponent(btnExportExcel))
+								.addComponent(btnExportExcel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 							.addGap(6)
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))

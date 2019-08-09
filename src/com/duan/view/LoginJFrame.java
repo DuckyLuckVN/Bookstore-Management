@@ -32,9 +32,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import org.omg.CORBA.PRIVATE_MEMBER;
+
+import com.duan.custom.MessageOptionPane;
+import com.duan.dao.AdminDAO;
+import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
+import com.duan.model.User;
 
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
@@ -57,6 +63,9 @@ public class LoginJFrame extends JDialog
 	
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
+	private JProgressBar proLoading;
+	private Admin admin;
+	private JLabel lblWelcomeName;
 
 
 	public static void main(String[] args) 
@@ -73,7 +82,29 @@ public class LoginJFrame extends JDialog
 			e.printStackTrace();
 		}
 	}
-
+	
+	boolean checkNullForm()
+	{
+		boolean isSuccess = true;
+		String msg = "";
+		
+		if (txtUsername.getText().length()== 0) 
+		{
+			isSuccess = false;
+			msg += "+ Tài khoản không được để trống!\n";
+		}
+		if (txtPassword.getText().length() == 0) 
+		{
+			isSuccess = false;
+			msg += "+ Mật khẩu không được để trống!\n";
+		}
+		
+		if (isSuccess == false)
+		{
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg, MessageOptionPane.ICON_NAME_WARNING);
+		}
+		return isSuccess;
+	}
 
 	public LoginJFrame() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -198,11 +229,44 @@ public class LoginJFrame extends JDialog
 		pnlForm.add(txtPassword);
 		
 		btnLogin = new JButton("Đăng Nhập");
+		AdminDAO dao = new AdminDAO();
+		
+		btnLogin = new JButton("Đăng Nhập");
 		btnLogin.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				animationWelcome();
+				if (checkNullForm() == true) 
+				{
+					//xu ly
+					String username = txtUsername.getText();
+					String password = txtPassword.getText();
+					try {	
+						admin = dao.findByUsername(username); 
+						if (admin != null) 
+						{
+							if (password.equals(admin.getPassword())) 
+							{
+								AccountSave.setAdmin(admin);
+								MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+								active();
+							}
+							else 
+							{
+								MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
+								txtPassword.requestFocus();
+							}
+						}
+						else 
+						{
+							MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
+							txtUsername.requestFocus();
+						}
+					} catch (Exception e2) 
+					{
+						e2.printStackTrace();
+					}
+				}
 			}
 		});
 		btnLogin.addMouseListener(new MouseAdapter() {
@@ -256,11 +320,11 @@ public class LoginJFrame extends JDialog
 		lblManagerment.setBounds(111, 68, 286, 57);
 		panel.add(lblManagerment);
 		
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setIndeterminate(true);
-		progressBar.setForeground(new Color(255, 69, 0));
-		progressBar.setBounds(0, 486, 386, 14);
-		panel.add(progressBar);
+		proLoading = new JProgressBar();
+		proLoading.setBorder(null);
+		proLoading.setForeground(new Color(255, 69, 0));
+		proLoading.setBounds(0, 492, 386, 8);
+		panel.add(proLoading);
 		
 		pnlWelcome = new JPanel();
 		pnlWelcome.setOpaque(false);
@@ -275,18 +339,18 @@ public class LoginJFrame extends JDialog
 		SwingHelper.setAutoResizeIcon(lblWelcome, Image.SCALE_DEFAULT);
 		pnlWelcome.add(lblWelcome);
 		
-		JLabel lblNguyniHo = new JLabel("Đào Quang Tiến");
-		lblNguyniHo.setForeground(new Color(255, 255, 255));
-		lblNguyniHo.setFont(new Font("Tahoma", Font.BOLD, 34));
-		lblNguyniHo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNguyniHo.setBounds(0, 132, 354, 58);
-		pnlWelcome.add(lblNguyniHo);
+		lblWelcomeName = new JLabel("Đào Quang Tiến");
+		lblWelcomeName.setForeground(new Color(255, 255, 255));
+		lblWelcomeName.setFont(new Font("Tahoma", Font.BOLD, 34));
+		lblWelcomeName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWelcomeName.setBounds(0, 132, 354, 58);
+		pnlWelcome.add(lblWelcomeName);
 		
-		JLabel lblangTiD = new JLabel("Đang tải dữ liệu...");
-		lblangTiD.setForeground(Color.WHITE);
-		lblangTiD.setHorizontalAlignment(SwingConstants.CENTER);
-		lblangTiD.setBounds(0, 295, 366, 28);
-		pnlWelcome.add(lblangTiD);
+		JLabel lblLoading = new JLabel("Đang tải dữ liệu...");
+		lblLoading.setForeground(Color.WHITE);
+		lblLoading.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLoading.setBounds(0, 295, 366, 28);
+		pnlWelcome.add(lblLoading);
 		
 		JLabel lblPhnMmQun = new JLabel("Phần mềm quản lý nhà sách chuyên nghiệp");
 		lblPhnMmQun.setBounds(40, 110, 342, 29);
@@ -301,7 +365,8 @@ public class LoginJFrame extends JDialog
 		int maxHeight = 332;
 		lblLogo.setIcon(new ImageIcon(LoginJFrame.class.getResource("/com/duan/icon/sunrise-400.gif")));
 		getContentPane().remove(btnLogin);
-
+		
+		
 		txtUsername.setEnabled(false);
 		txtPassword.setEnabled(false);
 		
@@ -322,8 +387,54 @@ public class LoginJFrame extends JDialog
 		}).start();
 	}
 	
+	//Chạy processbar để kích hoạt
+	public void runProcessBar()
+	{
+		new Thread(new Runnable() 
+		{
+			int maxValue = proLoading.getMaximum();
+			@Override
+			public void run() 
+			{
+				try 
+				{
+					while (true)
+					{
+						int value = proLoading.getValue();
+						if (value < maxValue)
+						{
+							proLoading.setValue(++value);
+							Thread.sleep(45);
+						}
+						else
+						{
+							dispose();
+							showMainJFrame();
+							break;
+						}
+					}
+				} 
+				catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	public void showMainJFrame()
+	{
+		MainJFrame2 mainJFrame = new MainJFrame2();
+		mainJFrame.addContainer();
+		mainJFrame.setVisible(true);
+	}
+	
+	//Goi ham nay khi login thanh cong
 	public void active()
 	{
-		//Goi ham nay khi login thanh cong
+		lblWelcomeName.setText(admin.getFullname());
+		AccountSave.setAdmin(admin);
+		animationWelcome();
+		runProcessBar();
 	}
 }

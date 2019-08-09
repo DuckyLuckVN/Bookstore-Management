@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
 import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;
@@ -385,13 +386,13 @@ public class RentBookEditorJDialog extends JDialog {
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(contentPane, "Số lượng nhập vào phải lớn hơn 0!");
+				MessageOptionPane.showAlertDialog(contentPane, "Số lượng nhập vào phải lớn hơn 0!", MessageOptionPane.ICON_NAME_WARNING);
 				return false;
 			}
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(contentPane, "Số lượng nhập vào phải là số!");
+			MessageOptionPane.showAlertDialog(contentPane, "Số lượng nhập vào phải là số!", MessageOptionPane.ICON_NAME_WARNING);
 			return false;
 		}
 	}
@@ -444,7 +445,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
-			JOptionPane.showMessageDialog(this, "Thêm phiếu thuê sách thành công!");
+			MessageOptionPane.showAlertDialog(this, "Thêm phiếu thuê sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
 	
@@ -467,7 +468,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
-			JOptionPane.showMessageDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!");
+			MessageOptionPane.showAlertDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
 	
@@ -612,7 +613,7 @@ public class RentBookEditorJDialog extends JDialog {
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra:\n" + msg);
+			MessageOptionPane.showMessageDialog(this, "Đã có lỗi sảy ra:\n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 		
 		return isSuccess;
