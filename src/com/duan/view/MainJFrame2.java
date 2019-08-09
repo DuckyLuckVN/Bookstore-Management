@@ -554,6 +554,8 @@ public class MainJFrame2 extends JFrame {
 		pnlAvatar.setLayout(null);
 		
 		JLabel lblCicleAvatar = new JLabel("");
+		lblCicleAvatar.setToolTipText("Thông tin chi tiết");
+		lblCicleAvatar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lblCicleAvatar.setBounds(10, 11, 73, 75);
 		pnlAvatar.add(lblCicleAvatar);
 		lblCicleAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/cicleAvatar.png")));

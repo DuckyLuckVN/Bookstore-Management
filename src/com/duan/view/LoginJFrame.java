@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
@@ -100,7 +101,7 @@ public class LoginJFrame extends JDialog
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg);
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 		return isSuccess;
 	}
@@ -247,18 +248,18 @@ public class LoginJFrame extends JDialog
 							if (password.equals(admin.getPassword())) 
 							{
 								AccountSave.setAdmin(admin);
-								JOptionPane.showMessageDialog(contentPane, "Đăng nhập thành công!");
+								MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 								active();
 							}
 							else 
 							{
-								JOptionPane.showMessageDialog(contentPane, "Mật khẩu không chính xác");
+								MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
 								txtPassword.requestFocus();
 							}
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(contentPane, "Tài khoản này không tồn tại!");
+							MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
 							txtUsername.requestFocus();
 						}
 					} catch (Exception e2) 

@@ -27,23 +27,23 @@ import java.awt.SystemColor;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
 
-public class MessageJDialog extends JDialog {
+public class AlertJDialog extends JDialog {
 	
-	public static final String ICON_NAME_INFORMATION = "icon_information_100px.png";
-	public static final String ICON_NAME_WARNING = "icon_warning_100px.png";
-	public static final String ICON_NAME_ERROR = "icon_error_100px.png";
+	public static final String ICON_NAME_INFORMATION = "icon_information_125px.png";
+	public static final String ICON_NAME_WARNING = "icon_warning_125px.png";
+	public static final String ICON_NAME_ERROR = "icon_error_125px.png";
+	public static final String ICON_NAME_BLOCK = "icon_block_125px.png";
 	
 	private final JPanel contentPanel = new JPanel();
 	private int posX;
 	private int posY;
 	private JLabel lblIcon;
-	private JTextArea txtContent;
-	private JLabel lblTitle;
+	private JLabel lblContent;
 	
 	public static void main(String[] args) 
 	{
 		try {
-			MessageJDialog dialog = new MessageJDialog();
+			AlertJDialog dialog = new AlertJDialog();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -51,26 +51,24 @@ public class MessageJDialog extends JDialog {
 		}
 	}
 	
-	public MessageJDialog(Component component, String message)
+	public AlertJDialog(Component component, String message)
 	{
 		this(component, message, ICON_NAME_INFORMATION);
 	}
-	
-	public MessageJDialog(Component component, String message, String iconName)
+
+	public AlertJDialog(Component component, String message, String iconName)
 	{
-		this(component, message, iconName, "Thông Báo");
+		this(component, message, iconName, 14);
 	}
 	
-	public MessageJDialog(Component component, String message, String iconName, String title)
+	public AlertJDialog(Component component, String message, String iconName, int fontSize)
 	{
 		this();
 		setLocationRelativeTo(component);
-		txtContent.setText(message);
+		lblContent.setText(message);
 		lblIcon.setIcon(new ImageIcon(MessageJDialog.class.getResource("/com/duan/icon/" + iconName)));
-		lblTitle.setText(title);
 	}
-
-	public MessageJDialog() 
+	public AlertJDialog() 
 	{
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -98,7 +96,7 @@ public class MessageJDialog extends JDialog {
 		getContentPane().setBackground(Color.WHITE);
 		setUndecorated(true);
 		setResizable(false);
-		setSize(507, 230);
+		setSize(471, 192);
 		getContentPane().setLayout(null);
 		
 		JLabel lblClose = new JLabel("X");
@@ -125,48 +123,21 @@ public class MessageJDialog extends JDialog {
 		lblClose.setHorizontalAlignment(SwingConstants.CENTER);
 		lblClose.setForeground(Color.BLACK);
 		lblClose.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblClose.setBounds(482, 0, 25, 25);
+		lblClose.setBounds(446, 0, 25, 25);
 		getContentPane().add(lblClose);
 		
 		lblIcon = new JLabel("");
 		lblIcon.setBackground(Color.LIGHT_GRAY);
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		lblIcon.setBounds(10, 31, 100, 100);
+		lblIcon.setBounds(184, 11, 100, 100);
 		getContentPane().add(lblIcon);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(null);
-		scrollPane.setBounds(129, 49, 364, 139);
-		getContentPane().add(scrollPane);
-		
-		txtContent = new JTextArea();
-		txtContent.setEditable(false);
-		txtContent.setWrapStyleWord(true);
-		txtContent.setLineWrap(true);
-		txtContent.setFont(new Font("Tahoma", Font.BOLD, 14));
-		scrollPane.setViewportView(txtContent);
-		
-		lblTitle = new JLabel("Thông Báo");
-		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitle.setBounds(0, 5, 507, 30);
-		getContentPane().add(lblTitle);
-		
-		JButton btnOk = new JButton("OK");
-		btnOk.addActionListener(new ActionListener() 
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				dispose();
-			}
-		});
-		btnOk.setForeground(SystemColor.windowText);
-		btnOk.setBackground(SystemColor.controlHighlight);
-		btnOk.setBounds(404, 196, 89, 23);
-		getContentPane().add(btnOk);
+		lblContent = new JLabel("Xóa tài khoảng có username 'DuckyLuckVN' thành công!");
+		lblContent.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblContent.setHorizontalAlignment(SwingConstants.CENTER);
+		lblContent.setBounds(0, 131, 469, 45);
+		getContentPane().add(lblContent);
 		
 		setLocationRelativeTo(getOwner());
-
 	}
 }

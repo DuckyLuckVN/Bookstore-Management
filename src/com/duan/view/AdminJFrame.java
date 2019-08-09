@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.CustomJTableRed;
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
@@ -629,12 +630,12 @@ public class AdminJFrame extends JFrame {
 					fileImageSelected = null;
 				}
 				
-				JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thành công!");
+				MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			}
 		} 
 		catch (Exception e) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Thêm tài khoản thất bại!");
+			MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
 			e.printStackTrace();
 		}
 	}
@@ -659,10 +660,10 @@ public class AdminJFrame extends JFrame {
 			loadTable();
 			setControllMode_Nothing();
 			lockForm();
-			JOptionPane.showMessageDialog(contentPane, "Xóa tài khoản thành công!");
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(contentPane, "Xóa tài khoản thất bại!");
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
 		}
 	}
 
@@ -698,13 +699,13 @@ public class AdminJFrame extends JFrame {
 				loadTable();
 				setControllMode_edit();
 				
-				JOptionPane.showMessageDialog(contentPane, "Cập nhật tài khoản thành công!");
+				MessageOptionPane.showAlertDialog(contentPane, "Cập nhật tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			}
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(contentPane, "Cập nhật tài khoản thất bại!");
+			MessageOptionPane.showAlertDialog(contentPane, "Cập nhật tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
 		}
 	}
 	
@@ -745,63 +746,63 @@ public class AdminJFrame extends JFrame {
 	private boolean validateAll() {
 		if (txtUsername.getText().length() == 0) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Tài khoản không đươc để trống");
+			MessageOptionPane.showAlertDialog(contentPane, "Tài khoản không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
 			txtUsername.requestFocus();
 			return false;
 		}
 		else if (!txtUsername.getText().matches("^[0-9a-zA-Z\\p{L}]{1,}$")) {
-			JOptionPane.showMessageDialog(contentPane, "Tài khoản chỉ được nhập chữ hoặc số");
+			MessageOptionPane.showAlertDialog(contentPane, "Tài khoản chỉ được nhập chữ hoặc số", MessageOptionPane.ICON_NAME_WARNING);
 			txtUsername.requestFocus();
 			return false;
 		}
 		else if (txtPassword.getText().length() == 0)
 		{
-			JOptionPane.showMessageDialog(contentPane, "Mật khẩu không đươc để trống");
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
 			txtPassword.requestFocus();
 			return false;
 		}
 		else if (!txtPassword.getText().matches("^[0-9a-zA-Z\\p{L}]{1,}$")) {
-			JOptionPane.showMessageDialog(contentPane, "Mật khẩu chỉ được nhập chữ hoặc số");
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu chỉ được nhập chữ hoặc số", MessageOptionPane.ICON_NAME_WARNING);
 			txtPassword.requestFocus();
 			return false;
 		}
 		else if (txtPassword.getText().length() < 6 || txtPassword.getText().length() > 14) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Mật khẩu từ 6 - 14 ký tự");
+			MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu từ 6 - 14 ký tự", MessageOptionPane.ICON_NAME_WARNING);
 			txtPassword.requestFocus();
 			return false;
 		}
 		else if (txtUsername.getText().length() == 0) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Họ tên không đươc để trống");
+			MessageOptionPane.showAlertDialog(contentPane, "Họ tên không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
 			txtFullname.requestFocus();
 			return false;
 		}
 		else if (!txtFullname.getText().matches("^[a-zA-Z\\p{L} ]{1,}$")) {
-			JOptionPane.showMessageDialog(contentPane, "Họ tên chỉ được nhập chữ");
+			MessageOptionPane.showAlertDialog(contentPane, "Họ tên chỉ được nhập chữ", MessageOptionPane.ICON_NAME_WARNING);
 			txtFullname.requestFocus();
 			return false;
 		}
 		else if (txtEmail.getText().length() == 0) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Email không đươc để trống");
+			MessageOptionPane.showAlertDialog(contentPane, "Email không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
 			txtEmail.requestFocus();
 			return false;
 		}
 		else if (!txtEmail.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Email không đươc đúng định dạng");
+			MessageOptionPane.showAlertDialog(contentPane, "Email không đươc đúng định dạng", MessageOptionPane.ICON_NAME_WARNING);
 			txtEmail.requestFocus();
 			return false;
 		}
 		else if (txtPhoneNum.getText().length() == 0) 
 		{
-			JOptionPane.showMessageDialog(contentPane, "Số điện thoại không đươc để trống");
+			MessageOptionPane.showAlertDialog(contentPane, "Số điện thoại không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
 			txtPhoneNum.requestFocus();
 			return false;
 		}
 		else if (!txtPhoneNum.getText().matches("[0-9]{10,}")) {
-			JOptionPane.showMessageDialog(contentPane, "Số điện thoại 10 số ");
+			MessageOptionPane.showAlertDialog(contentPane, "Số điện thoại 10 số ", MessageOptionPane.ICON_NAME_WARNING);
 			txtPhoneNum.requestFocus();
 			return false;
 		}

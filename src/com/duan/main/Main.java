@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.duan.custom.MessageOptionPane;
 import com.duan.helper.SettingSave;
 import com.duan.view.LoginJFrame;
 import com.duan.view.SettingJDialog;
@@ -30,10 +31,8 @@ public class Main extends JFrame
 		}
 		else
 		{
-			String msg = "Đây là lần đầu phần mềm được mở, vui lòng\n"
-					+ "thiết lập các giá trị cần thiết trước khi\n"
-					+ "chương trình được chạy!";
-			JOptionPane.showMessageDialog(null, msg);
+			String msg = "Đây là lần đầu phần mềm được mở, vui lòng thiết lập các giá trị cần thiết trước khi chương trình được chạy!";
+			MessageOptionPane.showMessageDialog(null, msg);
 			settingJDialog.setVisible(true);
 		}
 	}

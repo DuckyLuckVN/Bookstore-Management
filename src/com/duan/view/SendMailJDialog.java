@@ -24,6 +24,7 @@ import javax.swing.JTextArea;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
 
+import com.duan.custom.MessageOptionPane;
 import com.duan.helper.SettingSave;
 
 import javax.swing.border.LineBorder;
@@ -169,6 +170,7 @@ public class SendMailJDialog extends JDialog {
 						msg.setSubject(txtTieuDe.getText());
 						msg.setText(txtNoiDung.getText());
 						Transport.send(msg);
+						MessageOptionPane.showAlertDialog(getContentPane(), "Đã gửi mail thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					} 
 					catch (MessagingException ex) 
 					{
@@ -223,7 +225,7 @@ public class SendMailJDialog extends JDialog {
 		}
 		if (loiRong == true) 
 		{
-			JOptionPane.showMessageDialog(this, msgString);
+			MessageOptionPane.showMessageDialog(this, msgString, MessageOptionPane.ICON_NAME_WARNING);
 			return false;
 		}
 		return true;

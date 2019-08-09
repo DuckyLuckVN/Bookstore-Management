@@ -24,6 +24,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
@@ -336,11 +337,11 @@ public class BookEditorJDialog extends JDialog {
 							
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							JOptionPane.showMessageDialog(getContentPane(), "UPDATE thành công!");
+							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(getContentPane(), "UPDATE thất bại");
+							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thất bại", MessageOptionPane.ICON_NAME_WARNING);
 						}
 					}
 					else if (isEditMode == false)
@@ -363,11 +364,11 @@ public class BookEditorJDialog extends JDialog {
 							//Sau đó đổ lại dữ liệu vào JFrame Book và fill ngược vào table
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							JOptionPane.showMessageDialog(getContentPane(), "INSERT thành công!");
+							MessageOptionPane.showAlertDialog(getContentPane(), "Thêm sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(getContentPane(), "INSERT thất bại");
+							MessageOptionPane.showAlertDialog(getContentPane(), "INSERT thất bại", MessageOptionPane.ICON_NAME_WARNING);
 						}
 					}
 				} 
