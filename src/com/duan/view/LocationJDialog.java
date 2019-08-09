@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.custom.CustomJTableBlue;
 import com.duan.dao.LocationDAO;
 import com.duan.model.Location;
 
@@ -54,7 +55,7 @@ import java.awt.event.MouseEvent;
 public class LocationJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private JTable tblLocation;
+	private CustomJTableBlue tblLocation;
 	private JTextField txtMaKeSach;
 	private JTextField txtTenKe;
 	private JTextField txtSucChua;
@@ -111,7 +112,8 @@ public class LocationJDialog extends JDialog {
 		panel.setBounds(10, 8, 344, 208);
 		panel.setLayout(null);
 		
-		tblLocation = new JTable();
+		tblLocation = new CustomJTableBlue();
+		tblLocation.setRowHeight(30);
 		tblLocation.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) 
