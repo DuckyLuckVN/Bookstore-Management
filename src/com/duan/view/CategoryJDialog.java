@@ -122,6 +122,7 @@ public class CategoryJDialog extends JDialog {
 				showDetail();
 				setControllMode_Edit();
 				unLockForm();
+				txtMaTheLoai.setEnabled(false);
 			}
 		});
 		tblCategory.setModel(new DefaultTableModel(null, new String[] {"MÃ THỂ LOẠI", "TÊN THỂ LOẠI", "GHI CHÚ"})
@@ -206,6 +207,7 @@ public class CategoryJDialog extends JDialog {
 					clearForm();
 					lockForm();
 					setControllMode_Nothing();
+					
 				}
 			}
 
@@ -216,9 +218,17 @@ public class CategoryJDialog extends JDialog {
 		contentPane.add(btnUpdate);
 		
 		btnDelete = new JButton("Xóa");
+		btnDelete.setEnabled(false);
 		btnDelete.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) 
+			{
+				
+			}
+		});
+		btnDelete.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
 			{
 				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa thể loại này không ?","Thông báo ",JOptionPane.YES_NO_OPTION);
 				if (luachon == JOptionPane.YES_OPTION) 
@@ -230,14 +240,6 @@ public class CategoryJDialog extends JDialog {
 				}
 			}
 		});
-		btnDelete.setEnabled(false);
-		btnDelete.addActionListener(new ActionListener() 
-		{
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				
-			}
-		});
 		btnDelete.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		btnDelete.setBounds(364, 155, 105, 38);
@@ -247,9 +249,12 @@ public class CategoryJDialog extends JDialog {
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
+				
 				unLockForm();
 				setControllMode_Insert();
+				txtMaTheLoai.requestFocus();
 				clearForm();
+				
 				
 			}
 		});

@@ -119,6 +119,7 @@ public class LocationJDialog extends JDialog {
 				showDetail();
 				setControllMode_Edit();
 				unlockForm();
+				txtMaKeSach.setEditable(false);
 			}
 		});
 		tblLocation.setModel(new DefaultTableModel(null, new String[] {"MÃ KỆ SÁCH", "TÊN KỆ", "SỨC CHỨA", "GHI CHÚ"})
@@ -356,6 +357,7 @@ public class LocationJDialog extends JDialog {
 	}
 	public void insert()
 	{
+		
 		dao = new LocationDAO();
 		String id = txtMaKeSach.getText();
 		String ten  = txtTenKe.getText();
@@ -370,15 +372,14 @@ public class LocationJDialog extends JDialog {
 				JOptionPane.showMessageDialog(this, "Thêm thành công mã kệ : " + txtMaKeSach.getText());
 				list.add(lc);
 				fillToTable();
-				
 			}
 		} catch (SQLException e) 
 		{
-			if (e.getErrorCode() == 2627) 
-			{
-				JOptionPane.showMessageDialog(this, "Mã kệ này đã tồn tại !");
-			}
-			
+//			if (e.getErrorCode() == 2627) 
+//			{
+//				JOptionPane.showMessageDialog(this, "Mã kệ này đã tồn tại !");
+//			}
+			e.printStackTrace();
 		}
 	}
 	
@@ -399,9 +400,14 @@ public class LocationJDialog extends JDialog {
 				JOptionPane.showMessageDialog(this, "Sửa thành công kệ có mã : " + list.get(index).getId());
 				list.set(index, lc);
 				fillToTable();
+				tblLocation.setRowSelectionInterval(index, index);
 			}
 		} catch (SQLException e) 
 		{
+			if (e.getErrorCode() == 2627) 
+			{
+				JOptionPane.showMessageDialog(this, "Mã kệ này đã tồn tại");
+			}
 			e.printStackTrace();
 		}
 	}
@@ -417,10 +423,11 @@ public class LocationJDialog extends JDialog {
 					list.remove(index);
 					fillToTable();
 			}
-		} catch (SQLException e) 
+		} 
+		catch (SQLException e) 
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this	, "Không thể xóa mã kệ sách này");
+			
 		}
 	}
 	
