@@ -53,37 +53,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class LocationJDialog extends JDialog {
-	String header[]= {"MÃ KỆ SÁCH","TÊN KỆ","SỨC CHỨA","GHI CHÚ"};
-	DefaultTableModel model = new DefaultTableModel(header, 0);
-	public void CategoryJDialog() 
-	{
-		LoadDataToJtable();
-	}
-	// ĐỔ DỮ LIỆU LÊN BẢNG LOCATION
-	public void LoadDataToJtable() {
-		Connection conn = null;
-    	java.sql.Statement st = null;
-    	ResultSet rs = null;
-    	try {
-    		model.setRowCount(0);
-		 	conn = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=BookStore", "sa", "123");
-		 	st = conn.createStatement();
-			String sql = "select * from LOCATION";
-			rs = st.executeQuery(sql);
-			 while (rs.next()) {
-				   Vector data = new Vector();
-				   data.add(rs.getString(1));
-				   data.add(rs.getString(2));
-				   data.add(rs.getString(3));
-				   data.add(rs.getString(4));
-				   model.addRow(data);
-				 }
-			 tblLocation.setModel(model);conn.close();
-		} catch (Exception e) {
-			 System.out.println(e);
-		} 
-	}
-
 	private JPanel contentPane;
 	private CustomJTableBlue tblLocation;
 	private JTextField txtMaKeSach;
@@ -92,7 +61,6 @@ public class LocationJDialog extends JDialog {
 	
 	LocationDAO dao;
 	ArrayList<Location> list = new ArrayList<>();
-	DefaultTableModel model;
 	int index = -1;
 	private JTextArea txtGhiChu;
 	JButton btnThm;
@@ -249,11 +217,6 @@ public class LocationJDialog extends JDialog {
 					setControllMode_Nothing();
 				}
 			}
-
-			private void LoadDataToJTable() {
-				// TODO Auto-generated method stub
-				
-			}
 		});
 		pnlControll.add(btnCpNht);
 		btnCpNht.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
@@ -320,7 +283,7 @@ public class LocationJDialog extends JDialog {
 	
 	public void fillToTable()
 	{
-		model = (DefaultTableModel) tblLocation.getModel();
+		DefaultTableModel model = (DefaultTableModel) tblLocation.getModel();
 		model.setRowCount(0);
 		for (Location lc : list) 
 		{
