@@ -47,12 +47,12 @@ public class CategoryDAO
     
     public static boolean delete(String id) throws SQLException
     {
-        String sql = "DELETE FROM CATEGORY Where id = ?";
+        String sql = "DELETE FROM [CATEGORY] Where id = ?";
         PreparedStatement pre;
         
         pre = JDBCHelper.createPreparedStatement(sql, id);
         int count = pre.executeUpdate();
-        return count >0;
+        return count > 0;
     }
     
     public static Category findById(String id) throws SQLException
