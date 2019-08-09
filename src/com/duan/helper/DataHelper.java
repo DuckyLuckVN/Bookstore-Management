@@ -64,12 +64,19 @@ public class DataHelper
 		return false;
 	}
 	
-	//Kiểm tra xem chuỗi truyền vào có phải là helper hay không
-	public static boolean isEmail(String email)
-	{
-		String regex = "\\w+@\\w+(\\.\\w+){1,3}";
-		return email.matches(regex);
-	}
+	//Kiểm tra xem chuỗi truyền vào có phải là email hay không
+		public static boolean isEmail(String email)
+		{
+			String regex = "\\w+@\\w+(\\.\\w+){1,3}";
+			return email.matches(regex);
+		}
+		
+		//Kiểm tra xem chuỗi truyền vào có phải là sdt hay không
+		public static boolean isPhoneNumber(String email)
+		{
+			String regex = "[0-9]{9,11}";
+			return email.matches(regex);
+		}
 	
 	//Lấy ra đường dẫn URL đến source project
 	public static File getFileFromSource(String path)
