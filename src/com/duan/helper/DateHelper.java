@@ -2,7 +2,14 @@ package com.duan.helper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.itextpdf.text.xml.simpleparser.NewLineHandler;
 
 public class DateHelper 
 {
@@ -41,17 +48,28 @@ public class DateHelper
 		}
 	}
 	
-	
+	public static int getDayBetweenTwoDate(Date date1, Date date2)
+	{
+		long miliSecBetween = date2.getTime() - date1.getTime();
+		return (int) TimeUnit.DAYS.convert(miliSecBetween, TimeUnit.MILLISECONDS);
+	}
+//	
+//	public static int getDay(Date date)
+//	{
+//		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//		localDate.getday
+//	}
+//	
 	//Lấy ra thời gian hiện tại
 	public static Date getTimeNow()
 	{
 		return new Date();
 	}
 	
-	public static void main(String[] args) throws ParseException {
-		System.out.println(stringToDate("1", "YYYY"));
-		System.out.println(stringToDate("2019", "yyyy"));;
+	public static void main(String[] args) throws ParseException 
+	{
 	}
+	
 	
 	
 	

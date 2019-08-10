@@ -18,7 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.JTableRed;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
@@ -79,7 +79,7 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private CustomJTableRed tblRentBook;
+	private JTableRed tblRentBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -87,7 +87,7 @@ public class RentBookJFrame extends JFrame {
 	private JButton btnMaxRight;
 	private JPanel pnlTime;
 	private JLabel lblTmKim;
-	private JTextField textField;
+	private JTextField txtSearch;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnDetail;
 	
@@ -97,6 +97,7 @@ public class RentBookJFrame extends JFrame {
 	
 	private List<RentBook> listRentBook = new ArrayList<RentBook>();
 	private int indexSelect = -1;
+	private JComboBox cboStatus;
 	
 	public static void main(String[] args) 
 	{
@@ -246,14 +247,37 @@ public class RentBookJFrame extends JFrame {
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		textField = new JTextField();
-		textField.setColumns(10);
+		txtSearch = new JTextField();
+		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				try {
+					search();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		txtSearch.setColumns(10);
 		
 		JLabel lblTnhTrng = new JLabel("Tình trạng:");
 		lblTnhTrng.setFont(new Font("Tahoma", Font.BOLD, 13));
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Đang thuê", "Đã trả sách"}));
+		cboStatus = new JComboBox();
+		cboStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try {
+					search();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Đang thuê", "Đã trả", "Quá hạn"}));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -263,11 +287,11 @@ public class RentBookJFrame extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblTnhTrng, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
+							.addComponent(cboStatus, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE))
+							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE))
 						.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -282,8 +306,8 @@ public class RentBookJFrame extends JFrame {
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblTnhTrng, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-								.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+								.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+								.addComponent(cboStatus, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
@@ -364,7 +388,7 @@ public class RentBookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblRentBook = new CustomJTableRed();
+		tblRentBook = new JTableRed();
 		tblRentBook.setRowHeight(30);
 		tblRentBook.addKeyListener(new KeyAdapter() {
 			@Override
@@ -462,7 +486,59 @@ public class RentBookJFrame extends JFrame {
 			}
 		}
 		
+	}
+
+	public void search() throws SQLException
+	{
+		String search = txtSearch.getText();
+		DefaultTableModel model = (DefaultTableModel) tblRentBook.getModel();
+		String cboStatusStr = (cboStatus.getSelectedIndex() != 0) ? cboStatus.getSelectedItem().toString() : "";
+		System.out.println(cboStatusStr);
+		model.setRowCount(0);
+		for (RentBook rb : listRentBook)
+		{
+			//Nếu giá trì tìm không thấy hoặc trạng thái đơn hàng không giống như cboStatus đã chọn thì không xử lý và lặp lại tiếp
+			if (DataHelper.search(rb.getSearchString(), search) == false || DataHelper.search(rb.getTitleStatus(), cboStatusStr) == false) {continue;}
+			
+			
+			User user = UserDAO.findByID(rb.getUserId());
+			Admin admin = AdminDAO.findByID(rb.getAdminId());
+			
+			String createdDate = DateHelper.dateToString(rb.getCreatedDate(), SettingSave.getSetting().getDateFormat());
+			String returnedDate = "Chưa có";
+			String status = rb.getTitleStatus();
+			if (rb.getReturnedDate() != null)
+			{
+				returnedDate = DateHelper.dateToString(rb.getReturnedDate(), SettingSave.getSetting().getDateFormat());
+			}
+			
+			String[] data = {rb.getId() + "", user.getUsername(), admin.getUsername(), createdDate, returnedDate, status};
+			model.addRow(data);
+		}
 		
+		
+		
+		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+		int rowCount = tblRentBook.getRowCount();
+		if (indexSelect != -1)
+		{
+			if (indexSelect < rowCount && rowCount > 0)
+			{
+				tblRentBook.setRowSelectionInterval(indexSelect, indexSelect);
+			}
+			else
+			{
+				indexSelect = rowCount - 1;
+				if (indexSelect > -1)
+				{
+					tblRentBook.setRowSelectionInterval(indexSelect, indexSelect);
+				}
+				else
+				{
+					setControllModeTo_Nothing();
+				}
+			}
+		}
 	}
 	
 	//Sự kiện dc gọi mỗi khi có thao tác select các row trên bảng

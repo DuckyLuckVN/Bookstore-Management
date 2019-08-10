@@ -430,7 +430,90 @@ AS BEGIN
 	WHERE order_id = @order_id
 END
 GO
+
+/****** Object:  StoredProcedure  [sp_getTotalAmountOrderBook]  Script Date: 8/10/2019 ******/
+--Trả về tổng số sách đã bán
+CREATE PROC sp_getTotalAmountOrderBook 
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM ORDER_DETAIL
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
+--Trả về tổng tất cả các thứ cần thống ke :))
+ALTER PROC sp_getStatisticOverviewInMonth 
+AS BEGIN
+	DECLARE @totalOrder FLOAT
+	DECLARE @totalRent FLOAT
+	DECLARE @totalLost FLOAT
+	DECLARE @totalUser FLOAT
+	DECLARE @totalAddStorage FLOAT
+	DECLARE @totalRevenue FLOAT
+
+	SELECT @totalOrder = SUM(ORDER_DETAIL.amount) FROM ORDER_DETAIL, [ORDER] 
+	WHERE ORDER_DETAIL.order_id = [ORDER].id 
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = MONTH(GETDATE())
 	
+	SELECT @totalRent = SUM(RENTBOOK_DETAIL.amount) FROM RENTBOOK_DETAIL, RENTBOOK
+	WHERE  RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+	AND YEAR(RENTBOOK.created_date) = YEAR(GETDATE()) 
+	AND MONTH(RENTBOOK.created_date) = MONTH(GETDATE()) 
+	
+	SELECT @totalLost = SUM(BOOK_LOST_DETAIL.amount) FROM  BOOK_LOST_DETAIL, BOOK_LOST
+	WHERE BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id 
+	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
+	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+	
+	SELECT @totalUser = COUNT([USER].id) FROM [USER]
+	WHERE YEAR([USER].created_date) = YEAR(GETDATE()) 
+	AND MONTH([USER].created_date) = MONTH(GETDATE())
+	
+	SELECT @totalAddStorage = SUM(STORAGE_DETAIL.amount) FROM STORAGE_DETAIL, STORAGE
+	WHERE STORAGE_DETAIL.storage_id = STORAGE.id
+	AND YEAR(STORAGE.created_date) = YEAR(GETDATE()) 
+	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
+	
+	SELECT @totalrevenue = SUM(ORDER_DETAIL.amount*ORDER_DETAIL.price) + SUM(BOOK_LOST_DETAIL.cost) - SUM(BOOK_LOST_DETAIL.amount*BOOK.price)
+	FROM ORDER_DETAIL, [ORDER], BOOK_LOST, BOOK_LOST_DETAIL, BOOK
+	WHERE  ORDER_DETAIL.order_id = [ORDER].id
+	AND BOOK.id = BOOK_LOST_DETAIL.book_id
+	AND BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = MONTH(GETDATE())
+
+
+	SELECT @totalOrder AS [Total Order], @totalRent AS [Total Rent], @totalLost AS [Total Lost], @totalUser AS [Total User], @totalAddStorage AS [Total Book Storage], @totalRevenue AS [Total imcome]
+END
+GO
+
+INSERT dbo.ADMIN
+        ( username ,
+          password ,
+          fullName ,
+          email ,
+          phone_number ,
+          image ,
+          sex ,
+          role ,
+          isActive ,
+          created_date
+        )
+VALUES  ( 'haoql' , -- username - varchar(50)
+          '123' , -- password - varchar(50)
+          N'Đại Hào' , -- fullName - nvarchar(256)
+          'daihao12mc@gmail.com' , -- email - varchar(50)
+          '0376555796' , -- phone_number - varchar(14)
+          N'' , -- image - nvarchar(256)
+          1 , -- sex - bit
+          1 , -- role - int
+          1 , -- isActive - bit
+          GETDATE()  -- created_date - date
+        )
+
+EXEC sp_getStatisticOverviewInMonth
 
 SELECT * FROM dbo.BOOK
 SELECT * FROM dbo.LOCATION
@@ -440,7 +523,9 @@ UPDATE dbo.BOOK SET description = 'abcdef descrip' WHERE id = 'GH12'
 SELECT * FROM dbo.[USER]
 SELECT * FROM dbo.ADMIN
 SELECT * FROM dbo.[ORDER]
+SELECT * FROM dbo.ORDER_DETAIL
 SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
+SELECT * FROM dbo.STORAGE_DETAIL
 
 DELETE FROM dbo.RENTBOOK

@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.JTableRed;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
@@ -60,7 +60,7 @@ import java.awt.Dimension;
 public class BookLostJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private CustomJTableRed tblBookLost;
+	private JTableRed tblBookLost;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
 	private JButton btnRight;
@@ -182,7 +182,7 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.setIcon(new ImageIcon(BookLostJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
 		pnlController.add(btnDelete);
 		
-		tblBookLost = new CustomJTableRed();
+		tblBookLost = new JTableRed();
 		tblBookLost.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 

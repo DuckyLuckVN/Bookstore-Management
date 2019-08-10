@@ -21,13 +21,15 @@ import javax.swing.JScrollPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.SystemColor;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
 
-public class MessageJDialog extends JDialog {
+public class MessageJDialog extends CustomJDialog {
 	
 	public static final String ICON_NAME_INFORMATION = "icon_information_100px.png";
 	public static final String ICON_NAME_WARNING = "icon_warning_100px.png";
@@ -72,6 +74,15 @@ public class MessageJDialog extends JDialog {
 
 	public MessageJDialog() 
 	{
+		setContentPane(contentPanel);
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				if (e.getKeyCode() == 27)
+					dispose();
+			}
+		});
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -140,10 +151,11 @@ public class MessageJDialog extends JDialog {
 		getContentPane().add(scrollPane);
 		
 		txtContent = new JTextArea();
+		txtContent.setEnabled(false);
 		txtContent.setEditable(false);
 		txtContent.setWrapStyleWord(true);
 		txtContent.setLineWrap(true);
-		txtContent.setFont(new Font("Tahoma", Font.BOLD, 14));
+		txtContent.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		scrollPane.setViewportView(txtContent);
 		
 		lblTitle = new JLabel("Thông Báo");

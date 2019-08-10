@@ -14,9 +14,9 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class CustomJTableRed extends JTable
+public class JTableRed extends JTable
 {
-	public CustomJTableRed() 
+	public JTableRed() 
 	{
 		setShowHorizontalLines(false);
 		setGridColor(Color.BLACK);

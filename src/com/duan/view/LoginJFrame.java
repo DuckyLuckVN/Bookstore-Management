@@ -424,7 +424,7 @@ public class LoginJFrame extends JDialog
 	
 	public void showMainJFrame()
 	{
-		MainJFrame2 mainJFrame = new MainJFrame2();
+		MainJFrame mainJFrame = new MainJFrame();
 		mainJFrame.addContainer();
 		mainJFrame.setVisible(true);
 	}

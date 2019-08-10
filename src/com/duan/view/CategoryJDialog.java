@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.JTableBlue;
 import com.duan.dao.CategoryDAO;
 import com.duan.model.Category;
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
@@ -55,7 +55,7 @@ public class CategoryJDialog extends JDialog {
 	DefaultTableModel model = new DefaultTableModel(head, 0);
 	
 	private JPanel contentPane;
-	private CustomJTableBlue tblCategory;
+	private JTableBlue tblCategory;
 	private JTextField txtMaTheLoai;
 	private JTextField txtTenTheLoai;
 	private JTextArea txtGhiChu;
@@ -114,7 +114,7 @@ public class CategoryJDialog extends JDialog {
 		panel.setBounds(10, 8, 344, 185);
 		panel.setLayout(null);
 		
-		tblCategory = new CustomJTableBlue();
+		tblCategory = new JTableBlue();
 		tblCategory.setRowHeight(30);
 		tblCategory.addMouseListener(new MouseAdapter() 
 		{

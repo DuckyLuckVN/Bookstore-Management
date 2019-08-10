@@ -21,8 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.JTableBlue;
+import com.duan.custom.JTableRed;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
@@ -63,7 +63,7 @@ public class OrderEditorJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
-	private CustomJTableBlue tblBook;
+	private JTableBlue tblBook;
 	private JLabel lblPriceTotal;
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
@@ -146,11 +146,9 @@ public class OrderEditorJDialog extends JDialog {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(14, 103, 512, 235);
-		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.setRowHeight(25);
-		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG"}) {
 			
 			//Column = 4 -> cột "XÓA"

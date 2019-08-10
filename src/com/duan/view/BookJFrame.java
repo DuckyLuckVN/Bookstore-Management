@@ -20,13 +20,16 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.controller.ExportExcel;
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.JTableRed;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 import com.duan.model.Book;
 
 import java.awt.Toolkit;
@@ -87,7 +90,7 @@ public class BookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private CustomJTableRed tblBook;
+	private JTableRed tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -99,7 +102,7 @@ public class BookJFrame extends JFrame {
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
 	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
-	private JTextField textField;
+	private JTextField txtSearch;
 	
 	private List<Book> listBook = new ArrayList<Book>();
 	private Book book;
@@ -190,7 +193,14 @@ public class BookJFrame extends JFrame {
 		btnAdd = new JButton("Thêm mới");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showInsertBook();
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+				{
+					showInsertBook();
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 		});
 		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -206,8 +216,15 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					System.out.println(getBookSelected().getImage());
-					showEditorBook(getBookSelected());
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+					{
+						System.out.println(getBookSelected().getImage());
+						showEditorBook(getBookSelected());
+					}
+					else
+					{
+						MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+					}
 				} 
 				catch (SQLException e1) 
 				{
@@ -226,14 +243,21 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
 					{
-						if (deleteBook())
+						if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
 						{
-							getDataToList();
-							fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Đã xóa sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+							if (deleteBook())
+							{
+								getDataToList();
+								fillToTable();
+								MessageOptionPane.showAlertDialog(getContentPane(), "Đã xóa sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+							}
 						}
+					}
+					else
+					{
+						MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
 					}
 				} 
 				catch (HeadlessException | SQLException e1) 
@@ -260,9 +284,23 @@ public class BookJFrame extends JFrame {
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		textField = new JTextField();
-		textField.setBorder(null);
-		textField.setColumns(10);
+		txtSearch = new JTextField();
+		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				try 
+				{
+					search();
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+		txtSearch.setBorder(null);
+		txtSearch.setColumns(10);
 		
 		popupMenu = new JPopupMenu();
 		
@@ -350,7 +388,7 @@ public class BookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblBook = new CustomJTableRed();
+		tblBook = new JTableRed();
 		tblBook.setShowHorizontalLines(false);
 		tblBook.setShowVerticalLines(true);
 		tblBook.setDragEnabled(true);
@@ -427,8 +465,8 @@ public class BookJFrame extends JFrame {
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 							.addGap(4)
-							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-							.addGap(402)
+							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 402, Short.MAX_VALUE)
 							.addComponent(btnExportExcel))
 						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
 					.addGap(6)
@@ -447,7 +485,7 @@ public class BookJFrame extends JFrame {
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(1)
-									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+									.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 								.addComponent(btnExportExcel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 							.addGap(6)
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
@@ -511,6 +549,57 @@ public class BookJFrame extends JFrame {
 		int rowCount = tblBook.getRowCount();
 		
 		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+		if (indexSelect != -1)
+		{
+			if (indexSelect < rowCount && rowCount > 0)
+			{
+				tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+			}
+			else
+			{
+				indexSelect = rowCount - 1;
+				if (indexSelect > -1)
+				{
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+				}
+				else
+				{
+					setControllModeTo_Nothing();
+				}
+			}
+		}
+	}
+	
+	public void search() throws SQLException
+	{
+		String search = txtSearch.getText();
+		
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		for (Book e : listBook)
+		{
+			if (DataHelper.search(e.getSearchString(), search) == false)
+				continue;
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
+			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			
+			String[] rowData = 
+				{
+					e.getId(), 
+					e.getTitle(), 
+					categoryTitle, 
+					e.getAuthor(), 
+					e.getAmount() + "", 
+					price, 
+					e.getDescription(), 
+				};
+			
+			model.addRow(rowData);
+		}
+		
+		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+		int rowCount = tblBook.getRowCount();
 		if (indexSelect != -1)
 		{
 			if (indexSelect < rowCount && rowCount > 0)

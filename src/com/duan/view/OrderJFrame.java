@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.JTableRed;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.OrderDAO;
@@ -56,7 +56,7 @@ import java.awt.event.KeyEvent;
 public class OrderJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private CustomJTableRed tblOrder;
+	private JTableRed tblOrder;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
 	private JButton btnRight;
@@ -175,7 +175,7 @@ public class OrderJFrame extends JFrame {
 		btnDelete.setIcon(new ImageIcon(OrderJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
 		pnlController.add(btnDelete);
 		
-		tblOrder = new CustomJTableRed();
+		tblOrder = new JTableRed();
 		tblOrder.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 

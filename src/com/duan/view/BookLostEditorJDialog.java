@@ -27,7 +27,7 @@ import javax.swing.event.TableModelListener;
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.JTableBlue;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
@@ -62,7 +62,7 @@ public class BookLostEditorJDialog extends JDialog {
 	private JTextField txtTaiKhoan;
 	private JTextField txtTongThue;
 	private JTextField txtAdmin;
-	private CustomJTableBlue tblBook;
+	private JTableBlue tblBook;
 	private JComboBox cboRentBookId;
 	private JLabel lblTotalCost;
 	
@@ -133,7 +133,7 @@ public class BookLostEditorJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 304, 496, 129);
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.setRowHeight(30);
 		tblBook.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ", "ĐÃ THUÊ", "ĐÃ MẤT", "TIỀN PHẠT"}) 
@@ -335,8 +335,15 @@ public class BookLostEditorJDialog extends JDialog {
 			{
 				Book book = bp.getBook();
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getAmount();
-				String price_str = DataHelper.getFormatForMoney(bp.getPrice()) + SettingSave.getSetting().getMoneySymbol();
-				
+				//Giá lúc thuê
+				String price_str = ""; 
+				if (bookLostEdit != null)
+					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(bookLostEdit.getRentbookId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
+				else if (rentBookSelected != null)
+					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
+				else if (rentbookEdit != null)
+					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(rentbookEdit.getId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
+					
 				Object[] rowData = {book.getId(), book.getTitle(), price_str, amountRented, bp.getAmount(), bp.getPrice()};
 				model.addRow(rowData);
 			}

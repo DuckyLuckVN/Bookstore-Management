@@ -58,7 +58,7 @@ import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 
 import com.duan.controller.ExportPDF;
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.JTableBlue;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -67,7 +67,7 @@ import java.awt.event.ActionEvent;
 public class BookLostDetailJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private CustomJTableBlue tblDetail;
+	private JTableBlue tblDetail;
 	private JLabel lblUser;
 	private JLabel lblNhnVinBn;
 	private JLabel lblRentbookAdmin;
@@ -172,7 +172,7 @@ public class BookLostDetailJDialog extends JDialog {
 		scrollPane.setBounds(10, 237, 669, 180);
 		contentPane.add(scrollPane);
 		
-		tblDetail = new CustomJTableBlue();
+		tblDetail = new JTableBlue();
 		tblDetail.setRowHeight(30);
 		tblDetail.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "GIÁ LÚC THUÊ", "SỐ THUÊ", "SỐ MẤT", "PHÍ PHẠT"}) 
 		{
@@ -404,7 +404,7 @@ public class BookLostDetailJDialog extends JDialog {
 				RentBookDetail rentDetail = RentBookDetailDAO.findById(rentBook.getId(), book.getId());
 				
 				String giaHienTai = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
-				String giaLucThue =  DataHelper.getFormatForMoney(p.getPrice()) + SettingSave.getSetting().getMoneySymbol();
+				String giaLucThue =  DataHelper.getFormatForMoney(rentDetail.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 				String phiMatSach = DataHelper.getFormatForMoney(p.getPrice()) + SettingSave.getSetting().getMoneySymbol();;
 				
 				Object[] rowData = {book.getId(), book.getTitle(), giaHienTai, giaLucThue, rentDetail.getAmount(), p.getAmount(), phiMatSach};
