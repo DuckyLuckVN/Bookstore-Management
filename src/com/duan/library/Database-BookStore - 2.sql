@@ -593,6 +593,7 @@ AS BEGIN
 	DECLARE @totalSumOrder FLOAT = 0
 	DECLARE @totalSumLost FLOAT = 0
 	DECLARE @totalSumRentLost FLOAT = 0
+	DECLARE @totalSumMoneyStorage FLOAT = 0
 
 	SELECT @totalSumOrder = SUM(ORDER_DETAIL.amount*ORDER_DETAIL.price)
 	FROM ORDER_DETAIL, [ORDER]
@@ -617,6 +618,12 @@ AS BEGIN
 	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
 	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
 
+	SELECT @totalSumMoneyStorage = SUM(STORAGE_DETAIL.amount*STORAGE_DETAIL.price)
+	FROM STORAGE, STORAGE_DETAIL
+	WHERE STORAGE.id = STORAGE_DETAIL.storage_id
+	AND YEAR(STORAGE.created_date) = YEAR(GETDATE())
+	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
+
 	IF (@totalLost IS NULL)
 		SET @totalLost = 0
 	IF (@totalSumOrder IS NULL)
@@ -625,8 +632,10 @@ AS BEGIN
 		SET @totalSumRentLost = 0
 	IF (@totalSumLost IS NULL)
 		SET @totalSumLost = 0
+	IF (@totalSumMoneyStorage IS NULL)
+		SET @totalSumMoneyStorage = 0
 
-	SET @totalrevenue = @totalSumLost + @totalSumOrder - @totalSumRentLost
+	SET @totalrevenue = @totalSumLost + @totalSumOrder - @totalSumRentLost - @totalSumMoneyStorage
 
 	SELECT @totalOrder AS [Total Order], @totalRent AS [Total Rent], @totalLost AS [Total Lost], @totalUser AS [Total User], @totalAddStorage AS [Total Book Storage], @totalRevenue AS [Total imcome]
 END
