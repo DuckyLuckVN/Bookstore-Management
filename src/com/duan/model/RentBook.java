@@ -1,6 +1,12 @@
 package com.duan.model;
 
+import java.sql.SQLException;
 import java.util.Date;
+
+import com.duan.dao.AdminDAO;
+import com.duan.dao.UserDAO;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 
 public class RentBook 
 {
@@ -76,16 +82,43 @@ public class RentBook
     
     public String getTitleStatus()
     {
+    	int DayExpiration = SettingSave.getSetting().getDayExpiration();
 	    switch (status) {
 		case 0:
-			return "Đang Thuê";
+			if (returnedDate == null && DateHelper.getDayBetweenTwoDate(createdDate, new Date()) > DayExpiration)
+				return "Quá hạn";
+			else
+				return "Đang Thuê";
 		case 1:
 			return "Đã trả";
 		default:
 			return "Không rõ";
 		}
-    
     }
+    
+    public String getSearchString()
+    {
+    	String usernameUser = "";
+    	String usernameAdmin = "";
+    	String createdDateStr = "";
+    	
+    	try 
+    	{
+			usernameUser = UserDAO.findByID(userId).getUsername();
+			usernameAdmin = AdminDAO.findByID(adminId).getUsername();
+			createdDateStr = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
+		} 
+    	catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+    	
+    	return id + " " + usernameUser + " " + usernameAdmin + " " + createdDateStr + " " + getTitleStatus();
+    }
+    
+    public static void main(String[] args) {
+		System.out.println(new Date().getDay());
+	}
     
     
 }

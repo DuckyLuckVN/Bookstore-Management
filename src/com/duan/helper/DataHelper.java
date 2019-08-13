@@ -34,7 +34,7 @@ public class DataHelper
 		data = data.toLowerCase();
 		find = find.toLowerCase();
 		String regex = "^(?i)[\\w\\p{L} ]*" + find + "[\\w\\p{L} ]*$";
-		System.out.println(regex);
+//		System.out.println(regex);
 		if (find.length() != 0)
 		{
 			if (data.matches(regex))
@@ -43,6 +43,27 @@ public class DataHelper
 			}
 		}
 		return false;
+	}
+	
+	//Hỗ trợ tìm kiếm giá trị, nếu giá trị truyền vào là rổng thì trả về true luôn
+	public static boolean search(String data, String find)
+	{
+		data = data.toLowerCase();
+		find = find.toLowerCase();
+		String regex = "^(?i)[\\w\\W\\p{L} ]*" + find + "[\\w\\W\\p{L} ]*$";
+//		System.out.println(regex);
+		if (find.length() != 0)
+		{
+			if (data.matches(regex))
+			{
+				return true;
+			}
+			else 
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	//Kiểm tra tên fileName truyền vào có phải thuộc một trong các định dạng trong array extensions hay không?
@@ -64,12 +85,19 @@ public class DataHelper
 		return false;
 	}
 	
-	//Kiểm tra xem chuỗi truyền vào có phải là helper hay không
-	public static boolean isEmail(String email)
-	{
-		String regex = "\\w+@\\w+(\\.\\w+){1,3}";
-		return email.matches(regex);
-	}
+	//Kiểm tra xem chuỗi truyền vào có phải là email hay không
+		public static boolean isEmail(String email)
+		{
+			String regex = "\\w+@\\w+(\\.\\w+){1,3}";
+			return email.matches(regex);
+		}
+		
+		//Kiểm tra xem chuỗi truyền vào có phải là sdt hay không
+		public static boolean isPhoneNumber(String email)
+		{
+			String regex = "[0-9]{9,11}";
+			return email.matches(regex);
+		}
 	
 	//Lấy ra đường dẫn URL đến source project
 	public static File getFileFromSource(String path)
@@ -190,7 +218,7 @@ public class DataHelper
 	
 	public static void main(String[] args) 
 	{
-		System.out.println(isInteger("a"));;
+//		System.out.println(contain("Test", "t"));;
 	}
 	
 	

@@ -20,7 +20,8 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -59,7 +60,7 @@ import java.awt.Dimension;
 public class BookLostJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private CustomJTableRed tblBookLost;
+	private JTableRed tblBookLost;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
 	private JButton btnRight;
@@ -160,7 +161,7 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(SwingHelper.showConfirm(contentPane, "Bạn có muốn xóa đơn hàng này?"))
+				if(MessageOptionPane.showConfirmDialog(contentPane, "Bạn có muốn xóa đơn hàng này?"))
 				{
 					try 
 					{
@@ -181,7 +182,7 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.setIcon(new ImageIcon(BookLostJFrame.class.getResource("/com/duan/icon/icons8_delete_50px.png")));
 		pnlController.add(btnDelete);
 		
-		tblBookLost = new CustomJTableRed();
+		tblBookLost = new JTableRed();
 		tblBookLost.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -278,11 +279,17 @@ public class BookLostJFrame extends JFrame {
 		});
 		panel.add(btnMaxRight);
 		
-		JLabel label = new JLabel("23:15");
-		label.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		JButton label = new JButton("Tải lại");
+		label.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				refresh();
+			}
+		});
+		label.setIcon(new ImageIcon(BookLostJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setForeground(Color.RED);
-		label.setFont(new Font("Tahoma", Font.BOLD, 18));
+		label.setForeground(Color.BLACK);
+		label.setFont(new Font("Tahoma", Font.BOLD, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -445,5 +452,11 @@ public class BookLostJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	
+	public void refresh()
+	{
+		getDataTolist();
+		fillToTable();
 	}
 }

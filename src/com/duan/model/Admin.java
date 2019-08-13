@@ -3,9 +3,16 @@ package com.duan.model;
 
 import java.util.Date;
 
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
+
 
 public class Admin 
 {
+	public static final int ROLE_NHANVIEN = 2;
+	public static final int ROLE_QUANLY = 1;
+	public static final int ROLE_GIAMDOC = 0;
+	
     private int id;
     private String username;
     private String password;
@@ -145,6 +152,13 @@ public class Admin
 		case 2: return "Nhân viên";
 		}
 		return "Không xác định";
+	}
+	
+	public String getSearchString()
+	{
+		String createdDateStr = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
+		String sexString = (sex) ? "Nam" : "Nữ";
+		return id + " " + username + " " + password + " " + fullname + " " + email + " " + phoneNumber + " " + sexString + " " + getRoleTitle() + " " + createdDateStr;
 	}
     
 }

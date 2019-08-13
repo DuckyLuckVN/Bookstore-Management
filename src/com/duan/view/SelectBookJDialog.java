@@ -13,7 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.BookDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.Book;
@@ -33,13 +33,14 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SelectBookJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private CustomJTableBlue tblBook;
+	private JTableBlue tblBook;
 	private JLabel lblTmTheoTn;
-	private JTextField textField;
 	
 	public static final int STATUS_NOT_SELECT = -1;
 	public static final int STATUS_SELECTED = 1;
@@ -48,6 +49,7 @@ public class SelectBookJDialog extends JDialog {
 	private List<Book> listBookSelected = new ArrayList<Book>();
 	private List<Book> listBook;
 	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
+	private JTextField txtSearch;
 	
 	
 	public static void main(String[] args) 
@@ -85,7 +87,7 @@ public class SelectBookJDialog extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(5, 49, 425, 191);
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.setRowHeight(25);
 		tblBook.setModel(new DefaultTableModel(null,new String[] {"MÃ", "TIÊU ĐỀ", "GIÁ BÁN", "CHỌN"}) 
 		{
@@ -114,16 +116,23 @@ public class SelectBookJDialog extends JDialog {
 		tblBook.getColumnModel().getColumn(1).setPreferredWidth(300);
 		scrollPane.setViewportView(tblBook);
 		
-		lblTmTheoTn = new JLabel("Tìm theo tên:");
-		lblTmTheoTn.setBounds(5, 11, 83, 26);
+		lblTmTheoTn = new JLabel("Tìm kiếm:");
+		lblTmTheoTn.setBounds(5, 11, 59, 26);
 		lblTmTheoTn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		textField = new JTextField();
-		textField.setBounds(98, 11, 332, 26);
-		textField.setColumns(10);
+		txtSearch = new JTextField();
+		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				search();
+			}
+		});
+		txtSearch.setBounds(74, 11, 356, 26);
+		txtSearch.setColumns(10);
 		contentPane.setLayout(null);
 		contentPane.add(lblTmTheoTn);
-		contentPane.add(textField);
+		contentPane.add(txtSearch);
 		contentPane.add(scrollPane);
 		
 		JButton btnChn = new JButton("Chọn");
@@ -239,4 +248,55 @@ public class SelectBookJDialog extends JDialog {
 			model.addRow(rowData);
 		}
 	}
+	
+	public void search()
+	{
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		List<String> listIdSelected = new ArrayList<String>();
+		String searchValue = txtSearch.getText();
+		//Xóa các phần tử không được chọn trong bảng
+		for (int i = tblBook.getRowCount() - 1; i >= 0; i--)
+		{
+			boolean isSelected = (boolean) tblBook.getValueAt(i, 3);
+			if (isSelected == false)
+			{
+				model.removeRow(i);
+			}
+			else
+			{
+				//Lấy ra mã sách và thêm vào list
+				listIdSelected.add(tblBook.getValueAt(i, 0).toString());
+			}
+		}
+		
+		//Thêm các phần tử trùng với search hoặc đã chọn
+		for (Book b : listBook)
+		{
+			//Thêm vào bảng khi từ khóa cần tìm gần giống với mã sách
+			if (DataHelper.search(b.getSearchString(), searchValue))
+			{
+				if (listIdSelected.size() != 0)
+					for (String idSelected : listIdSelected)
+					{
+						//Nếu id book giống với id đã chọn thì bỏ qua và lặp tiếp
+						if (b.getId() != idSelected)
+							model.addRow(new Object[] {b.getId(), b.getTitle(), b.getPrice(), false});
+					}
+				else
+					model.addRow(new Object[] {b.getId(), b.getTitle(), b.getPrice(), false});
+			}
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+

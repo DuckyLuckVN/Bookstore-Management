@@ -1,4 +1,4 @@
-package com.duan.custom;
+package com.duan.custom.common;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -14,15 +14,15 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class CustomJTableRed extends JTable
+public class JTableBlue extends JTable
 {
-	public CustomJTableRed() 
+	public JTableBlue() 
 	{
-		setShowHorizontalLines(false);
 		setGridColor(Color.BLACK);
+		setShowHorizontalLines(false);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		setBorder(new LineBorder(Color.DARK_GRAY));
-		setSelectionBackground(new Color(32, 136, 203));
+		setSelectionBackground(new Color(230, 72, 100));
 		setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null, null},
@@ -44,7 +44,7 @@ public class CustomJTableRed extends JTable
 		//Set text nằm giữa cho header table
 		((DefaultTableCellRenderer) getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 		getTableHeader().setOpaque(false);
-		getTableHeader().setBackground(new Color(232, 57, 92));
+		getTableHeader().setBackground(new Color(0, 169, 224));
 		getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 11));
 		getTableHeader().setForeground(Color.WHITE);
 		

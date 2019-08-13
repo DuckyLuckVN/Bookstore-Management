@@ -1,6 +1,9 @@
 package com.duan.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -21,10 +24,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
+import com.duan.custom.common.JDateChooserCustom;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.User;
+import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -56,7 +63,7 @@ import javax.swing.JFormattedTextField;
 public class UserJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private CustomJTableRed tblUser;
+	private JTableRed tblUser;
 	private JTextField txtsearch;
 	private JTextField txtUsername;
 	private JTextField txtPassword;
@@ -134,8 +141,6 @@ public class UserJFrame extends JFrame {
 			}
 		});
 		txtsearch.setColumns(10);
-		
-		JButton btnNewButton = new JButton("New button");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -145,13 +150,11 @@ public class UserJFrame extends JFrame {
 					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
 					.addGap(1))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
-				.addGroup(gl_contentPane.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addComponent(btnNewButton)
-					.addGap(285))
+					.addGap(392))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -162,9 +165,7 @@ public class UserJFrame extends JFrame {
 							.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-									.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(btnNewButton))
+								.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED))
 						.addGroup(gl_contentPane.createSequentialGroup()
@@ -194,12 +195,7 @@ public class UserJFrame extends JFrame {
 		JLabel lblHTn = new JLabel("Họ tên");
 		lblHTn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		txtBirthDay = new JDateChooser();
-		txtBirthDay.setLocale(Locale.US);
-		txtBirthDay.getCalendarButton().setIcon(new ImageIcon(UserJFrame.class.getResource("/com/toedter/calendar/demo/images/DemoTableColor16.gif")));
-		txtBirthDay.getCalendarButton().setText("Chọn ");
-		txtBirthDay.setDateFormatString("dd/MM/yyyy");
-		//textField_4.setColumns(10);
+		txtBirthDay = new JDateChooserCustom();
 		
 		JLabel lblNgySinh = new JLabel("Ngày sinh");
 		lblNgySinh.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -369,7 +365,7 @@ public class UserJFrame extends JFrame {
 		btnXa.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		pnlController.add(btnXa);
 		
-		tblUser = new CustomJTableRed();
+		tblUser = new JTableRed();
 		tblUser.setRowHeight(30);
 		tblUser.addMouseListener(new MouseAdapter() {
 			@Override
@@ -471,63 +467,64 @@ public class UserJFrame extends JFrame {
 		{
 			rdoNu.setSelected(true);
 		}
+		
 	}
 
 	
 	public boolean checkForm()
 	{
 		boolean rong = false;
-		String thongbao = " Đã có lỗi xảy ra : \n";
+		String thongbao = "Đã có lỗi xảy ra : \n";
 		if (txtUsername.getText().equals("")) 
 		{
 			rong = true;
-			thongbao+="Tài khoản không được để trống\n";
+			thongbao+="+ Tài khoản không được để trống\n";
 		}
 		if (txtPassword.getText().equals("")) 
 		{
 			rong = true;
-			thongbao+="Mật khẩu không được để trống \n";		
+			thongbao+="+ Mật khẩu không được để trống \n";		
 		}
 		if (txtFullname.getText().equals(""))
 		{
 			rong = true;
-			thongbao+="Họ tên không được để trống\n";
+			thongbao+="+ Họ tên không được để trống\n";
 		}
 		if(txtBirthDay.getDate() == null)
 		{
 			rong = true;
-			thongbao+="Ngày sinh sai định dạng hoặc không được để trống\n";
+			thongbao+="+ Ngày sinh sai định dạng hoặc không được để trống\n";
 		}
 		if (txtEmail.getText().equals(""))
 		{
 			rong = true;
-			thongbao +="Email không được để trống!\n";
+			thongbao +="+ Email không được để trống!\n";
 		}
 		else
         {
             if (!txtEmail.getText().matches("\\w+@\\w+(\\.\\w+){1,2}")) 
             {
                 rong = true;
-                thongbao+="Email không đúng định dạng\n";
+                thongbao+="+ Email không đúng định dạng\n";
             }
         }
 		if (txtPhoneNum.getText().equals(""))
 		{
 			rong = true;
-			thongbao +="Số điện thoại không được để trống!\n";
+			thongbao +="+ Số điện thoại không được để trống!\n";
 		}
 		else
         {
             if (!txtPhoneNum.getText().matches("\\d{10,14}")) 
             {
-                thongbao+="Số ĐT không đúng dịnh dạng\n";
+                thongbao+="+ Số ĐT không đúng dịnh dạng\n";
                 rong = true;
             }
         }
 		
 		if (rong == true) 
 		{
-			JOptionPane.showMessageDialog(this, thongbao);
+			MessageOptionPane.showMessageDialog(this, thongbao, MessageOptionPane.ICON_NAME_WARNING);
 			return false;
 		}
 		return true;
@@ -566,7 +563,7 @@ public class UserJFrame extends JFrame {
 		catch (SQLException e) {
 			if (e.getErrorCode() == 2627) 
 			{
-				JOptionPane.showMessageDialog(this, "ID này đã tồn tại!\n" + " Bạn cần Nhấn 'THÊM MỚI' để thêm USER mới");
+				MessageOptionPane.showMessageDialog(this, "ID này đã tồn tại!\n" + " Bạn cần Nhấn 'THÊM MỚI' để thêm USER mới", MessageOptionPane.ICON_NAME_WARNING);
 			}
 			// TODO Auto-generated catch block
 		}
@@ -603,7 +600,7 @@ public class UserJFrame extends JFrame {
 			if (dao.update(user, list.get(index).getId())) 
 			{
 				list.set(index, user);
-				JOptionPane.showMessageDialog(this, "Cập nhật thành công USER có mã : "+ list.get(index).getId());
+				MessageOptionPane.showAlertDialog(this, "Cập nhật thành công USER có mã : "+ list.get(index).getId(), MessageOptionPane.ICON_NAME_SUCCESS);
 				fillToTable();
 				txtUsername.setText("");
 				txtPassword.setText("");
@@ -615,6 +612,7 @@ public class UserJFrame extends JFrame {
 			}
 		} catch (SQLException e) 
 		{
+			
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -629,7 +627,7 @@ public class UserJFrame extends JFrame {
 		{
 			if (dao.delete(list.get(index).getId())) 
 			{
-				JOptionPane.showMessageDialog(this, "Xóa thành công USER có mã : " + list.get(index).getId());
+				MessageOptionPane.showAlertDialog(this, "Xóa thành công USER có mã : " + list.get(index).getId(), MessageOptionPane.ICON_NAME_SUCCESS);
 				list.remove(index);
 				fillToTable();
 			}

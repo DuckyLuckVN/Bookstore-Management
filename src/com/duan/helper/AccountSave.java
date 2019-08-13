@@ -3,10 +3,12 @@ package com.duan.helper;
 import java.util.Date;
 
 import com.duan.model.Admin;
+import com.duan.model.User;
 
 public class AccountSave 
 {
 	private static Admin admin = new Admin(101, "quanly", "123", "Lý Tiểu Long", "lytieulong@gmail.com", "01682439314", null, true, 2, true, new Date());
+	private static User user;
 	public static void setAdmin(Admin admin) 
 	{
 		AccountSave.admin = admin;
@@ -20,6 +22,21 @@ public class AccountSave
 	public static void removeAdmin()
 	{
 		admin = null;
+	}
+	
+	public static void setUser(User user)
+	{
+		AccountSave.user = user;
+	}
+	
+	public static User getUser()
+	{
+		return user;
+	}
+	
+	public static void removeUser()
+	{
+		user = null;
 	}
 	
 }

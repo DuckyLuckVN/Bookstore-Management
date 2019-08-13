@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.DBConnection;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
@@ -46,7 +47,7 @@ public class SettingJDialog extends JDialog {
 	private JTextField txtMoneySymbol;
 	private JComboBox cboTimeFormat;
 	private JComboBox cboDateFormat;
-	private MainJFrame2 mainJFrame;
+	private MainJFrame mainJFrame;
 	private JTextField txtUsernameMail;
 	private JTextField txtPasswordEmail;
 	private JTextField txtDayExpiration;
@@ -299,17 +300,17 @@ public class SettingJDialog extends JDialog {
 			isSuccess = DBConnection.checkConnectionSQL(txtHost.getText(), txtNameDB.getText(), txtUsernameDB.getText(), txtPasswordDB.getText());
 			if (isSuccess)
 			{
-				JOptionPane.showMessageDialog(getContentPane(), "Kết nối thành công!");
+				MessageOptionPane.showAlertDialog(getContentPane(), "Kết nối thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(getContentPane(), "Kết nối thất bại!");
+				MessageOptionPane.showAlertDialog(getContentPane(), "Kết nối thất bại!", MessageOptionPane.ICON_NAME_ERROR);
 			}
 		} 
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(getContentPane(), "Kết nối thất bại, đã có lỗi sảy ra (code: " + e.getErrorCode() + ")\n" + e.getMessage());
+			MessageOptionPane.showMessageDialog(getContentPane(), "Kết nối thất bại, đã có lỗi sảy ra (code: " + e.getErrorCode() + ")\n" + e.getMessage(), MessageOptionPane.ICON_NAME_ERROR);
 		}
 	}
 	
@@ -322,9 +323,9 @@ public class SettingJDialog extends JDialog {
 			//Tiến hành set Setting vào SettingSave và ghi ra file lưu trữ
 			SettingSave.setSetting(getSettingFromForm());
 			SettingSave.writeSetting();
-			JOptionPane.showMessageDialog(getContentPane(), "Lưu lại thay đổi thành công!");
+			MessageOptionPane.showMessageDialog(getContentPane(), "Lưu lại thay đổi thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			String msg = "Bạn cần phải reload lại ứng dụng để các tùy chỉnh này hoạt động chính xác!";
-			if (SwingHelper.showConfirm(getContentPane(), msg))
+			if (MessageOptionPane.showConfirmDialog(getContentPane(), msg, MessageOptionPane.ICON_NAME_QUESTION, 12))
 			{
 				dispose();
 				
@@ -332,7 +333,7 @@ public class SettingJDialog extends JDialog {
 				if (mainJFrame != null) 
 				{
 					mainJFrame.dispose();
-					mainJFrame = new MainJFrame2();
+					mainJFrame = new MainJFrame();
 					mainJFrame.addContainer();
 					mainJFrame.setVisible(true);
 				}
@@ -401,13 +402,13 @@ public class SettingJDialog extends JDialog {
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(getContentPane(), "Đã có lỗi sảy ra:\n" + msg);
+			MessageOptionPane.showMessageDialog(getContentPane(), "Đã có lỗi sảy ra:\n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 			
 		return isSuccess;
 	}
 	
-	public void setMainJFrame(MainJFrame2 mainJFrame)
+	public void setMainJFrame(MainJFrame mainJFrame)
 	{
 		this.mainJFrame = mainJFrame;
 	}

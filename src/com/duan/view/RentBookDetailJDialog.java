@@ -54,7 +54,8 @@ import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 
 import com.duan.controller.ExportPDF;
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.common.JTableBlue;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -63,7 +64,7 @@ import java.awt.event.ActionEvent;
 public class RentBookDetailJDialog extends JDialog {
 
 	private JPanel contentPane;
-	private CustomJTableBlue tblOrderDetail;
+	private JTableBlue tblOrderDetail;
 	private JLabel lblUser;
 	private JLabel lblNhnVinBn;
 	private JLabel lblAdmin;
@@ -159,7 +160,7 @@ public class RentBookDetailJDialog extends JDialog {
 		scrollPane.setBounds(10, 173, 516, 156);
 		contentPane.add(scrollPane);
 		
-		tblOrderDetail = new CustomJTableBlue();
+		tblOrderDetail = new JTableBlue();
 		tblOrderDetail.setRowHeight(30);
 		tblOrderDetail.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "GIÁ LÚC THUÊ", "SỐ LƯỢNG"}) 
 		{

@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
@@ -43,6 +44,10 @@ import com.duan.model.User;
 
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import java.awt.GridLayout;
+import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
 
 /*
  * 15/05/2019
@@ -65,6 +70,7 @@ public class LoginJFrame extends JDialog
 	private JProgressBar proLoading;
 	private Admin admin;
 	private JLabel lblWelcomeName;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 
 	public static void main(String[] args) 
@@ -100,7 +106,7 @@ public class LoginJFrame extends JDialog
 		
 		if (isSuccess == false)
 		{
-			JOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg);
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi xảy ra: \n" + msg, MessageOptionPane.ICON_NAME_WARNING);
 		}
 		return isSuccess;
 	}
@@ -121,7 +127,7 @@ public class LoginJFrame extends JDialog
 		}
 		setResizable(false);
 		setTitle("Đăng Nhập");
-		setBounds(100, 100, 755, 500);
+		setBounds(100, 100, 755, 527);
 		contentPane = new JPanel();
 		
 		contentPane.addMouseMotionListener(new MouseMotionAdapter() 
@@ -178,9 +184,35 @@ public class LoginJFrame extends JDialog
 		lblExit.setBounds(726, 0, 29, 29);
 		contentPane.add(lblExit);
 		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(396, 426, 341, 29);
+		contentPane.add(panel_1);
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setLayout(null);
+		
+		JLabel lblngNhpVi = new JLabel("Đăng nhập với tư cách:");
+		lblngNhpVi.setBounds(10, 0, 151, 29);
+		lblngNhpVi.setFont(new Font("Tahoma", Font.BOLD, 12));
+		panel_1.add(lblngNhpVi);
+		
+		JRadioButton rdbtnNhnVin = new JRadioButton("Nhân viên");
+		buttonGroup.add(rdbtnNhnVin);
+		rdbtnNhnVin.setSelected(true);
+		rdbtnNhnVin.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnNhnVin.setBounds(165, 0, 88, 29);
+		rdbtnNhnVin.setBackground(Color.WHITE);
+		panel_1.add(rdbtnNhnVin);
+		
+		JRadioButton rdbtnKhch = new JRadioButton("Khách");
+		buttonGroup.add(rdbtnKhch);
+		rdbtnKhch.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnKhch.setBounds(260, 0, 74, 29);
+		rdbtnKhch.setBackground(Color.WHITE);
+		panel_1.add(rdbtnKhch);
+		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBackground(new Color(255, 255, 255));
-		pnlForm.setBounds(396, 246, 341, 181);
+		pnlForm.setBounds(396, 240, 341, 187);
 		contentPane.add(pnlForm);
 		pnlForm.setLayout(null);
 		
@@ -247,18 +279,18 @@ public class LoginJFrame extends JDialog
 							if (password.equals(admin.getPassword())) 
 							{
 								AccountSave.setAdmin(admin);
-								JOptionPane.showMessageDialog(contentPane, "Đăng nhập thành công!");
+								MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 								active();
 							}
 							else 
 							{
-								JOptionPane.showMessageDialog(contentPane, "Mật khẩu không chính xác");
+								MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
 								txtPassword.requestFocus();
 							}
 						}
 						else 
 						{
-							JOptionPane.showMessageDialog(contentPane, "Tài khoản này không tồn tại!");
+							MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
 							txtUsername.requestFocus();
 						}
 					} catch (Exception e2) 
@@ -285,7 +317,7 @@ public class LoginJFrame extends JDialog
 		btnLogin.setForeground(new Color(255, 255, 255));
 		btnLogin.setBackground(new Color(62, 144, 255));
 		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLogin.setBounds(399, 438, 335, 51);
+		btnLogin.setBounds(396, 459, 341, 51);
 		contentPane.add(btnLogin);
 		
 		lblLogo = new JLabel("");
@@ -297,7 +329,7 @@ public class LoginJFrame extends JDialog
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(65, 71, 86));
-		panel.setBounds(0, 0, 386, 500);
+		panel.setBounds(0, 0, 386, 527);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -322,7 +354,7 @@ public class LoginJFrame extends JDialog
 		proLoading = new JProgressBar();
 		proLoading.setBorder(null);
 		proLoading.setForeground(new Color(255, 69, 0));
-		proLoading.setBounds(0, 492, 386, 8);
+		proLoading.setBounds(0, 519, 386, 8);
 		panel.add(proLoading);
 		
 		pnlWelcome = new JPanel();
@@ -423,7 +455,7 @@ public class LoginJFrame extends JDialog
 	
 	public void showMainJFrame()
 	{
-		MainJFrame2 mainJFrame = new MainJFrame2();
+		MainJFrame mainJFrame = new MainJFrame();
 		mainJFrame.addContainer();
 		mainJFrame.setVisible(true);
 	}
