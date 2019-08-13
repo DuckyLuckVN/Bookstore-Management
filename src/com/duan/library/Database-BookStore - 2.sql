@@ -240,8 +240,8 @@ VALUES  ( 100 , 101 , GETDATE() ),
 GO
 
 INSERT INTO ORDER_DETAIL(order_id ,	book_id, amount, price)
-VALUES	(102,'GH12',3,200000),
-		(103,'JH42', 2, 300000)
+VALUES	(101,'GH12',3,200000),
+		(102,'JH42', 2, 300000)
 GO
 
 INSERT INTO dbo.RENTBOOK(user_id , admin_id ,created_date ,status)
@@ -250,19 +250,19 @@ VALUES  (100, 101, GETDATE() , 0),
 GO
 
 INSERT INTO RENTBOOK_DETAIL (rentbook_id , book_id , amount, price)
-VALUES	(102,'GH12',3,300000),
-		(103,'JH42',4,400000),
-		(104,'GH12',2,400000)
+VALUES	(101,'GH12',3,300000),
+		(101,'JH42',4,400000),
+		(102,'GH12',2,400000)
 GO
 
 INSERT INTO BOOK_LOST(rentbook_id,admin_id,created_date)
 VALUES (102,101,GETDATE()),
-		(103,103,GETDATE())
+		(101,102,GETDATE())
 GO
 
 INSERT INTO BOOK_LOST_DETAIL(rentbook_id,book_id,amount,cost)
-VALUES (102,'GH12',2, 10000),
-		(103,'JH42',2, 10000)
+VALUES (101,'GH12',2, 10000),
+		(102,'JH42',2, 10000)
 GO
 
 INSERT INTO dbo.STORAGE( admin_id, description, created_date)
@@ -352,7 +352,7 @@ GO
 /****** Object:  StoredProcedure  [sp_getBookSoldByMonth]  Script Date: 7/17/2019 ******/
 --Trả về thông tin thống kê sách đã bán được theo tháng
 GO
-DROP PROC sp_getBookSoldByMonth
+--DROP PROC sp_getBookSoldByMonth
 
 CREATE PROC sp_getBookSoldByMonth(@month INT)
 AS BEGIN
