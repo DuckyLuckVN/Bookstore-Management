@@ -40,7 +40,7 @@ CREATE TABLE PUBLISHER
 	phone_number VARCHAR(13),
 	email VARCHAR(100) NOT NULL,
 	address NVARCHAR(200),
-	introduct NVARCHAR(256),
+	introduce NVARCHAR(256),
 	created_date DATE
 )
 GO
@@ -59,6 +59,7 @@ CREATE TABLE BOOK
 	image NVARCHAR(256),
 	location_id VARCHAR(50),
 	description NVARCHAR(256),
+	introduce NVARCHAR(256),
 	created_date date,
 	CONSTRAINT fk_cateID FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE,
@@ -713,6 +714,8 @@ SELECT * FROM dbo.RENTBOOK_DETAIL WHERE rentbook_id = 102
 SELECT * FROM dbo.BOOK
 SELECT * FROM dbo.[ORDER_DETAIL]
 SELECT * FROM dbo.LOCATION
+SELECT * FROM dbo.AUTHOR
+SELECT * FROM dbo.PUBLISHER
 
 UPDATE dbo.BOOK SET description = 'abcdef descrip' WHERE id = 'GH12'
 
