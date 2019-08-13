@@ -19,6 +19,31 @@ CREATE TABLE LOCATION
 	max_storage INT CHECK(max_storage > 0),
 	[description] NVARCHAR(256)
 )
+GO
+
+CREATE TABLE AUTHOR
+(
+	id INT IDENTITY (100, 1) PRIMARY KEY,
+	fullname NVARCHAR(256) NOT NULL,
+	date_of_birth DATE,
+	date_of_death DATE NULL,
+	image NVARCHAR(256),
+	introduce NVARCHAR(256),
+	created_date DATE,
+)
+GO
+
+CREATE TABLE PUBLISHER
+(
+	id INT IDENTITY (100, 1) PRIMARY KEY,
+	name NVARCHAR(256) NOT NULL,
+	phone_number VARCHAR(13),
+	email VARCHAR(100) NOT NULL,
+	address NVARCHAR(200),
+	introduct NVARCHAR(256),
+	created_date DATE
+)
+GO
 
 CREATE TABLE BOOK
 (
@@ -26,9 +51,9 @@ CREATE TABLE BOOK
 	title NVARCHAR(100) NOT NULL,
 	category_id varchar(50) NOT NULL,
 	page_num INT,
-	author NVARCHAR(50) NOT NULL,
+	author_id INT FOREIGN KEY REFERENCES dbo.AUTHOR(id),
 	amount INT ,
-	publisher NVARCHAR(50),
+	publisher_id INT FOREIGN KEY REFERENCES dbo.PUBLISHER(id),
 	publication_year INT,
 	price MONEY,
 	image NVARCHAR(256),
@@ -36,11 +61,9 @@ CREATE TABLE BOOK
 	description NVARCHAR(256),
 	created_date date,
 	CONSTRAINT fk_cateID FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE
+	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE,
 )
 GO
-
-
 
 CREATE TABLE [USER]
 (
@@ -175,6 +198,7 @@ VALUES  ( 'A1', N'Kệ A1', 100, N''),
 		( 'A6', N'Kệ A6', 100, N''),
 		( 'A7', N'Kệ A7', 120, N''),
 		( 'A8', N'Kệ A8', 110, N'')
+GO
 
 INSERT INTO dbo.CATEGORY( id ,category_title ,category_description)
 VALUES  ('TT2'	 ,N'Kỉ Niệm HÀ NỘI tôi' ,'71 trang'),
@@ -182,9 +206,20 @@ VALUES  ('TT2'	 ,N'Kỉ Niệm HÀ NỘI tôi' ,'71 trang'),
 		('AG1',N'Sống đúng','')
 GO
 
-INSERT INTO dbo.BOOK (id ,title ,category_id ,page_num ,author ,amount ,publisher ,publication_year ,price ,image, location_id ,description ,created_date)
-VALUES  ('GH12' ,N'TÔI THẤY MÌNH CÒN TRẺ','TT2' ,274 ,N'Đỗ Văn Hoàn' ,96 ,N'NXB Trẻ' ,2017 ,296999 , N'', 'A1' ,'' ,'11/05/2018' ),  
-		('JH42' ,N'TÔI THẤY HOA VÀNG TRÊN CỎ XANH','AG1' ,274 ,N'Lê Văn Thuyết' ,96 ,N'NXB Nhi Đồng' ,2017 ,196333 , N'', 'A2' ,'' ,'11/06/2018' )
+INSERT INTO dbo.AUTHOR(fullname ,date_of_birth ,image ,introduce ,created_date)
+VALUES  (N'Đỗ Văn Hoàng', GETDATE(), N'', N'Tác giả này tên là Đỗ Văn Hoàng.', GETDATE()),
+		(N'Trần Đăng Khoa', GETDATE(), N'', N'Tác giả này nổi tiếng với các bài văn dành cho trẻ em', GETDATE()),
+		(N'Lê Văn Thuyết', GETDATE(), N'', N'', GETDATE())
+GO
+
+INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduct, created_date)
+VALUES  (N'BXB Trẻ', '0376546521', 'contact@nxbtre.com', N'Đây là nhà xuất bản khá trẻ :v', GETDATE()),
+		(N'BXB Nhi Đồng', '0186224665', 'contact@nxbnhidong.com', N'Đây là nhà xuất bản nhi đồng', GETDATE())
+GO
+
+INSERT INTO dbo.BOOK (id ,title ,category_id ,page_num ,author_id ,amount ,publisher_id ,publication_year ,price ,image, location_id ,description ,created_date)
+VALUES  ('GH12' ,N'TÔI THẤY MÌNH CÒN TRẺ','TT2' ,274 , 100 ,96 ,100 ,2017 ,296999 , N'', 'A1' ,'' ,'11/05/2018' ),  
+		('JH42' ,N'TÔI THẤY HOA VÀNG TRÊN CỎ XANH','AG1' ,274 ,102 ,96 , 101 ,2017 ,196333 , N'', 'A2' ,'' ,'11/06/2018' )
 GO
 	
 INSERT INTO dbo.[USER]( username ,password ,fullname ,date_of_birth ,email ,phone_number)
@@ -443,7 +478,7 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
-ALTER PROC sp_getStatisticOverviewInMonth 
+CREATE PROC sp_getStatisticOverviewInMonth 
 AS BEGIN
 	DECLARE @totalOrder FLOAT = 0
 	DECLARE @totalRent FLOAT = 0
@@ -532,14 +567,14 @@ INSERT dbo.ADMIN
           isActive ,
           created_date
         )
-VALUES  ( 'haoql' , -- username - varchar(50)
-          '123' , -- password - varchar(50)
+VALUES  ( 'haogd' , -- username - varchar(50)
+          '123456789' , -- password - varchar(50)
           N'Đại Hào' , -- fullName - nvarchar(256)
           'daihao12mc@gmail.com' , -- email - varchar(50)
           '0376555796' , -- phone_number - varchar(14)
           N'' , -- image - nvarchar(256)
           1 , -- sex - bit
-          1 , -- role - int
+          0 , -- role - int
           1 , -- isActive - bit
           GETDATE()  -- created_date - date
         )
