@@ -44,6 +44,8 @@ import com.duan.model.User;
 
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import java.awt.GridLayout;
 
 /*
  * 15/05/2019
@@ -122,7 +124,7 @@ public class LoginJFrame extends JDialog
 		}
 		setResizable(false);
 		setTitle("Đăng Nhập");
-		setBounds(100, 100, 755, 500);
+		setBounds(100, 100, 755, 527);
 		contentPane = new JPanel();
 		
 		contentPane.addMouseMotionListener(new MouseMotionAdapter() 
@@ -179,9 +181,33 @@ public class LoginJFrame extends JDialog
 		lblExit.setBounds(726, 0, 29, 29);
 		contentPane.add(lblExit);
 		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(396, 426, 341, 29);
+		contentPane.add(panel_1);
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setLayout(null);
+		
+		JLabel lblngNhpVi = new JLabel("Đăng nhập với tư cách:");
+		lblngNhpVi.setBounds(10, 0, 138, 29);
+		lblngNhpVi.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		panel_1.add(lblngNhpVi);
+		
+		JRadioButton rdbtnNhnVin = new JRadioButton("Nhân viên");
+		rdbtnNhnVin.setSelected(true);
+		rdbtnNhnVin.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnNhnVin.setBounds(154, 0, 88, 29);
+		rdbtnNhnVin.setBackground(Color.WHITE);
+		panel_1.add(rdbtnNhnVin);
+		
+		JRadioButton rdbtnKhch = new JRadioButton("Khách");
+		rdbtnKhch.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnKhch.setBounds(246, 0, 88, 29);
+		rdbtnKhch.setBackground(Color.WHITE);
+		panel_1.add(rdbtnKhch);
+		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBackground(new Color(255, 255, 255));
-		pnlForm.setBounds(396, 246, 341, 181);
+		pnlForm.setBounds(396, 240, 341, 187);
 		contentPane.add(pnlForm);
 		pnlForm.setLayout(null);
 		
@@ -286,7 +312,7 @@ public class LoginJFrame extends JDialog
 		btnLogin.setForeground(new Color(255, 255, 255));
 		btnLogin.setBackground(new Color(62, 144, 255));
 		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLogin.setBounds(399, 438, 335, 51);
+		btnLogin.setBounds(396, 459, 341, 51);
 		contentPane.add(btnLogin);
 		
 		lblLogo = new JLabel("");
@@ -298,7 +324,7 @@ public class LoginJFrame extends JDialog
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(65, 71, 86));
-		panel.setBounds(0, 0, 386, 500);
+		panel.setBounds(0, 0, 386, 527);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -323,7 +349,7 @@ public class LoginJFrame extends JDialog
 		proLoading = new JProgressBar();
 		proLoading.setBorder(null);
 		proLoading.setForeground(new Color(255, 69, 0));
-		proLoading.setBounds(0, 492, 386, 8);
+		proLoading.setBounds(0, 519, 386, 8);
 		panel.add(proLoading);
 		
 		pnlWelcome = new JPanel();
