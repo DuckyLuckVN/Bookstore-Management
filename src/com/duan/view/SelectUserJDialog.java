@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.User;
@@ -34,6 +34,8 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SelectUserJDialog extends JDialog {
 
@@ -41,9 +43,9 @@ public class SelectUserJDialog extends JDialog {
 	public static final int STATUS_SELECTED = 1;
 	
 	private JPanel contentPane;
-	private CustomJTableBlue tblUser;
+	private JTableBlue tblUser;
 	private JLabel lblTmTheoTn;
-	private JTextField textField;
+	private JTextField txtSearch;
 	
 	public int status;
 	private User userSelect = null;
@@ -87,7 +89,7 @@ public class SelectUserJDialog extends JDialog {
 		scrollPane.setBounds(5, 48, 356, 218);
 		contentPane.add(scrollPane);
 		
-		tblUser = new CustomJTableBlue();
+		tblUser = new JTableBlue();
 		tblUser.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) 
@@ -114,7 +116,8 @@ public class SelectUserJDialog extends JDialog {
 				return false;
 			}
 		});
-		tblUser.getColumnModel().getColumn(0).setResizable(false);
+		tblUser.getColumnModel().getColumn(0).setPreferredWidth(0);
+		tblUser.getColumnModel().getColumn(1).setPreferredWidth(100);
 		scrollPane.setViewportView(tblUser);
 		
 		lblTmTheoTn = new JLabel("Tìm kiếm:");
@@ -122,10 +125,17 @@ public class SelectUserJDialog extends JDialog {
 		lblTmTheoTn.setBounds(5, 11, 59, 26);
 		contentPane.add(lblTmTheoTn);
 		
-		textField = new JTextField();
-		textField.setBounds(74, 11, 287, 26);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		txtSearch = new JTextField();
+		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				search();
+			}
+		});
+		txtSearch.setBounds(74, 11, 287, 26);
+		contentPane.add(txtSearch);
+		txtSearch.setColumns(10);
 		
 		getDataToList();
 		fillToTable();
@@ -188,6 +198,21 @@ public class SelectUserJDialog extends JDialog {
 		fillToTable();
 		status = STATUS_NOT_SELECT;
 		setVisible(true);
+	}
+	
+	public void search()
+	{
+		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+		model.setRowCount(0);
+		
+		for (User u : listUser)
+		{
+			if (DataHelper.search(u.getSearchString(), txtSearch.getText()))
+			{
+				String[] rowData = {u.getId() + "", u.getUsername(), u.getFullname()};
+				model.addRow(rowData);
+			}
+		}
 	}
 	
 

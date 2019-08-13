@@ -1,33 +1,30 @@
-package com.duan.custom;
+package com.duan.custom.message;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.JScrollPane;
-
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.SystemColor;
 import java.awt.event.MouseMotionAdapter;
-import javax.swing.ImageIcon;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class AlertJDialog extends JDialog {
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.LineBorder;
+
+public class AlertJDialog extends CustomJDialog {
 	
 	public static final String ICON_NAME_INFORMATION = "icon_information_125px.png";
 	public static final String ICON_NAME_WARNING = "icon_warning_125px.png";
@@ -39,6 +36,8 @@ public class AlertJDialog extends JDialog {
 	private int posY;
 	private JLabel lblIcon;
 	private JLabel lblContent;
+	
+
 	
 	public static void main(String[] args) 
 	{
@@ -70,6 +69,16 @@ public class AlertJDialog extends JDialog {
 	}
 	public AlertJDialog() 
 	{
+		contentPanel.setBorder(new LineBorder(Color.GRAY, 3));
+		setContentPane(contentPanel);
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				if (e.getKeyCode() == 27)
+					dispose();
+			}
+		});
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException

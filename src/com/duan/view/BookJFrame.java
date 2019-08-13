@@ -20,13 +20,17 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.controller.ExportExcel;
-import com.duan.custom.CustomJTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 import com.duan.model.Book;
 
 import java.awt.Toolkit;
@@ -65,12 +69,14 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.Desktop;
 
-public class BookJFrame extends JFrame {
+public class BookJFrame extends JFrame{
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
@@ -87,7 +93,7 @@ public class BookJFrame extends JFrame {
 	private JButton btnAdd;
 	private JButton btnEdit;
 	private JButton btnDelete;
-	private CustomJTableRed tblBook;
+	private JTableRed tblBook;
 	private JPanel pnlSelect;
 	private JButton btnMaxLeft;
 	private JButton btnLeft;
@@ -97,9 +103,9 @@ public class BookJFrame extends JFrame {
 	
 	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
-	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
+	private BookDetailJDialog bookDetailJDialog = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
-	private JTextField textField;
+	private JTextField txtSearch;
 	
 	private List<Book> listBook = new ArrayList<Book>();
 	private Book book;
@@ -124,8 +130,7 @@ public class BookJFrame extends JFrame {
 			}
 		});
 	}
-
-
+	
 	public BookJFrame() 
 	{
 		setTitle("Quản lý kho sách");
@@ -138,7 +143,7 @@ public class BookJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
+		setBounds(100, 100, 897, 600);
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -167,6 +172,13 @@ public class BookJFrame extends JFrame {
 		mntmAboutUs = new JMenuItem("Thông tin chung");
 		mnHelp.add(mntmAboutUs);
 		contentPane = new JPanel();
+		contentPane.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				System.out.println(e.getKeyCode());
+			}
+		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
@@ -190,7 +202,14 @@ public class BookJFrame extends JFrame {
 		btnAdd = new JButton("Thêm mới");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showInsertBook();
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+				{
+					showInsertBook();
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 		});
 		btnAdd.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -206,8 +225,15 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					System.out.println(getBookSelected().getImage());
-					showEditorBook(getBookSelected());
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+					{
+						System.out.println(getBookSelected().getImage());
+						showEditorBook(getBookSelected());
+					}
+					else
+					{
+						MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+					}
 				} 
 				catch (SQLException e1) 
 				{
@@ -226,14 +252,21 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 					{
-						if (deleteBook())
+						if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
 						{
-							getDataToList();
-							fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Đã xóa sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+							if (deleteBook())
+							{
+								getDataToList();
+								fillToTable();
+								MessageOptionPane.showAlertDialog(getContentPane(), "Đã xóa sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+							}
 						}
+					}
+					else
+					{
+						MessageOptionPane.showAlertDialog(contentPane, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
 					}
 				} 
 				catch (HeadlessException | SQLException e1) 
@@ -254,15 +287,27 @@ public class BookJFrame extends JFrame {
 		pnlSelect = new JPanel();
 		
 		pnlTime = new JPanel();
-		pnlTime.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlTime.setBackground(SystemColor.menu);
 		
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		textField = new JTextField();
-		textField.setBorder(null);
-		textField.setColumns(10);
+		txtSearch = new JTextFieldDark();
+		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				try 
+				{
+					search();
+				} 
+				catch (SQLException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+		txtSearch.setColumns(10);
 		
 		popupMenu = new JPopupMenu();
 		
@@ -275,13 +320,6 @@ public class BookJFrame extends JFrame {
 		mntmXa = new JMenuItem("Xóa");
 		popupMenu.add(mntmXa);
 		pnlTime.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblTime = new JLabel("23:15");
-		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTime.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_alarm_clock_24px_1.png")));
-		lblTime.setForeground(Color.RED);
-		lblTime.setFont(new Font("Tahoma", Font.BOLD, 18));
-		pnlTime.add(lblTime);
 		pnlSelect.setLayout(new GridLayout(1, 0, 15, 0));
 		
 		btnMaxLeft = new JButton("|<");
@@ -350,7 +388,7 @@ public class BookJFrame extends JFrame {
 		});
 		pnlSelect.add(btnMaxRight);
 		
-		tblBook = new CustomJTableRed();
+		tblBook = new JTableRed();
 		tblBook.setShowHorizontalLines(false);
 		tblBook.setShowVerticalLines(true);
 		tblBook.setDragEnabled(true);
@@ -425,18 +463,21 @@ public class BookJFrame extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(12)
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 							.addGap(4)
-							.addComponent(textField, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-							.addGap(402)
+							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
 							.addComponent(btnExportExcel))
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
-					.addGap(6)
-					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE))
+					.addGap(10)
+					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+					.addGap(3))
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-					.addGap(6)
-					.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+					.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+					.addGap(10)
+					.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+					.addGap(3))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -447,16 +488,29 @@ public class BookJFrame extends JFrame {
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGap(1)
-									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+									.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 								.addComponent(btnExportExcel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 							.addGap(6)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
-					.addGap(6)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+							.addGap(6))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(6)
+							.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(pnlSelect, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
 		);
+		
+		JButton btnRefresh = new JButton("Tải lại");
+		pnlTime.add(btnRefresh, BorderLayout.CENTER);
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				refresh();
+			}
+		});
+		btnRefresh.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
+		btnRefresh.setFont(new Font("Tahoma", Font.BOLD, 12));
 		contentPane.setLayout(gl_contentPane);
 		//setLocationRelativeTo(getOwner());
 		try 
@@ -532,6 +586,57 @@ public class BookJFrame extends JFrame {
 		}
 	}
 	
+	public void search() throws SQLException
+	{
+		String search = txtSearch.getText();
+		
+		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		
+		for (Book e : listBook)
+		{
+			if (DataHelper.search(e.getSearchString(), search) == false)
+				continue;
+			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
+			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			
+			String[] rowData = 
+				{
+					e.getId(), 
+					e.getTitle(), 
+					categoryTitle, 
+					e.getAuthor(), 
+					e.getAmount() + "", 
+					price, 
+					e.getDescription(), 
+				};
+			
+			model.addRow(rowData);
+		}
+		
+		//Nếu điều kiện hợp lý thì set select row lại y như lúc chưa fillToTable
+		int rowCount = tblBook.getRowCount();
+		if (indexSelect != -1)
+		{
+			if (indexSelect < rowCount && rowCount > 0)
+			{
+				tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+			}
+			else
+			{
+				indexSelect = rowCount - 1;
+				if (indexSelect > -1)
+				{
+					tblBook.setRowSelectionInterval(indexSelect, indexSelect);
+				}
+				else
+				{
+					setControllModeTo_Nothing();
+				}
+			}
+		}
+	}
+	
 	public void showBookDetail()
 	{
 		try 
@@ -539,8 +644,11 @@ public class BookJFrame extends JFrame {
 			String id = (String) tblBook.getValueAt(indexSelect, 0);
 			Book bookDetail;
 			bookDetail = BookDAO.findByID(id);
-			bookDetailJFrame.setDetail(bookDetail);
-			bookDetailJFrame.setVisible(true);
+			
+			bookDetailJDialog = new BookDetailJDialog();
+			bookDetailJDialog.setLocationRelativeTo(this);
+			bookDetailJDialog.setDetail(bookDetail);
+			bookDetailJDialog.setVisible(true);
 		} 
 		catch (SQLException e) 
 		{
@@ -637,5 +745,17 @@ public class BookJFrame extends JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	
+	//Tải lại tất cả
+	public void refresh()
+	{
+		getDataToList();
+		try {
+			fillToTable();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

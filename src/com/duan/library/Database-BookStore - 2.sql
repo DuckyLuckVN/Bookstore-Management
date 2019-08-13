@@ -19,6 +19,31 @@ CREATE TABLE LOCATION
 	max_storage INT CHECK(max_storage > 0),
 	[description] NVARCHAR(256)
 )
+GO
+
+CREATE TABLE AUTHOR
+(
+	id INT IDENTITY (100, 1) PRIMARY KEY,
+	fullname NVARCHAR(256) NOT NULL,
+	date_of_birth DATE,
+	date_of_death DATE NULL,
+	image NVARCHAR(256),
+	introduce NVARCHAR(256),
+	created_date DATE,
+)
+GO
+
+CREATE TABLE PUBLISHER
+(
+	id INT IDENTITY (100, 1) PRIMARY KEY,
+	name NVARCHAR(256) NOT NULL,
+	phone_number VARCHAR(13),
+	email VARCHAR(100) NOT NULL,
+	address NVARCHAR(200),
+	introduce NVARCHAR(256),
+	created_date DATE
+)
+GO
 
 CREATE TABLE BOOK
 (
@@ -26,21 +51,20 @@ CREATE TABLE BOOK
 	title NVARCHAR(100) NOT NULL,
 	category_id varchar(50) NOT NULL,
 	page_num INT,
-	author NVARCHAR(50) NOT NULL,
+	author_id INT FOREIGN KEY REFERENCES dbo.AUTHOR(id),
 	amount INT ,
-	publisher NVARCHAR(50),
+	publisher_id INT FOREIGN KEY REFERENCES dbo.PUBLISHER(id),
 	publication_year INT,
 	price MONEY,
 	image NVARCHAR(256),
 	location_id VARCHAR(50),
 	description NVARCHAR(256),
+	introduce NVARCHAR(256),
 	created_date date,
 	CONSTRAINT fk_cateID FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE
+	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE,
 )
 GO
-
-
 
 CREATE TABLE [USER]
 (
@@ -175,6 +199,7 @@ VALUES  ( 'A1', N'Kệ A1', 100, N''),
 		( 'A6', N'Kệ A6', 100, N''),
 		( 'A7', N'Kệ A7', 120, N''),
 		( 'A8', N'Kệ A8', 110, N'')
+GO
 
 INSERT INTO dbo.CATEGORY( id ,category_title ,category_description)
 VALUES  ('TT2'	 ,N'Kỉ Niệm HÀ NỘI tôi' ,'71 trang'),
@@ -182,9 +207,20 @@ VALUES  ('TT2'	 ,N'Kỉ Niệm HÀ NỘI tôi' ,'71 trang'),
 		('AG1',N'Sống đúng','')
 GO
 
-INSERT INTO dbo.BOOK (id ,title ,category_id ,page_num ,author ,amount ,publisher ,publication_year ,price ,image, location_id ,description ,created_date)
-VALUES  ('GH12' ,N'TÔI THẤY MÌNH CÒN TRẺ','TT2' ,274 ,N'Đỗ Văn Hoàn' ,96 ,N'NXB Trẻ' ,2017 ,296999 , N'', 'A1' ,'' ,'11/05/2018' ),  
-		('JH42' ,N'TÔI THẤY HOA VÀNG TRÊN CỎ XANH','AG1' ,274 ,N'Lê Văn Thuyết' ,96 ,N'NXB Nhi Đồng' ,2017 ,196333 , N'', 'A2' ,'' ,'11/06/2018' )
+INSERT INTO dbo.AUTHOR(fullname ,date_of_birth ,image ,introduce ,created_date)
+VALUES  (N'Đỗ Văn Hoàng', GETDATE(), N'', N'Tác giả này tên là Đỗ Văn Hoàng.', GETDATE()),
+		(N'Trần Đăng Khoa', GETDATE(), N'', N'Tác giả này nổi tiếng với các bài văn dành cho trẻ em', GETDATE()),
+		(N'Lê Văn Thuyết', GETDATE(), N'', N'', GETDATE())
+GO
+
+INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduct, created_date)
+VALUES  (N'BXB Trẻ', '0376546521', 'contact@nxbtre.com', N'Đây là nhà xuất bản khá trẻ :v', GETDATE()),
+		(N'BXB Nhi Đồng', '0186224665', 'contact@nxbnhidong.com', N'Đây là nhà xuất bản nhi đồng', GETDATE())
+GO
+
+INSERT INTO dbo.BOOK (id ,title ,category_id ,page_num ,author_id ,amount ,publisher_id ,publication_year ,price ,image, location_id ,description ,created_date)
+VALUES  ('GH12' ,N'TÔI THẤY MÌNH CÒN TRẺ','TT2' ,274 , 100 ,96 ,100 ,2017 ,296999 , N'', 'A1' ,'' ,'11/05/2018' ),  
+		('JH42' ,N'TÔI THẤY HOA VÀNG TRÊN CỎ XANH','AG1' ,274 ,102 ,96 , 101 ,2017 ,196333 , N'', 'A2' ,'' ,'11/06/2018' )
 GO
 	
 INSERT INTO dbo.[USER]( username ,password ,fullname ,date_of_birth ,email ,phone_number)
@@ -430,17 +466,267 @@ AS BEGIN
 	WHERE order_id = @order_id
 END
 GO
-	
 
+/****** Object:  StoredProcedure  [sp_getTotalAmountOrderBook]  Script Date: 8/10/2019 ******/
+--Trả về tổng số sách đã bán
+CREATE PROC sp_getTotalAmountOrderBook 
+AS BEGIN
+	SELECT
+		SUM(amount)
+	FROM ORDER_DETAIL
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
+--Trả về tổng tất cả các thứ cần thống ke :))
+CREATE PROC sp_getStatisticOverviewInMonth 
+AS BEGIN
+	DECLARE @totalOrder FLOAT = 0
+	DECLARE @totalRent FLOAT = 0
+	DECLARE @totalLost FLOAT = 0
+	DECLARE @totalUser FLOAT = 0
+	DECLARE @totalAddStorage FLOAT = 0
+	DECLARE @totalRevenue FLOAT = 0
+
+	SELECT @totalOrder = SUM(ORDER_DETAIL.amount) FROM ORDER_DETAIL, [ORDER] 
+	WHERE ORDER_DETAIL.order_id = [ORDER].id 
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = MONTH(GETDATE())
+	
+	SELECT @totalRent = SUM(RENTBOOK_DETAIL.amount) FROM RENTBOOK_DETAIL, RENTBOOK
+	WHERE  RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+	AND YEAR(RENTBOOK.created_date) = YEAR(GETDATE()) 
+	AND MONTH(RENTBOOK.created_date) = MONTH(GETDATE()) 
+	
+	SELECT @totalLost = SUM(BOOK_LOST_DETAIL.amount) FROM  BOOK_LOST_DETAIL, BOOK_LOST
+	WHERE BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id 
+	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
+	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+	
+	SELECT @totalUser = COUNT([USER].id) FROM [USER]
+	WHERE YEAR([USER].created_date) = YEAR(GETDATE()) 
+	AND MONTH([USER].created_date) = MONTH(GETDATE())
+	
+	SELECT @totalAddStorage = SUM(STORAGE_DETAIL.amount) FROM STORAGE_DETAIL, STORAGE
+	WHERE STORAGE_DETAIL.storage_id = STORAGE.id
+	AND YEAR(STORAGE.created_date) = YEAR(GETDATE()) 
+	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
+	
+	DECLARE @totalSumOrder FLOAT = 0
+	DECLARE @totalSumLost FLOAT = 0
+	DECLARE @totalSumRentLost FLOAT = 0
+
+	SELECT @totalSumOrder = SUM(ORDER_DETAIL.amount*ORDER_DETAIL.price)
+	FROM ORDER_DETAIL, [ORDER]
+	WHERE ORDER_DETAIL.order_id = [ORDER].id
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = MONTH(GETDATE())
+
+	SELECT @totalSumLost = SUM(BOOK_LOST_DETAIL.cost)
+	FROM BOOK_LOST, BOOK_LOST_DETAIL
+	WHERE BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
+	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+
+	SELECT @totalSumRentLost = SUM(BOOK_LOST_DETAIL.amount*RENTBOOK_DETAIL.price)
+	FROM BOOK_LOST, BOOK_LOST_DETAIL, RENTBOOK_DETAIL,RENTBOOK
+	WHERE BOOK_LOST.rentbook_id = RENTBOOK.id
+	AND RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+	AND RENTBOOK_DETAIL.book_id = BOOK_LOST_DETAIL.book_id
+	AND RENTBOOK_DETAIL.rentbook_id = BOOK_LOST_DETAIL.rentbook_id
+	AND YEAR(RENTBOOK.created_date) = YEAR(GETDATE()) 
+	AND MONTH(RENTBOOK.created_date) = MONTH(GETDATE())
+	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
+	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+
+	IF (@totalLost IS NULL)
+		SET @totalLost = 0
+	IF (@totalSumOrder IS NULL)
+		SET @totalSumOrder = 0
+	IF (@totalSumRentLost IS NULL)
+		SET @totalSumRentLost = 0
+	IF (@totalSumLost IS NULL)
+		SET @totalSumLost = 0
+
+	SET @totalrevenue = @totalSumLost + @totalSumOrder - @totalSumRentLost
+
+	SELECT @totalOrder AS [Total Order], @totalRent AS [Total Rent], @totalLost AS [Total Lost], @totalUser AS [Total User], @totalAddStorage AS [Total Book Storage], @totalRevenue AS [Total imcome]
+END
+GO
+
+EXEC sp_getStatisticOverviewInMonth
+
+INSERT dbo.ADMIN
+        ( username ,
+          password ,
+          fullName ,
+          email ,
+          phone_number ,
+          image ,
+          sex ,
+          role ,
+          isActive ,
+          created_date
+        )
+VALUES  ( 'haogd' , -- username - varchar(50)
+          '123456789' , -- password - varchar(50)
+          N'Đại Hào' , -- fullName - nvarchar(256)
+          'daihao12mc@gmail.com' , -- email - varchar(50)
+          '0376555796' , -- phone_number - varchar(14)
+          N'' , -- image - nvarchar(256)
+          1 , -- sex - bit
+          0 , -- role - int
+          1 , -- isActive - bit
+          GETDATE()  -- created_date - date
+        )
+
+GO
+
+--Gọi khi bảng order detail có insert	
+CREATE TRIGGER tg_InsertOrderDetail ON dbo.ORDER_DETAIL
+FOR INSERT
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_insertd INT
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @book_id = Inserted.book_id, @amount_insertd = Inserted.amount FROM Inserted
+
+	--Giảm trừ số lượng đã insert vào số lượng sách đang có
+	UPDATE dbo.BOOK SET amount = (amount - @amount_insertd) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng order detail có delete	
+CREATE TRIGGER tg_DeleteOrderDetail ON dbo.ORDER_DETAIL
+FOR DELETE
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_deleted INT
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
+
+	--Tăng số lượng từ bảng đã xóa vào số lượng sách đang có
+	UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng STORAGE_DETAIL có INSERT
+CREATE TRIGGER tg_InsertStorageDetail ON dbo.STORAGE_DETAIL
+FOR INSERT
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_insertd INT
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @book_id = Inserted.book_id, @amount_insertd = Inserted.amount FROM Inserted
+
+	--Thêm số lượng đã insert vào số lượng sách đang có
+	UPDATE dbo.BOOK SET amount = (amount + @amount_insertd) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng STORAGE_DETAIL có delete
+CREATE TRIGGER tg_DeleteStorageDetail ON dbo.STORAGE_DETAIL
+FOR DELETE
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_deleted INT
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
+
+	--Giảm số lượng từ bảng đã xóa vào số lượng sách đang có
+	UPDATE dbo.BOOK SET amount = (amount - @amount_deleted) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng RentBookDetail có insert	
+CREATE TRIGGER tg_insertRentBookDetail ON dbo.RENTBOOK_DETAIL
+FOR INSERT
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_inserted INT
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @book_id = Inserted.book_id, @amount_inserted = Inserted.amount FROM Inserted
+
+	--Giảm số lượng sách đang có dựa vào số lượng sách thuê đã insert
+	UPDATE dbo.BOOK SET amount = (amount  - @amount_inserted) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng RentBookDetail có delete	
+CREATE TRIGGER tg_deleteRentBookDetail ON dbo.RENTBOOK_DETAIL
+FOR DELETE
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_deleted INT
+
+	--Lấy ra mã sách và số lượng delete
+	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
+
+	--tăng số lượng sách đang có dựa vào số lượng sách thuê đã delete
+	UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
+END
+GO
+
+--Gọi khi bảng RENTBOOK có update status = 1 => đã trả sách
+CREATE TRIGGER tg_updateRentBook ON dbo.RENTBOOK
+FOR INSERT
+AS
+BEGIN
+	DECLARE @status INT
+	DECLARE @rentbook_id INT
+
+	DECLARE @tblRentBookDetail TABLE
+	(
+		book_id VARCHAR(50),
+		amount INT
+	)
+
+	--Lấy ra mã sách và số lượng insert
+	SELECT @status = @status, @rentbook_id = @rentbook_id FROM Inserted
+
+	--Mã status = 1 => đã trả sách
+	IF (@status = 1)
+	BEGIN
+		INSERT INTO @tblRentBookDetail SELECT book_id, amount FROM dbo.RENTBOOK_DETAIL WHERE rentbook_id = @rentbook_id
+	END
+END
+GO
+
+SELECT * FROM dbo.RENTBOOK_DETAIL WHERE rentbook_id = 102
+
+
+
+
+
+
+/*
 SELECT * FROM dbo.BOOK
+SELECT * FROM dbo.[ORDER_DETAIL]
 SELECT * FROM dbo.LOCATION
+SELECT * FROM dbo.AUTHOR
+SELECT * FROM dbo.PUBLISHER
 
 UPDATE dbo.BOOK SET description = 'abcdef descrip' WHERE id = 'GH12'
 
 SELECT * FROM dbo.[USER]
 SELECT * FROM dbo.ADMIN
 SELECT * FROM dbo.[ORDER]
+SELECT * FROM dbo.ORDER_DETAIL
 SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
+SELECT * FROM dbo.STORAGE_DETAIL
 
 DELETE FROM dbo.RENTBOOK
+
+*/

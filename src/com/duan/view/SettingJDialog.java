@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.DBConnection;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
@@ -47,7 +47,7 @@ public class SettingJDialog extends JDialog {
 	private JTextField txtMoneySymbol;
 	private JComboBox cboTimeFormat;
 	private JComboBox cboDateFormat;
-	private MainJFrame2 mainJFrame;
+	private MainJFrame mainJFrame;
 	private JTextField txtUsernameMail;
 	private JTextField txtPasswordEmail;
 	private JTextField txtDayExpiration;
@@ -333,7 +333,7 @@ public class SettingJDialog extends JDialog {
 				if (mainJFrame != null) 
 				{
 					mainJFrame.dispose();
-					mainJFrame = new MainJFrame2();
+					mainJFrame = new MainJFrame();
 					mainJFrame.addContainer();
 					mainJFrame.setVisible(true);
 				}
@@ -408,7 +408,7 @@ public class SettingJDialog extends JDialog {
 		return isSuccess;
 	}
 	
-	public void setMainJFrame(MainJFrame2 mainJFrame)
+	public void setMainJFrame(MainJFrame mainJFrame)
 	{
 		this.mainJFrame = mainJFrame;
 	}

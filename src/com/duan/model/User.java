@@ -3,6 +3,10 @@ package com.duan.model;
 
 import java.util.Date;
 
+import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
+
 
 public class User 
 {
@@ -105,6 +109,18 @@ public class User
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+    
+    public String getSearchString()
+    {
+    	String dateOfBirthStr = "";
+    	String createdDateSrt = "";
+    	if (dateOfBirthStr != null)
+    		dateOfBirthStr = DateHelper.dateToString(dateOfBirth, SettingSave.getSetting().getDateFormat());
+    	if (createdDate != null)
+    		createdDateSrt = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
+    	
+    	return id + " " + username  + " " + password  + " " + fullname  + " " + dateOfBirthStr + " " + email + " " + phoneNumber + " " + createdDateSrt;
     }
     
     

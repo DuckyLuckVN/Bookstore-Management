@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.helper.AccountSave;
 import com.duan.helper.ComponentResizer;
 import com.duan.helper.SwingHelper;
@@ -56,7 +57,7 @@ import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import javax.swing.JSeparator;
 
-public class MainJFrame2 extends JFrame {
+public class MainJFrame extends JFrame {
 
 	private static final Color COLOR_MENU_DEFAULT = new Color(238, 239, 249);
 	private static final Color COLOR_MENU_HOVER = new Color(232, 233, 247);
@@ -119,7 +120,7 @@ public class MainJFrame2 extends JFrame {
 			{
 				try 
 				{
-					MainJFrame2 frame = new MainJFrame2();
+					MainJFrame frame = new MainJFrame();
 					frame.addContainer();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -138,7 +139,7 @@ public class MainJFrame2 extends JFrame {
 	        cr.setSnapSize(new Dimension(10, 10));
 	    }
 	 
-	public MainJFrame2() 
+	public MainJFrame() 
 	{
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -160,16 +161,16 @@ public class MainJFrame2 extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) 
 			{
-				if (sHelper.showConfirm(getContentPane(), "Bạn có chắc muốn tắt ứng dụng này không?"))
+				if (MessageOptionPane.showConfirmDialog(getContentPane(), "Bạn có chắc muốn tắt ứng dụng này không?"))
 				{
 					System.exit(0);
 				}
 			}
 		});
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 1093, 764);
+		setBounds(100, 100, 1159, 764);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		setContentPane(contentPane);
@@ -217,7 +218,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblTItle1 = new JLabel("Sách");
 		lblTItle1.setBounds(21, 0, 259, 50);
 		lblTItle1.setForeground(new Color(0, 0, 0));
-		lblTItle1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
+		lblTItle1.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_books_32px_1.png")));
 		lblTItle1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblTItle1.setHorizontalAlignment(SwingConstants.LEFT);
 		pnl1.add(lblTItle1);
@@ -256,7 +257,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblNhnVin = new JLabel("Bán sách");
 		lblNhnVin.setBounds(21, 0, 259, 50);
 		lblNhnVin.setForeground(new Color(0, 0, 0));
-		lblNhnVin.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
+		lblNhnVin.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")));
 		lblNhnVin.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl3.add(lblNhnVin);
@@ -295,7 +296,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblKhchHng = new JLabel("Thuê sách");
 		lblKhchHng.setBounds(21, 0, 259, 50);
 		lblKhchHng.setForeground(new Color(0, 0, 0));
-		lblKhchHng.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
+		lblKhchHng.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")));
 		lblKhchHng.setHorizontalAlignment(SwingConstants.LEFT);
 		lblKhchHng.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl2.add(lblKhchHng);
@@ -334,7 +335,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblHan = new JLabel("Mất sách");
 		lblHan.setBounds(21, 0, 259, 50);
 		lblHan.setForeground(new Color(0, 0, 0));
-		lblHan.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8-health-book-32.png")));
+		lblHan.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8-health-book-32.png")));
 		lblHan.setHorizontalAlignment(SwingConstants.LEFT);
 		lblHan.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl4.add(lblHan);
@@ -373,7 +374,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblCuHnh = new JLabel("Khách hàng");
 		lblCuHnh.setBounds(21, 0, 259, 50);
 		lblCuHnh.setForeground(new Color(0, 0, 0));
-		lblCuHnh.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
+		lblCuHnh.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_user_group_man_woman_32px.png")));
 		lblCuHnh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCuHnh.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl7.add(lblCuHnh);
@@ -404,9 +405,16 @@ public class MainJFrame2 extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				setBackgroundMenuClicked(pnl5);
-				showStatisticalJFrame();
-				setHighlightMenu(pnl5);
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+				{
+					setBackgroundMenuClicked(pnl5);
+					showStatisticalJFrame();
+					setHighlightMenu(pnl5);
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(pnlContent, "Chức năng này chỉ dành cho chức vụ Giám Đốc!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 		});
 		pnl5.setBackground(COLOR_MENU_DEFAULT);
@@ -415,7 +423,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblThu = new JLabel("Thống kê");
 		lblThu.setBounds(21, 0, 259, 50);
 		lblThu.setForeground(new Color(0, 0, 0));
-		lblThu.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
+		lblThu.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_statistics_32px.png")));
 		lblThu.setHorizontalAlignment(SwingConstants.LEFT);
 		lblThu.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl5.add(lblThu);
@@ -445,9 +453,16 @@ public class MainJFrame2 extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				setBackgroundMenuClicked(pnl6);
-				showAdminJFrame();
-				setHighlightMenu(pnl6);
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+				{
+					setBackgroundMenuClicked(pnl6);
+					showAdminJFrame();
+					setHighlightMenu(pnl6);
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(pnlContent, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 		});
 		pnl6.setBackground(COLOR_MENU_DEFAULT);
@@ -456,7 +471,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblNhnVin_1 = new JLabel("Quản trị viên");
 		lblNhnVin_1.setBounds(21, 0, 259, 50);
 		lblNhnVin_1.setForeground(new Color(0, 0, 0));
-		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
+		lblNhnVin_1.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_user_credentials_32px.png")));
 		lblNhnVin_1.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhnVin_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl6.add(lblNhnVin_1);
@@ -474,8 +489,10 @@ public class MainJFrame2 extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (sHelper.showConfirm(getContentPane(), "Bạn có chắc muốn đăng xuất không?"))
+				if (MessageOptionPane.showConfirmDialog(getContentPane(), "Bạn có chắc muốn đăng xuất không?"))
+				{
 					logout();
+				}
 			}
 		});
 		pnl8.setBackground(COLOR_MENU_DEFAULT);
@@ -484,7 +501,7 @@ public class MainJFrame2 extends JFrame {
 		JLabel lblngXut = new JLabel("Đăng xuất");
 		lblngXut.setForeground(new Color(0, 0, 0));
 		lblngXut.setBounds(22, 0, 178, 51);
-		lblngXut.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
+		lblngXut.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_exit_32px.png")));
 		lblngXut.setHorizontalAlignment(SwingConstants.LEFT);
 		lblngXut.setFont(new Font("Tahoma", Font.BOLD, 13));
 		pnl8.add(lblngXut);
@@ -492,7 +509,7 @@ public class MainJFrame2 extends JFrame {
 		contentPane.add(pnlMenu, BorderLayout.WEST);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
+		lblLogo.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		
 		JLabel lblBookstore = new JLabel("BOOKSTORE");
 		lblBookstore.setForeground(Color.DARK_GRAY);
@@ -523,9 +540,16 @@ public class MainJFrame2 extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				setBackgroundMenuClicked(pnl9);
-				showStorageJFrame();
-				setHighlightMenu(pnl9);
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+				{
+					setBackgroundMenuClicked(pnl9);
+					showStorageJFrame();
+					setHighlightMenu(pnl9);
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(pnlContent, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 			
 		});
@@ -535,7 +559,7 @@ public class MainJFrame2 extends JFrame {
 		
 		JLabel lblNhpKho = new JLabel(" Nhập kho");
 		lblNhpKho.setBounds(21, 0, 259, 50);
-		lblNhpKho.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")));
+		lblNhpKho.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")));
 		lblNhpKho.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNhpKho.setForeground(Color.BLACK);
 		lblNhpKho.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -566,13 +590,13 @@ public class MainJFrame2 extends JFrame {
 		lblCicleAvatar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lblCicleAvatar.setBounds(10, 11, 73, 75);
 		pnlAvatar.add(lblCicleAvatar);
-		lblCicleAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/cicleAvatar.png")));
+		lblCicleAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/cicleAvatar.png")));
 		SwingHelper.setAutoResizeIcon(lblCicleAvatar);
 		
 		lblAvatar = new JLabel("");
 		lblAvatar.setBounds(10, 11, 73, 75);
 		pnlAvatar.add(lblAvatar);
-		lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/43087105_2147322358815729_8587652113234919424_n.jpg")));
+		lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/43087105_2147322358815729_8587652113234919424_n.jpg")));
 		SwingHelper.setAutoResizeIcon(lblAvatar);
 		
 		lblChucVu = new JLabel("Nhân viên");
@@ -592,7 +616,7 @@ public class MainJFrame2 extends JFrame {
 		lblBGFrameAvatar.setBounds(81, 22, 189, 56);
 		pnlAvatar.add(lblBGFrameAvatar);
 		
-		lblBGFrameAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/frame2.png")));
+		lblBGFrameAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/frame2.png")));
 		SwingHelper.setAutoResizeIcon(lblBGFrameAvatar);
 		
 		JPanel pnl10 = new JPanel();
@@ -611,14 +635,21 @@ public class MainJFrame2 extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				showSettingJDialog();
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
+				{
+					showSettingJDialog();
+				}
+				else
+				{
+					MessageOptionPane.showAlertDialog(pnlContent, "Chức năng này chỉ dành cho chức vụ Quản Lý!", MessageOptionPane.ICON_NAME_BLOCK);
+				}
 			}
 		});
 		pnl10.setLayout(null);
 		pnl10.setBackground(COLOR_MENU_DEFAULT);
 		
 		JLabel lblCic = new JLabel("Cài đặt");
-		lblCic.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/icons8_settings_32px_1.png")));
+		lblCic.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/icons8_settings_32px_1.png")));
 		lblCic.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCic.setForeground(Color.BLACK);
 		lblCic.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -685,7 +716,7 @@ public class MainJFrame2 extends JFrame {
 		pnlContent.setLayout(cardLayout);
 		
 		lblBackgroundMain = new JLabel("");
-		lblBackgroundMain.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblBackgroundMain.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
 		lblBackgroundMain.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContent.add(lblBackgroundMain, "name_99788257003228");
 		setLocationRelativeTo(getOwner());
@@ -701,14 +732,14 @@ public class MainJFrame2 extends JFrame {
 		lblHoTen.setText(admin.getFullname());
 		
 		//Set Avatar
-		if (admin.getImage() != null && admin.getImage().length() > 0)
+		if (admin.getImage() != null && admin.getImage().length() > 0 && MainJFrame.class.getResource("/com/duan/image/" + admin.getImage()) != null)
 		{
-			lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/image/" + admin.getImage())));
+			lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/" + admin.getImage())));
 			SwingHelper.setAutoResizeIcon(lblAvatar);
 		}
 		else
 		{ //set avatar mặc định nếu admin không có image
-			lblAvatar.setIcon(new ImageIcon(MainJFrame2.class.getResource("/com/duan/icon/avatar-default.png")));
+			lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/avatar-default.png")));
 			SwingHelper.setAutoResizeIcon(lblAvatar);
 		}
 	}
@@ -757,11 +788,6 @@ public class MainJFrame2 extends JFrame {
 	//Hiển thị nội dung chính panel ở giữa, dựa vào Container truyền vào
 	public void setContainerShow(Container container)
 	{
-//		pnlContent.removeAll();
-//		pnlContent.add(container);
-//		pnlContent.repaint();
-//		pnlContent.revalidate();
-		
 		if (containerSelected != container)
 		{
 			containerSelected = container;

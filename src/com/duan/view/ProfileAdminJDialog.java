@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.LineBorder;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
@@ -57,7 +57,7 @@ public class ProfileAdminJDialog extends JDialog {
 	private JLabel lblAvatar;
 	private JLabel lblRoleTitle;
 
-	private MainJFrame2 mainJFrame;
+	private MainJFrame mainJFrame;
 	
 	public static void main(String[] args) {
 		try {
@@ -263,8 +263,11 @@ public class ProfileAdminJDialog extends JDialog {
 	{
 		if (nameImage != null && nameImage.length() > 0)
 		{
-			lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/image/" + nameImage)));
-			SwingHelper.setAutoResizeIcon(lblAvatar);
+			if (getClass().getResource("/com/duan/image/" + nameImage) != null)
+			{
+				lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/image/" + nameImage)));
+				SwingHelper.setAutoResizeIcon(lblAvatar);
+			}
 		}
 	}
 	
@@ -404,7 +407,7 @@ public class ProfileAdminJDialog extends JDialog {
 		return isSuccess;
 	}
 	
-	public void setMainJFrame(MainJFrame2 mainJFrame)
+	public void setMainJFrame(MainJFrame mainJFrame)
 	{
 		this.mainJFrame = mainJFrame;
 	}

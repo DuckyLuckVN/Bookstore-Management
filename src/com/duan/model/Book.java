@@ -1,7 +1,14 @@
 
 package com.duan.model;
 
+import java.sql.SQLException;
 import java.util.Date;
+
+import com.duan.dao.CategoryDAO;
+import com.duan.dao.LocationDAO;
+import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 
 
 public class Book 
@@ -147,5 +154,22 @@ public class Book
         this.createdDate = createdDate;
     }
     
+    public String getSearchString()
+    {
+    	String category = "";
+    	String location = "";
+    	String createdDateStr = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
+    	try 
+    	{
+			category = CategoryDAO.findById(categoryId).getCategoryTitle();
+			location = LocationDAO.findByID(locationId).getLocationName();
+			
+    	} 
+    	catch (SQLException e) 
+    	{
+    		e.printStackTrace();
+		}
+    	return id + " " + title + " " + category + " " + pageNum + " " + author + " " + amount + " " + publisher + " " + publicationYear + " " + price + " " + location  + " " + description + " " + createdDateStr;
+    }
     
 }

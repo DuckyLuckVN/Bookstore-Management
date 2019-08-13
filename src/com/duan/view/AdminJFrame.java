@@ -20,8 +20,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JPanelFlat;
+import com.duan.custom.common.JScrollPaneFlat;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
@@ -57,17 +60,21 @@ import java.sql.SQLException;
 import javax.swing.ButtonGroup;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.Color;
+import java.awt.SystemColor;
 
 public class AdminJFrame extends JFrame {
 
 	private JPanel contentPane;
-	private CustomJTableRed tblUser;
-	private JTextField txtFind;
-	private JTextField txtUsername;
-	private JTextField txtPassword;
-	private JTextField txtFullname;
-	private JTextField txtEmail;
-	private JTextField txtPhoneNum;
+	private JTableRed tblUser;
+	private JTextFieldDark txtFind;
+	private JTextFieldDark txtUsername;
+	private JTextFieldDark txtPassword;
+	private JTextFieldDark txtFullname;
+	private JTextFieldDark txtEmail;
+	private JTextFieldDark txtPhoneNum;
 	private JLabel lblAnh ;
 	private JComboBox cboChucVu;
 	private final ButtonGroup bgrSex = new ButtonGroup();
@@ -105,6 +112,7 @@ public class AdminJFrame extends JFrame {
 	 */
 	public AdminJFrame() 
 	{
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AdminJFrame.class.getResource("/com/duan/icon/icons8_user_groups_64px.png")));
 		setTitle("Quản Lý Người Dùng");
 		try {
@@ -125,7 +133,8 @@ public class AdminJFrame extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		
-		JPanel pnlController = new JPanel();
+		JPanel pnlController = new JPanelFlat();
+		pnlController.setBackground(SystemColor.menu);
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
 		JLabel lblTmKim = new JLabel("Tìm kiếm");
@@ -137,7 +146,7 @@ public class AdminJFrame extends JFrame {
 		});
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		txtFind = new JTextField();
+		txtFind = new JTextFieldDark();
 		txtFind.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -150,18 +159,18 @@ public class AdminJFrame extends JFrame {
 		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		txtUsername = new JTextField();
+		txtUsername = new JTextFieldDark();
 		txtUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtUsername.setColumns(10);
 		
-		txtPassword = new JTextField();
+		txtPassword = new JTextFieldDark();
 		txtPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtPassword.setColumns(10);
 		
 		JLabel lblMtKhu = new JLabel("Mật khẩu");
 		lblMtKhu.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		txtFullname = new JTextField();
+		txtFullname = new JTextFieldDark();
 		txtFullname.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtFullname.setColumns(10);
 		
@@ -171,11 +180,11 @@ public class AdminJFrame extends JFrame {
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		txtEmail = new JTextField();
+		txtEmail = new JTextFieldDark();
 		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtEmail.setColumns(10);
 		
-		txtPhoneNum = new JTextField();
+		txtPhoneNum = new JTextFieldDark();
 		txtPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtPhoneNum.setColumns(10);
 		
@@ -251,7 +260,7 @@ public class AdminJFrame extends JFrame {
 		btnDelete.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		pnlController.add(btnDelete);
 		
-		tblUser = new CustomJTableRed();
+		tblUser = new JTableRed();
 		tblUser.setRowHeight(30);
 		tblUser.setModel(new DefaultTableModel(null, new String[] {"MÃ SỐ", "TÀI KHOẢN", "HỌ TÊN", "EMAIL", "SỐ ĐIỆN THOẠI", "CHỨC VỤ"}) 
 		{
@@ -365,10 +374,12 @@ public class AdminJFrame extends JFrame {
 		lblGiiTnh.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
 		rdoNam = new JRadioButton("Nam");
+		rdoNam.setBackground(SystemColor.menu);
 		bgrSex.add(rdoNam);
 		rdoNam.setSelected(true);
 		
 		rdoNu = new JRadioButton("Nữ");
+		rdoNu.setBackground(SystemColor.menu);
 		bgrSex.add(rdoNu);
 		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
 		gl_pnlForm.setHorizontalGroup(

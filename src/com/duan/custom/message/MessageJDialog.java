@@ -1,4 +1,4 @@
-package com.duan.custom;
+package com.duan.custom.message;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -21,13 +21,16 @@ import javax.swing.JScrollPane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.SystemColor;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
+import javax.swing.border.LineBorder;
 
-public class MessageJDialog extends JDialog {
+public class MessageJDialog extends CustomJDialog {
 	
 	public static final String ICON_NAME_INFORMATION = "icon_information_100px.png";
 	public static final String ICON_NAME_WARNING = "icon_warning_100px.png";
@@ -43,7 +46,7 @@ public class MessageJDialog extends JDialog {
 	public static void main(String[] args) 
 	{
 		try {
-			MessageJDialog dialog = new MessageJDialog();
+			MessageJDialog dialog = new MessageJDialog(null, "Đã có lỗi sảy ra rồi ................................................................");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -72,6 +75,16 @@ public class MessageJDialog extends JDialog {
 
 	public MessageJDialog() 
 	{
+		contentPanel.setBorder(new LineBorder(Color.GRAY, 3));
+		setContentPane(contentPanel);
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				if (e.getKeyCode() == 27)
+					dispose();
+			}
+		});
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -140,6 +153,7 @@ public class MessageJDialog extends JDialog {
 		getContentPane().add(scrollPane);
 		
 		txtContent = new JTextArea();
+		txtContent.setEnabled(false);
 		txtContent.setEditable(false);
 		txtContent.setWrapStyleWord(true);
 		txtContent.setLineWrap(true);

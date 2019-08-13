@@ -19,9 +19,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
-import com.duan.custom.CustomJTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
@@ -89,8 +89,8 @@ public class StorageJFrame extends JFrame {
 	private JButton btnDelete;
 	private JButton btnSelectBook;
 	private JButton btnDeleteBook; 
-	private CustomJTableRed tblStorage;
-	private CustomJTableBlue tblBook;
+	private JTableRed tblStorage;
+	private JTableBlue tblBook;
 	private JButton btnNew;
 	
 	private SelectBookJDialog selectBookJDialog = new SelectBookJDialog();
@@ -281,7 +281,7 @@ public class StorageJFrame extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "B\u1EA3ng s\u00E1ch nh\u1EADp v\u00E0o", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.setRowHeight(30);
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "GIÁ NHẬP", "SỐ LƯỢNG"}) {
 			public boolean isCellEditable(int row, int column) 
@@ -300,7 +300,7 @@ public class StorageJFrame extends JFrame {
 		tblBook.getColumnModel().getColumn(4).setPreferredWidth(40);
 		scrollPane_1.setViewportView(tblBook);
 		
-		tblStorage = new CustomJTableRed();
+		tblStorage = new JTableRed();
 		tblStorage.setShowHorizontalLines(true);
 		tblStorage.addKeyListener(new KeyAdapter() {
 			@Override

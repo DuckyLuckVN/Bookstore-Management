@@ -21,9 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.CustomJTableBlue;
-import com.duan.custom.CustomJTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;
@@ -63,7 +63,7 @@ public class OrderEditorJDialog extends JDialog {
 
 	private JPanel contentPane;
 	private JTextField txtUsername;
-	private CustomJTableBlue tblBook;
+	private JTableBlue tblBook;
 	private JLabel lblPriceTotal;
 	
 	private SelectUserJDialog selectUserJDialog = new SelectUserJDialog();
@@ -146,11 +146,9 @@ public class OrderEditorJDialog extends JDialog {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(14, 103, 512, 235);
-		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.setRowHeight(25);
-		tblBook.setBorder(new EmptyBorder(0, 0, 0, 0));
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "GIÁ BÁN", "SỐ LƯỢNG"}) {
 			
 			//Column = 4 -> cột "XÓA"
@@ -243,12 +241,14 @@ public class OrderEditorJDialog extends JDialog {
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
+						dispose();
 						MessageOptionPane.showAlertDialog(contentPane, "Thêm hóa đơn mới thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 					else if (isEditMode == true && updateOrder())
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
+						dispose();
 						MessageOptionPane.showAlertDialog(contentPane, "Cập nhật lại hóa đơn số '" + order.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 						

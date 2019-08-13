@@ -31,8 +31,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
-import com.duan.custom.CustomJTableBlue;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;
@@ -60,7 +60,7 @@ public class RentBookEditorJDialog extends JDialog {
 	private JTextField txtSDT;
 	private JTextField txtNgaySinh;
 	private JTextField txtSoLuong;
-	private CustomJTableBlue tblBook;
+	private JTableBlue tblBook;
 	private JTextField txtMaTaiKhoang;
 	private JButton btnConfirm;
 	private JComboBox cboStatus;
@@ -238,7 +238,7 @@ public class RentBookEditorJDialog extends JDialog {
 		
 		cboStatus = new JComboBox();
 		cboStatus.setEnabled(false);
-		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách", "Mất sách"}));
+		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách"}));
 		cboStatus.setBounds(88, 419, 214, 26);
 		contentPane.add(cboStatus);
 		
@@ -255,7 +255,7 @@ public class RentBookEditorJDialog extends JDialog {
 		scrollPane.setBounds(10, 270, 582, 138);
 		contentPane.add(scrollPane);
 		
-		tblBook = new CustomJTableBlue();
+		tblBook = new JTableBlue();
 		tblBook.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) 
@@ -445,6 +445,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
+			dispose();
 			MessageOptionPane.showAlertDialog(this, "Thêm phiếu thuê sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
@@ -468,6 +469,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
+			dispose();
 			MessageOptionPane.showAlertDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
