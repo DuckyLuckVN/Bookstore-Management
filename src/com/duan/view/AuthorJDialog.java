@@ -12,9 +12,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
+import com.duan.custom.common.JDateChooserCustom;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.LocationDAO;
 import com.duan.model.Location;
+import com.toedter.calendar.JDateChooser;
 
 import net.miginfocom.layout.LC;
 
@@ -57,8 +59,8 @@ public class AuthorJDialog extends JDialog {
 	private JPanel contentPane;
 	private JTableBlue tblLocation;
 	private JTextField txtMaKeSach;
-	private JTextField txtTenKe;
-	private JTextField txtSucChua;
+	private JDateChooserCustom txtTenKe;
+	private JDateChooserCustom txtNgayMat;
 	
 	LocationDAO dao;
 	ArrayList<Location> list = new ArrayList<>();
@@ -138,9 +140,8 @@ public class AuthorJDialog extends JDialog {
 		panel.add(txtMaKeSach);
 		txtMaKeSach.setColumns(10);
 		
-		txtTenKe = new JTextField();
+		txtTenKe = new JDateChooserCustom();
 		txtTenKe.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtTenKe.setColumns(10);
 		txtTenKe.setBounds(227, 47, 231, 25);
 		panel.add(txtTenKe);
 		
@@ -165,11 +166,10 @@ public class AuthorJDialog extends JDialog {
 		lblSLngLu.setBounds(140, 83, 77, 25);
 		panel.add(lblSLngLu);
 		
-		txtSucChua = new JTextField();
-		txtSucChua.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtSucChua.setColumns(10);
-		txtSucChua.setBounds(227, 83, 231, 25);
-		panel.add(txtSucChua);
+		txtNgayMat = new JDateChooserCustom();
+		txtNgayMat.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtNgayMat.setBounds(227, 83, 231, 25);
+		panel.add(txtNgayMat);
 		
 		lblAvatar = new JLabel("");
 		lblAvatar.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -228,16 +228,16 @@ public class AuthorJDialog extends JDialog {
 	
 	public void lockForm()
 	{
-		txtMaKeSach.setEditable(false);
-		txtTenKe.setEditable(false);
-		txtSucChua.setEditable(false);
+		txtMaKeSach.setEnabled(false);
+		txtTenKe.setEnabled(false);
+		txtNgayMat.setEnabled(false);
 		txtGhiChu.setEditable(false);
 	}
 	public void unlockForm() 
 	{
 		txtMaKeSach.setEditable(true);
-		txtTenKe.setEditable(true);
-		txtSucChua.setEditable(true);
+		txtTenKe.setEnabled(true);
+		txtNgayMat.setEnabled(true);
 		txtGhiChu.setEditable(true);
 	}
 	public void setControllMode_Nothing()
@@ -266,7 +266,7 @@ public class AuthorJDialog extends JDialog {
 	{
 		txtGhiChu.setText("");
 		txtMaKeSach.setText("");
-		txtSucChua.setText("");
-		txtTenKe.setText("");
+		txtNgayMat.setDate(null);;
+		txtTenKe.setDate(null);;
 	}
 }

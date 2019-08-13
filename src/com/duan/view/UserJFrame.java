@@ -1,6 +1,9 @@
 package com.duan.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -21,11 +24,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JDateChooserCustom;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.User;
+import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import java.awt.GridLayout;
@@ -189,12 +195,7 @@ public class UserJFrame extends JFrame {
 		JLabel lblHTn = new JLabel("Họ tên");
 		lblHTn.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
-		txtBirthDay = new JDateChooser();
-		txtBirthDay.setLocale(Locale.US);
-		txtBirthDay.getCalendarButton().setIcon(new ImageIcon(UserJFrame.class.getResource("/com/toedter/calendar/demo/images/DemoTableColor16.gif")));
-		txtBirthDay.getCalendarButton().setText("Chọn ");
-		txtBirthDay.setDateFormatString("dd/MM/yyyy");
-		//textField_4.setColumns(10);
+		txtBirthDay = new JDateChooserCustom();
 		
 		JLabel lblNgySinh = new JLabel("Ngày sinh");
 		lblNgySinh.setFont(new Font("Tahoma", Font.PLAIN, 14));

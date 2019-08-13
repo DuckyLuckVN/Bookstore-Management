@@ -31,8 +31,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
-import com.duan.custom.JTableBlue;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.RentBookDAO;
 import com.duan.dao.RentBookDetailDAO;

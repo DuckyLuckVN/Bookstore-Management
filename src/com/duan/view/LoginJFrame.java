@@ -34,7 +34,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;

@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.DBConnection;
 import com.duan.helper.SettingSave;
 import com.duan.model.Setting;

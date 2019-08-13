@@ -21,9 +21,9 @@ import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
-import com.duan.custom.JTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.OrderDAO;
 import com.duan.dao.OrderDetailDAO;

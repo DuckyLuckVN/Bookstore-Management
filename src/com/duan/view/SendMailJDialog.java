@@ -24,7 +24,7 @@ import javax.swing.JTextArea;
 import java.awt.Font;
 import javax.swing.border.TitledBorder;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.helper.SettingSave;
 
 import javax.swing.border.LineBorder;

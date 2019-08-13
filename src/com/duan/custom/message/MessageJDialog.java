@@ -1,4 +1,4 @@
-package com.duan.custom;
+package com.duan.custom.message;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -7,9 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
-
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -31,30 +28,25 @@ import java.awt.event.MouseEvent;
 import java.awt.SystemColor;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import javax.swing.border.LineBorder;
 
-public class ConfirmJDialog extends CustomJDialog {
+public class MessageJDialog extends CustomJDialog {
 	
-	public static final String ICON_NAME_INFORMATION = "icon_information_125px.png";
-	public static final String ICON_NAME_WARNING = "icon_warning_125px.png";
-	public static final String ICON_NAME_ERROR = "icon_error_125px.png";
-	public static final String ICON_NAME_BLOCK = "icon_block_125px.png";
-	public static final String ICON_NAME_QUESTION = "icon_question_125px.png";
+	public static final String ICON_NAME_INFORMATION = "icon_information_100px.png";
+	public static final String ICON_NAME_WARNING = "icon_warning_100px.png";
+	public static final String ICON_NAME_ERROR = "icon_error_100px.png";
 	
 	private final JPanel contentPanel = new JPanel();
 	private int posX;
 	private int posY;
-	
 	private JLabel lblIcon;
-	private JLabel lblContent;
+	private JTextArea txtContent;
+	private JLabel lblTitle;
 	
-	private boolean isConfirmed = false;	
 	public static void main(String[] args) 
 	{
 		try {
-			ConfirmJDialog dialog = new ConfirmJDialog();
+			MessageJDialog dialog = new MessageJDialog(null, "Đã có lỗi sảy ra rồi ................................................................");
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -62,33 +54,29 @@ public class ConfirmJDialog extends CustomJDialog {
 		}
 	}
 	
-	public ConfirmJDialog(Component component, String message)
+	public MessageJDialog(Component component, String message)
 	{
-		this(component, message, ICON_NAME_QUESTION);
-	}
-
-	public ConfirmJDialog(Component component, String message, String iconName)
-	{
-		this(component, message, iconName, 14);
+		this(component, message, ICON_NAME_INFORMATION);
 	}
 	
-	public ConfirmJDialog(Component component, String message, String iconName, int fontSize)
+	public MessageJDialog(Component component, String message, String iconName)
+	{
+		this(component, message, iconName, "Thông Báo");
+	}
+	
+	public MessageJDialog(Component component, String message, String iconName, String title)
 	{
 		this();
 		setLocationRelativeTo(component);
-		lblContent.setText(message);
+		txtContent.setText(message);
 		lblIcon.setIcon(new ImageIcon(MessageJDialog.class.getResource("/com/duan/icon/" + iconName)));
-		lblContent.setFont(new Font("Tahoma", Font.BOLD, fontSize));
+		lblTitle.setText(title);
 	}
-	public ConfirmJDialog() 
+
+	public MessageJDialog() 
 	{
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		contentPanel.setBorder(new LineBorder(Color.GRAY, 3));
+		setContentPane(contentPanel);
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) 
@@ -97,13 +85,13 @@ public class ConfirmJDialog extends CustomJDialog {
 					dispose();
 			}
 		});
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent arg0) 
-			{
-				isConfirmed = false;
-			}
-		});
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		setModal(true);
 		addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -120,12 +108,10 @@ public class ConfirmJDialog extends CustomJDialog {
 				posY = e.getY();
 			}
 		});
-		contentPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 3));
-		setContentPane(contentPanel);
 		getContentPane().setBackground(Color.WHITE);
 		setUndecorated(true);
 		setResizable(false);
-		setSize(471, 234);
+		setSize(507, 230);
 		getContentPane().setLayout(null);
 		
 		JLabel lblClose = new JLabel("X");
@@ -152,50 +138,49 @@ public class ConfirmJDialog extends CustomJDialog {
 		lblClose.setHorizontalAlignment(SwingConstants.CENTER);
 		lblClose.setForeground(Color.BLACK);
 		lblClose.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblClose.setBounds(446, 0, 25, 25);
+		lblClose.setBounds(482, 0, 25, 25);
 		getContentPane().add(lblClose);
 		
 		lblIcon = new JLabel("");
 		lblIcon.setBackground(Color.LIGHT_GRAY);
 		lblIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		lblIcon.setBounds(184, 11, 100, 100);
+		lblIcon.setBounds(10, 31, 100, 100);
 		getContentPane().add(lblIcon);
 		
-		lblContent = new JLabel("Xóa tài khoảng có username 'DuckyLuckVN' thành công!");
-		lblContent.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblContent.setHorizontalAlignment(SwingConstants.CENTER);
-		lblContent.setBounds(0, 131, 469, 45);
-		getContentPane().add(lblContent);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
+		scrollPane.setBounds(129, 49, 364, 139);
+		getContentPane().add(scrollPane);
 		
-		JButton btnHy = new JButton("Hủy");
-		btnHy.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnHy.addActionListener(new ActionListener() {
+		txtContent = new JTextArea();
+		txtContent.setEnabled(false);
+		txtContent.setEditable(false);
+		txtContent.setWrapStyleWord(true);
+		txtContent.setLineWrap(true);
+		txtContent.setFont(new Font("Tahoma", Font.BOLD, 14));
+		scrollPane.setViewportView(txtContent);
+		
+		lblTitle = new JLabel("Thông Báo");
+		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitle.setBounds(0, 5, 507, 30);
+		getContentPane().add(lblTitle);
+		
+		JButton btnOk = new JButton("OK");
+		btnOk.addActionListener(new ActionListener() 
+		{
+			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				isConfirmed = false;
 				dispose();
 			}
 		});
-		btnHy.setBounds(243, 197, 89, 26);
-		getContentPane().add(btnHy);
-		
-		JButton btnConfirm = new JButton("Xác nhận");
-		btnConfirm.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnConfirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				isConfirmed = true;
-				dispose();
-			}
-		});
-		btnConfirm.setBounds(132, 197, 89, 26);
-		getContentPane().add(btnConfirm);
+		btnOk.setForeground(SystemColor.windowText);
+		btnOk.setBackground(SystemColor.controlHighlight);
+		btnOk.setBounds(404, 196, 89, 23);
+		getContentPane().add(btnOk);
 		
 		setLocationRelativeTo(getOwner());
-	}
-	
-	public boolean isConfirm()
-	{
-		return this.isConfirmed;
+
 	}
 }

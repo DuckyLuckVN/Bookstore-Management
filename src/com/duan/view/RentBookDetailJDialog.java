@@ -54,7 +54,8 @@ import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 
 import com.duan.controller.ExportPDF;
-import com.duan.custom.JTableBlue;
+import com.duan.custom.common.JTableBlue;
+
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
