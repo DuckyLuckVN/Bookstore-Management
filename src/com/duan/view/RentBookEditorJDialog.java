@@ -238,7 +238,7 @@ public class RentBookEditorJDialog extends JDialog {
 		
 		cboStatus = new JComboBox();
 		cboStatus.setEnabled(false);
-		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách", "Mất sách"}));
+		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách"}));
 		cboStatus.setBounds(88, 419, 214, 26);
 		contentPane.add(cboStatus);
 		
@@ -445,6 +445,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
+			dispose();
 			MessageOptionPane.showAlertDialog(this, "Thêm phiếu thuê sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
@@ -468,6 +469,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
+			dispose();
 			MessageOptionPane.showAlertDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}

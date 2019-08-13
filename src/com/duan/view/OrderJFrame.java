@@ -281,11 +281,18 @@ public class OrderJFrame extends JFrame {
 		});
 		panel.add(btnMaxRight);
 		
-		JLabel label = new JLabel("23:15");
+		JButton label = new JButton("Tải lại");
+		label.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				refresh();
+			}
+		});
+		label.setIcon(new ImageIcon(OrderJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		label.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setForeground(Color.RED);
-		label.setFont(new Font("Tahoma", Font.BOLD, 18));
+		label.setForeground(Color.BLACK);
+		label.setFont(new Font("Tahoma", Font.BOLD, 12));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -457,5 +464,11 @@ public class OrderJFrame extends JFrame {
 		//Các nút di chuyển select
 		btnLeft.setEnabled(true);
 		btnRight.setEnabled(true);
+	}
+	
+	public void refresh()
+	{
+		getDataTolist();
+		fillToTable();
 	}
 }
