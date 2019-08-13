@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.print.attribute.standard.SheetCollate;
+import javax.security.auth.Refreshable;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
@@ -98,6 +99,7 @@ public class RentBookJFrame extends JFrame {
 	private List<RentBook> listRentBook = new ArrayList<RentBook>();
 	private int indexSelect = -1;
 	private JComboBox cboStatus;
+	private JButton btnRefresh;
 	
 	public static void main(String[] args) 
 	{
@@ -241,7 +243,6 @@ public class RentBookJFrame extends JFrame {
 		pnlSelect = new JPanel();
 		
 		pnlTime = new JPanel();
-		pnlTime.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlTime.setBackground(SystemColor.menu);
 		
 		lblTmKim = new JLabel("Tìm kiếm:");
@@ -318,12 +319,16 @@ public class RentBookJFrame extends JFrame {
 		);
 		pnlTime.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblTime = new JLabel("23:15");
-		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTime.setIcon(new ImageIcon(RentBookJFrame.class.getResource("/com/duan/icon/icons8_alarm_clock_24px_1.png")));
-		lblTime.setForeground(Color.RED);
-		lblTime.setFont(new Font("Tahoma", Font.BOLD, 18));
-		pnlTime.add(lblTime);
+		btnRefresh = new JButton("Tải lại");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				refresh();
+			}
+		});
+		btnRefresh.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnRefresh.setIcon(new ImageIcon(RentBookJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
+		pnlTime.add(btnRefresh, BorderLayout.CENTER);
 		pnlSelect.setLayout(new GridLayout(1, 0, 15, 0));
 		
 		btnMaxLeft = new JButton("|<");
@@ -614,5 +619,15 @@ public class RentBookJFrame extends JFrame {
 		editorRentbookJDialog.setRentBookJFrame(this);
 		
 		editorRentbookJDialog.setVisible(true);
+	}
+	
+	public void refresh()
+	{
+		try {
+			getDataToList();
+			fillToTable();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

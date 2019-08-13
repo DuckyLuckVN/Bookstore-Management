@@ -12,20 +12,15 @@ public class DBConnection
 	private static String user = "sa";
 	private static String password = "123";
 	
+	
 	static
 	{
-		try 
-		{
-			conn = DriverManager.getConnection(url, user, password);
-		} 
-		catch (SQLException e) 
-		{
-			//new MessageJDialog("Đã có lỗi sảy ra!", e.getMessage(), "Đã Hiểu", MessageJDialog.TYPE_ICON_ERROR).setVisible(true);
+		try {
+			setConnection(url, user, password);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	//private static Connection conn = null;
 	
 	/**
 	 * @param url url cấu hình JDBC
@@ -37,6 +32,13 @@ public class DBConnection
 	{
 		conn = DriverManager.getConnection(url, user, password);
 	}
+	
+	public static void setConnection(String host, String databaseName, String user, String password) throws SQLException
+	{
+		String url = "jdbc:sqlserver://" + host + "; DataBaseName=" + databaseName;
+		conn = DriverManager.getConnection(url, user, password);
+	}
+	
 	
 	//Kiểm tra kết nối, trả về TRUE nếu kết nối thành công!
 	public static boolean checkConnectionSQL(String host, String databaseName, String user, String password) throws SQLException

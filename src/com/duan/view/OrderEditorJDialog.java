@@ -241,12 +241,14 @@ public class OrderEditorJDialog extends JDialog {
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
+						dispose();
 						MessageOptionPane.showAlertDialog(contentPane, "Thêm hóa đơn mới thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 					else if (isEditMode == true && updateOrder())
 					{
 						orderJFrame.getDataTolist();
 						orderJFrame.fillToTable();
+						dispose();
 						MessageOptionPane.showAlertDialog(contentPane, "Cập nhật lại hóa đơn số '" + order.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 						

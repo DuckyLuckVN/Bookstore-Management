@@ -68,12 +68,14 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.Desktop;
 
-public class BookJFrame extends JFrame {
+public class BookJFrame extends JFrame{
 
 	private JPanel contentPane;
 	private JMenuBar menuBar;
@@ -100,7 +102,7 @@ public class BookJFrame extends JFrame {
 	
 	private BookEditorJDialog inserBookJFrame = new BookEditorJDialog();
 	private BookEditorJDialog editorBookJDialog = new BookEditorJDialog();
-	private BookDetailJDialog bookDetailJFrame = new BookDetailJDialog(this);
+	private BookDetailJDialog bookDetailJDialog = new BookDetailJDialog(this);
 	private JLabel lblTmKim;
 	private JTextField txtSearch;
 	
@@ -127,8 +129,7 @@ public class BookJFrame extends JFrame {
 			}
 		});
 	}
-
-
+	
 	public BookJFrame() 
 	{
 		setTitle("Quản lý kho sách");
@@ -141,7 +142,7 @@ public class BookJFrame extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1000, 600);
+		setBounds(100, 100, 897, 600);
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -170,6 +171,13 @@ public class BookJFrame extends JFrame {
 		mntmAboutUs = new JMenuItem("Thông tin chung");
 		mnHelp.add(mntmAboutUs);
 		contentPane = new JPanel();
+		contentPane.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				System.out.println(e.getKeyCode());
+			}
+		});
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
@@ -193,7 +201,7 @@ public class BookJFrame extends JFrame {
 		btnAdd = new JButton("Thêm mới");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 				{
 					showInsertBook();
 				}
@@ -216,7 +224,7 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 					{
 						System.out.println(getBookSelected().getImage());
 						showEditorBook(getBookSelected());
@@ -243,7 +251,7 @@ public class BookJFrame extends JFrame {
 			{
 				try 
 				{
-					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+					if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 					{
 						if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa sách này không?"))
 						{
@@ -278,7 +286,6 @@ public class BookJFrame extends JFrame {
 		pnlSelect = new JPanel();
 		
 		pnlTime = new JPanel();
-		pnlTime.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlTime.setBackground(SystemColor.menu);
 		
 		lblTmKim = new JLabel("Tìm kiếm:");
@@ -313,13 +320,6 @@ public class BookJFrame extends JFrame {
 		mntmXa = new JMenuItem("Xóa");
 		popupMenu.add(mntmXa);
 		pnlTime.setLayout(new BorderLayout(0, 0));
-		
-		JLabel lblTime = new JLabel("23:15");
-		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTime.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_alarm_clock_24px_1.png")));
-		lblTime.setForeground(Color.RED);
-		lblTime.setFont(new Font("Tahoma", Font.BOLD, 18));
-		pnlTime.add(lblTime);
 		pnlSelect.setLayout(new GridLayout(1, 0, 15, 0));
 		
 		btnMaxLeft = new JButton("|<");
@@ -463,18 +463,21 @@ public class BookJFrame extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(12)
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)
 							.addGap(4)
 							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 217, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 402, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
 							.addComponent(btnExportExcel))
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE))
-					.addGap(6)
-					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE))
+					.addGap(10)
+					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+					.addGap(3))
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 789, Short.MAX_VALUE)
-					.addGap(6)
-					.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE))
+					.addComponent(pnlSelect, GroupLayout.DEFAULT_SIZE, 667, Short.MAX_VALUE)
+					.addGap(10)
+					.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 179, GroupLayout.PREFERRED_SIZE)
+					.addGap(3))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -488,13 +491,26 @@ public class BookJFrame extends JFrame {
 									.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 								.addComponent(btnExportExcel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 							.addGap(6)
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
-						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
-					.addGap(6)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+							.addGap(6))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(6)
+							.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(pnlSelect, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
 						.addComponent(pnlTime, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)))
 		);
+		
+		JButton btnRefresh = new JButton("Tải lại");
+		pnlTime.add(btnRefresh, BorderLayout.CENTER);
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				refresh();
+			}
+		});
+		btnRefresh.setIcon(new ImageIcon(BookJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
+		btnRefresh.setFont(new Font("Tahoma", Font.BOLD, 12));
 		contentPane.setLayout(gl_contentPane);
 		//setLocationRelativeTo(getOwner());
 		try 
@@ -628,8 +644,11 @@ public class BookJFrame extends JFrame {
 			String id = (String) tblBook.getValueAt(indexSelect, 0);
 			Book bookDetail;
 			bookDetail = BookDAO.findByID(id);
-			bookDetailJFrame.setDetail(bookDetail);
-			bookDetailJFrame.setVisible(true);
+			
+			bookDetailJDialog = new BookDetailJDialog();
+			bookDetailJDialog.setLocationRelativeTo(this);
+			bookDetailJDialog.setDetail(bookDetail);
+			bookDetailJDialog.setVisible(true);
 		} 
 		catch (SQLException e) 
 		{
@@ -726,5 +745,17 @@ public class BookJFrame extends JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	
+	//Tải lại tất cả
+	public void refresh()
+	{
+		getDataToList();
+		try {
+			fillToTable();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

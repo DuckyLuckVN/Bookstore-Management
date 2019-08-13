@@ -170,7 +170,7 @@ public class MainJFrame extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 1093, 764);
+		setBounds(100, 100, 1159, 764);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		setContentPane(contentPane);
@@ -453,7 +453,7 @@ public class MainJFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 				{
 					setBackgroundMenuClicked(pnl6);
 					showAdminJFrame();
@@ -540,7 +540,7 @@ public class MainJFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 				{
 					setBackgroundMenuClicked(pnl9);
 					showStorageJFrame();
@@ -635,7 +635,7 @@ public class MainJFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) 
 			{
-				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY)
+				if (AccountSave.getAdmin().getRole() == Admin.ROLE_QUANLY || AccountSave.getAdmin().getRole() == Admin.ROLE_GIAMDOC)
 				{
 					showSettingJDialog();
 				}

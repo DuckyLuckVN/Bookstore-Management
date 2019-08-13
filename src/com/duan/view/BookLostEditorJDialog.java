@@ -268,12 +268,14 @@ public class BookLostEditorJDialog extends JDialog {
 						{
 							bookLostJFrame.getDataTolist();
 							bookLostJFrame.fillToTable();
+							dispose();
 							MessageOptionPane.showAlertDialog(contentPane, "Đã báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 						else if (isEditMode == true && updateBookLost())
 						{
 							bookLostJFrame.getDataTolist();
 							bookLostJFrame.fillToTable();
+							dispose();
 							MessageOptionPane.showAlertDialog(contentPane, "Cập nhật báo mất sách cho đơn thuê '" + rentBookSelected.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					} 

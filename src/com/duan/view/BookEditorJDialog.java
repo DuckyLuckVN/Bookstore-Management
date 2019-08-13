@@ -65,6 +65,7 @@ public class BookEditorJDialog extends JDialog {
 	private JComboBox cboViTri;
 	
 	CategoryJDialog categoryJDialog = new CategoryJDialog();
+	LocationJDialog locationJDialog = new LocationJDialog();
 	
 	
 	List<Category> listCategory;
@@ -168,17 +169,17 @@ public class BookEditorJDialog extends JDialog {
 		
 		cboTheLoai = new JComboBox();
 		cboTheLoai.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		cboTheLoai.setBounds(95, 81, 191, 24);
+		cboTheLoai.setBounds(95, 81, 247, 24);
 		pnlForm.add(cboTheLoai);
 		
-		JButton btnEditTheLoai = new JButton("Tùy chỉnh");
+		JButton btnEditTheLoai = new JButton("...");
 		btnEditTheLoai.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				showCategoryJFrame();
 			}
 		});
-		btnEditTheLoai.setBounds(296, 81, 92, 24);
+		btnEditTheLoai.setBounds(352, 81, 36, 24);
 		pnlForm.add(btnEditTheLoai);
 		
 		JLabel lblSTrang = new JLabel("Số trang");
@@ -261,16 +262,20 @@ public class BookEditorJDialog extends JDialog {
 		txtTacGia.setBounds(95, 151, 293, 24);
 		pnlForm.add(txtTacGia);
 		
-		JLabel lblVTr = new JLabel("Vị trí để sách");
+		JLabel lblVTr = new JLabel("Vị trí đặt");
 		lblVTr.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblVTr.setBounds(194, 221, 75, 24);
+		lblVTr.setBounds(194, 221, 46, 24);
 		pnlForm.add(lblVTr);
 		
 		cboViTri = new JComboBox();
 		cboViTri.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		cboViTri.setModel(new DefaultComboBoxModel(new String[] {"Kệ A1", "Kệ A2", "Kệ A3"}));
-		cboViTri.setBounds(279, 221, 109, 24);
+		cboViTri.setBounds(250, 221, 92, 24);
 		pnlForm.add(cboViTri);
+		
+		JButton button = new JButton("Tùy chỉnh");
+		button.setBounds(352, 221, 36, 24);
+		pnlForm.add(button);
 		
 		JPanel pnlControllImage = new JPanel();
 		pnlControllImage.setBounds(418, 244, 214, 61);
@@ -591,5 +596,10 @@ public class BookEditorJDialog extends JDialog {
 	public void showCategoryJFrame()
 	{
 		categoryJDialog.setVisible(true);
+	}
+	
+	public void showLocationJFrame()
+	{
+		locationJDialog.setVisible(true);
 	}
 }
