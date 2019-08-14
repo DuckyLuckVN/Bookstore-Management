@@ -23,8 +23,10 @@ import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
@@ -548,12 +550,13 @@ public class BookJFrame extends JFrame{
 		{
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 
@@ -599,13 +602,14 @@ public class BookJFrame extends JFrame{
 				continue;
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 

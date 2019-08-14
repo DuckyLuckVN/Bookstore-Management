@@ -213,7 +213,7 @@ VALUES  (N'Đỗ Văn Hoàng', GETDATE(), N'', N'Tác giả này tên là Đỗ 
 		(N'Lê Văn Thuyết', GETDATE(), N'', N'', GETDATE())
 GO
 
-INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduct, created_date)
+INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduce, created_date)
 VALUES  (N'BXB Trẻ', '0376546521', 'contact@nxbtre.com', N'Đây là nhà xuất bản khá trẻ :v', GETDATE()),
 		(N'BXB Nhi Đồng', '0186224665', 'contact@nxbnhidong.com', N'Đây là nhà xuất bản nhi đồng', GETDATE())
 GO

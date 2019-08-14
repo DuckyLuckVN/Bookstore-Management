@@ -34,21 +34,22 @@ public class BookDAO
     //Thêm dữ liệu model Book vào bảng Book, trả về TRUE nếu thành công, FALSE nếu thất bại.
     public static boolean insert(Book b) throws SQLException
     {
-        String sql = "INSERT INTO BOOK Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO BOOK Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
         											b.getId(), 
         											b.getTitle(), 
         											b.getCategoryId(),
 									        		b.getPageNum(), 
-									        		b.getAuthor(), 
+									        		b.getAuthorId(), 
 									        		b.getAmount(), 
-									        		b.getPublisher(),
+									        		b.getPublisherId(),
 									        		b.getPublicationYear(), 
 									        		b.getPrice(), 
 									        		b.getImage(),
 									        		b.getLocationId(),
 									        		b.getDescription(),
+									        		b.getIntroduce(),
 									        		b.getCreatedDate());
         
         int count = pre.executeUpdate();
@@ -62,14 +63,15 @@ public class BookDAO
 					        		+ "title=?, "
 					        		+ "category_id=?, "
 					        		+ "page_num=?, "
-					                + "author=?, "
+					                + "author_id=?, "
 					                + "amount=?, "
-					                + "publisher=?, "
+					                + "publisher_id=?, "
 					                + "publication_year=?,"
 					                + "price=?, "
 					                + "image=?, "
 					                + "location_id=?, "
 					                + "description=?, "
+					                + "introduce=?"
 					                + "created_date=? "
 					                + "WHERE ID = ?";
         
@@ -78,14 +80,15 @@ public class BookDAO
 		        								b.getTitle(), 
 								        		b.getCategoryId(), 
 								        		b.getPageNum(),
-								        		b.getAuthor(),
+								        		b.getAuthorId(),
 								        		b.getAmount(),
-								        		b.getPublisher(),
+								        		b.getPublisherId(),
 								        		b.getPublicationYear(),
 								        		b.getPrice(), 
 								        		b.getImage(), 
 								        		b.getLocationId(),
 								        		b.getDescription(), 
+								        		b.getIntroduce(),
 								        		b.getCreatedDate(),
 								        		id);
 		int count = pre.executeUpdate();
@@ -163,17 +166,18 @@ public class BookDAO
         String title = rs.getString(2);
         String categoryId = rs.getString(3);
         int  pageNum = rs.getInt(4);
-        String author = rs.getString(5);
+        int authorId = rs.getInt(5);
         int amount =  rs.getInt(6);
-        String  publisher = rs.getString(7);
+        int  publisherId = rs.getInt(7);
         int publicationYear = rs.getInt(8) ;
         double money = rs.getDouble(9);
         String image = rs.getString(10);
         String locationId = rs.getString(11);
         String description = rs.getString(12);
-        Date createdDate = rs.getDate(13);
+        String introcuce = rs.getString(13);
+        Date createdDate = rs.getDate(14);
         
-        return new Book(id, title, categoryId, pageNum, author, amount, publisher, publicationYear, money, image, locationId, description, createdDate);
+        return new Book(id, title, categoryId, pageNum, authorId, amount, publisherId, publicationYear, money, image, locationId, description, introcuce, createdDate);
     }
     
     public static void main(String[] args) throws SQLException 

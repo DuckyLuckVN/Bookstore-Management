@@ -11,9 +11,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.border.SoftBevelBorder;
 
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
@@ -271,13 +273,14 @@ public class BookDetailJDialog extends JDialog {
 	public void setDetail(Book book) throws SQLException
 	{
 		String price = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
-		String publisher = book.getPublisher() + " (" + book.getPublicationYear() + ")";
+		String publisher = PublisherDAO.findById(book.getPublisherId()).getName() + " (" + book.getPublicationYear() + ")";
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
 		String locationTitle = LocationDAO.findByID(book.getLocationId()).getLocationName();
+		String authorName = AuthorDAO.findById(book.getAuthorId()).getFullName();
 		
 		lblMaSach.setText(book.getId());
 		lblTenSach.setText(book.getTitle());
-		lblTacGia.setText(book.getAuthor());
+		lblTacGia.setText(authorName);
 		lblTheLoai.setText(categoryTitle);
 		lblTrang.setText(book.getPageNum() + " trang");
 		lblXuatBan.setText(publisher);
