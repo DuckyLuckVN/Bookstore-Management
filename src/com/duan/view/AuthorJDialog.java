@@ -15,12 +15,15 @@ import javax.swing.table.DefaultTableModel;
 import com.duan.custom.JTableBlue;
 import com.duan.custom.MessageOptionPane;
 import com.duan.dao.AuthorDAO;
+import com.duan.custom.common.JDateChooserCustom;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.LocationDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Author;
 import com.duan.model.Location;
+import com.toedter.calendar.JDateChooser;
 
 import net.miginfocom.layout.LC;
 
@@ -72,6 +75,10 @@ public class AuthorJDialog extends JDialog {
 	private JTextField txtName;
 	private JTextField txtBirthDay;
 	private JTextField txtDateOfDeath;
+	private JTableBlue tblLocation;
+	private JTextField txtMaKeSach;
+	private JDateChooserCustom txtTenKe;
+	private JDateChooserCustom txtNgayMat;
 	
 	private File fileImageSelected;
 	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -166,6 +173,10 @@ public class AuthorJDialog extends JDialog {
 		txtBirthDay.setColumns(10);
 		txtBirthDay.setBounds(227, 47, 231, 25);
 		panel.add(txtBirthDay);
+		txtTenKe = new JDateChooserCustom();
+		txtTenKe.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtTenKe.setBounds(227, 47, 231, 25);
+		panel.add(txtTenKe);
 		
 		JLabel lblTnThLoi = new JLabel("Ngày sinh:");
 		lblTnThLoi.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -193,6 +204,10 @@ public class AuthorJDialog extends JDialog {
 		txtDateOfDeath.setColumns(10);
 		txtDateOfDeath.setBounds(227, 83, 231, 25);
 		panel.add(txtDateOfDeath);
+		txtNgayMat = new JDateChooserCustom();
+		txtNgayMat.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtNgayMat.setBounds(227, 83, 231, 25);
+		panel.add(txtNgayMat);
 		
 		lblAvatar = new JLabel("");
 		lblAvatar.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -437,6 +452,17 @@ public class AuthorJDialog extends JDialog {
 		txtBirthDay.setEditable(true);
 		txtDateOfDeath.setEditable(true);
 		txtIntroduction.setEditable(true);
+		txtMaKeSach.setEnabled(false);
+		txtTenKe.setEnabled(false);
+		txtNgayMat.setEnabled(false);
+		txtGhiChu.setEditable(false);
+	}
+	public void unlockForm() 
+	{
+		txtMaKeSach.setEditable(true);
+		txtTenKe.setEnabled(true);
+		txtNgayMat.setEnabled(true);
+		txtGhiChu.setEditable(true);
 	}
 	public void setControllMode_Nothing()
 	{
@@ -466,5 +492,9 @@ public class AuthorJDialog extends JDialog {
 		txtName.setText("");
 		txtDateOfDeath.setText("");
 		txtBirthDay.setText("");
+		txtGhiChu.setText("");
+		txtMaKeSach.setText("");
+		txtNgayMat.setDate(null);;
+		txtTenKe.setDate(null);;
 	}
 }

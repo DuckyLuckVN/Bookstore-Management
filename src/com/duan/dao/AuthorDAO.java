@@ -14,7 +14,7 @@ public class AuthorDAO
 	public static ArrayList<Author> getAll() throws SQLException
 	{
 		ArrayList<Author> list = new ArrayList<Author>();
-		String sqlString = "SELECT * FROM AUTHOR";
+		String sqlString = "SELECT * FROM dbo.AUTHOR";
 		ResultSet rs = JDBCHelper.executeQuery(sqlString);
 		while(rs.next())
 		{
@@ -26,20 +26,28 @@ public class AuthorDAO
 	
 	public static boolean insert (Author at) throws SQLException
 	{
-		String sql = "INSERT INTO AUTHOR VALUES (?,?,?,?,?,?)";
-		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,at.getFullName(), at.getDateOfBirth(),
-																	at.getDateOfDeath(), at.getImage(), at.getIntroduce(),
-																	at.getCreatedDate());
+		String sql = "INSERT INTO AUTHOR VALUES (?, ?, ?, ?, ?, ?)";
+		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
+														at.getFullName(), 
+														at.getDateOfBirth(),
+														at.getDateOfDeath(), 
+														at.getImage(), 
+														at.getIntroduce(),
+														at.getCreatedDate());
 		int count = pre.executeUpdate();
 		return count > 0;
 	}
 	
 	public static boolean update(Author at,int id) throws SQLException
 	{
-		String sql = "UPDATE AUTHOR SET fullname = ?, date_of_birth = ?, date_of_death = ?, image = ?, introduce = ?, created_date = ? WHERE ID = ?";
-		PreparedStatement pret = JDBCHelper.createPreparedStatement(sql, at.getFullName(), at.getDateOfBirth(),
-																	at.getDateOfDeath(), at.getImage(), at.getIntroduce(),
-																	at.getCreatedDate(), id);
+		String sql = "UPDATE AUTHOR SET fullname = ?, date_of_birth = ?, date_of_death = ?, image = ?, introduce = ?, created_date = ? WHERE id = ?";
+		PreparedStatement pret = JDBCHelper.createPreparedStatement(sql, at.getFullName(), 
+																		at.getDateOfBirth(),
+																		at.getDateOfDeath(), 
+																		at.getImage(), 
+																		at.getIntroduce(),
+																		at.getCreatedDate(), 
+																		id);
 		int count = pret.executeUpdate();
 		return count > 0 ;
 	}

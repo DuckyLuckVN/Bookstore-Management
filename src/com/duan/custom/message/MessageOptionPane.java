@@ -1,4 +1,4 @@
-package com.duan.custom;
+package com.duan.custom.message;
 
 import java.awt.Component;
 

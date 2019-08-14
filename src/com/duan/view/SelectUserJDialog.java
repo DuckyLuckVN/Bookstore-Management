@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.model.User;

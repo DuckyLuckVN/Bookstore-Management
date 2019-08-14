@@ -27,8 +27,8 @@ import javax.swing.event.TableModelListener;
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableBlue;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDAO;
 import com.duan.dao.BookLostDetailDAO;

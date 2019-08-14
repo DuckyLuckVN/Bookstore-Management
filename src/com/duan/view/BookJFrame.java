@@ -20,8 +20,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.controller.ExportExcel;
-import com.duan.custom.JTableRed;
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.helper.AccountSave;
@@ -291,7 +292,7 @@ public class BookJFrame extends JFrame{
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		txtSearch = new JTextField();
+		txtSearch = new JTextFieldDark();
 		txtSearch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -306,7 +307,6 @@ public class BookJFrame extends JFrame{
 				}
 			}
 		});
-		txtSearch.setBorder(null);
 		txtSearch.setColumns(10);
 		
 		popupMenu = new JPopupMenu();

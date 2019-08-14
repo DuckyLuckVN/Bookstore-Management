@@ -1,4 +1,4 @@
-package com.duan.custom;
+package com.duan.custom.message;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

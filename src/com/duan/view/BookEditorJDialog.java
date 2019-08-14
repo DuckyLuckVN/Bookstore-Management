@@ -24,12 +24,13 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
-import com.duan.custom.MessageOptionPane;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Book;
 import com.duan.model.Category;
@@ -245,8 +246,8 @@ public class BookEditorJDialog extends JDialog {
 		txtGhiChu.setBounds(95, 256, 293, 84);
 		pnlForm.add(txtGhiChu);
 		
-		JLabel lblVn = new JLabel("VNĐ");
-		lblVn.setHorizontalAlignment(SwingConstants.RIGHT);
+		JLabel lblVn = new JLabel(SettingSave.getSetting().getMoneySymbol());
+		lblVn.setHorizontalAlignment(SwingConstants.CENTER);
 		lblVn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblVn.setBounds(360, 116, 28, 24);
 		pnlForm.add(lblVn);

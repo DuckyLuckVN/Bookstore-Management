@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
+import com.duan.custom.common.JTableBlue;
 import com.duan.dao.LocationDAO;
 import com.duan.model.Location;
 
