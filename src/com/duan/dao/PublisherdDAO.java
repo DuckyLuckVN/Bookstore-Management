@@ -20,6 +20,7 @@ public class PublisherdDAO
 		while (rs.next()) 
 		{
 			Publisher pls = readFromResultSet(rs);
+			list.add(pls);
 		}
 		return list;
 	}

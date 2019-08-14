@@ -315,6 +315,11 @@ public class AdminJFrame extends JFrame {
 		JPanel panel = new JPanel();
 		
 		lblAnh = new JLabel("Không có ảnh");
+		lblAnh.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+			}
+		});
 		lblAnh.setBounds(0, 0, 181, 235);
 		SwingHelper.setAutoResizeIcon(lblAnh);
 		
@@ -326,7 +331,8 @@ public class AdminJFrame extends JFrame {
 		
 		btnChonanh = new JButton("Chọn ảnh");
 		btnChonanh.setEnabled(false);
-		btnChonanh.addActionListener(new ActionListener() {
+		btnChonanh.addActionListener(new ActionListener() 
+		{
 			public void actionPerformed(ActionEvent e) 
 			{
 				JFileChooser chooser = new JFileChooser();
@@ -347,8 +353,6 @@ public class AdminJFrame extends JFrame {
 						//File anh khong hop le, vui long chon lai
 					}
 				}
-				
-				
 			}
 		});
 		btnChonanh.setBounds(0, 246, 85, 37);
@@ -473,6 +477,10 @@ public class AdminJFrame extends JFrame {
 			ImageIcon icon = new ImageIcon(urlImage);
 			lblAnh.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblAnh);
+		}
+		else
+		{
+			clearAvatar();
 		}
 	}
 	

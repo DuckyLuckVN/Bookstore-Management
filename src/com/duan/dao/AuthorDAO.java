@@ -54,6 +54,7 @@ public class AuthorDAO
 	
 	public static Author readFromResultSet(ResultSet rs) throws SQLException
 	{
+		int id = rs.getInt(1);
 		String fullName = rs.getString(2);
 		Date dateOfBirth = rs.getDate(3);
 		Date dateOfDeath = rs.getDate(4);
@@ -61,6 +62,6 @@ public class AuthorDAO
 		String introduce = rs.getString(6);
 		Date createdDate = rs.getDate(7);
 		
-		return new Author(0, fullName, dateOfBirth, dateOfDeath, image, introduce, createdDate);
+		return new Author(id, fullName, dateOfBirth, dateOfDeath, image, introduce, createdDate);
 	}
 }
