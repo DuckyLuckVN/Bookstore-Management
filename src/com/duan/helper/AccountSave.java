@@ -7,7 +7,7 @@ import com.duan.model.User;
 
 public class AccountSave 
 {
-	private static Admin admin = new Admin(101, "quanly", "123", "Lý Tiểu Long", "lytieulong@gmail.com", "01682439314", null, true, 2, true, new Date());
+	private static Admin admin = new Admin(105, "haogd", "123", "Lý Tiểu Long", "lytieulong@gmail.com", "01682439314", null, true, 0, true, new Date());
 	private static User user;
 	public static void setAdmin(Admin admin) 
 	{
