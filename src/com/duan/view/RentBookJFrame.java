@@ -347,7 +347,8 @@ public class RentBookJFrame extends JFrame {
 		pnlSelect.add(btnMaxLeft);
 		
 		btnLeft = new JButton("<");
-		btnLeft.addActionListener(new ActionListener() {
+		btnLeft.addActionListener(new ActionListener() 
+		{
 			public void actionPerformed(ActionEvent e)
 			{
 				int rowCount = tblRentBook.getRowCount();
