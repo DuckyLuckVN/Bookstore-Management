@@ -367,7 +367,6 @@ public class BookDetailJDialog extends JDialog {
 		{
 			setImage(null);
 		}
-		
 	}
 	
 	//Cập nhật lại ảnh của sách

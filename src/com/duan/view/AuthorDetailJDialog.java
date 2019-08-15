@@ -1,24 +1,18 @@
 package com.duan.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import java.awt.Color;
 import java.awt.Font;
 import java.sql.SQLException;
 
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JTextField;
-import java.awt.Color;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import com.duan.dao.AuthorDAO;
@@ -27,9 +21,7 @@ import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Author;
-
-import javax.swing.UIManager;
-import javax.swing.JTextArea;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class AuthorDetailJDialog extends JDialog {
 	private JTextField txtFullname;
@@ -127,6 +119,7 @@ public class AuthorDetailJDialog extends JDialog {
 			getContentPane().add(scrollPane);
 			{
 				txtIntroduce = new JTextArea();
+				txtIntroduce.setFont(new Font("Tahoma", Font.PLAIN, 13));
 				txtIntroduce.setEditable(false);
 				txtIntroduce.setWrapStyleWord(true);
 				txtIntroduce.setLineWrap(true);
@@ -139,13 +132,18 @@ public class AuthorDetailJDialog extends JDialog {
 	public void setDetailModel(Author author)
 	{
 		this.author = author;
+		if (author != null) { showDetail(); };
 	}
 	
 	public void setDetailModel(int authorId)
 	{
-		try {
+		try 
+		{
 			this.author = AuthorDAO.findById(authorId);
-		} catch (SQLException e) {
+			if (author != null) { showDetail(); };
+		} 
+		catch (SQLException e) 
+		{
 			e.printStackTrace();
 		}
 	}
@@ -161,7 +159,10 @@ public class AuthorDetailJDialog extends JDialog {
 		else
 			txtDateOfDeath.setText("Không có");
 		
+		txtIntroduce.setText(author.getIntroduce());
+		
 		//Set hình ảnh
+		setAvatar();
 	}
 	
 	public void setAvatar()
@@ -173,12 +174,10 @@ public class AuthorDetailJDialog extends JDialog {
 			{
 				lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/image/" + author.getImage())));
 				SwingHelper.setAutoResizeIcon(lblAvatar);
+				return;
 			}
 		}
-		else
-		{
-			clearAvatar();
-		}
+		clearAvatar();
 	}
 	
 	public void clearAvatar()

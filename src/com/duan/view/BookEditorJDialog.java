@@ -187,7 +187,7 @@ public class BookEditorJDialog extends JDialog {
 		btnEditTheLoai.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				showCategoryJFrame();
+				showCategoryJDialog();
 			}
 		});
 		btnEditTheLoai.setBounds(352, 81, 36, 24);
@@ -282,6 +282,12 @@ public class BookEditorJDialog extends JDialog {
 		pnlForm.add(cboAuthor);
 		
 		JButton btnEditAuthor = new JButton("...");
+		btnEditAuthor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				showAuthorJDialog();
+			}
+		});
 		btnEditAuthor.setBounds(352, 151, 36, 24);
 		pnlForm.add(btnEditAuthor);
 		
@@ -609,9 +615,13 @@ public class BookEditorJDialog extends JDialog {
 	//Cập nhật lại icon cho lblImage = file vừa truyền vào
 	public void setImage(File file)
 	{
-		ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-		lblImage.setIcon(icon);
-		SwingHelper.setAutoResizeIcon(lblImage);
+		if (file.exists())
+		{
+			lblImage.setText("");
+			ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+			lblImage.setIcon(icon);
+			SwingHelper.setAutoResizeIcon(lblImage);
+		}
 	}
 	
 	//Cập nhật lại icon cho lblImage lấy ảnh từ folder image có nameFile.
@@ -619,6 +629,7 @@ public class BookEditorJDialog extends JDialog {
 	{
 		if (imageName != null && imageName.length() > 0)
 		{
+			lblImage.setText("");
 			ImageIcon icon = new ImageIcon(DataHelper.getFileFromSource("/com/duan/image/" + imageName).getAbsolutePath());
 			lblImage.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblImage);
@@ -639,13 +650,27 @@ public class BookEditorJDialog extends JDialog {
 	}
 	
 	
-	public void showCategoryJFrame()
+	public void showCategoryJDialog()
 	{
+		categoryJDialog.setLocationRelativeTo(contentPane);
 		categoryJDialog.setVisible(true);
 	}
 	
-	public void showLocationJFrame()
+	public void showAuthorJDialog()
 	{
+		authorJDialog.setLocationRelativeTo(contentPane);
+		authorJDialog.setVisible(true);
+	}
+	
+	public void showPublisherJDialog()
+	{
+		publisherJDialog.setLocationRelativeTo(contentPane);
+		publisherJDialog.setVisible(true);
+	}
+	
+	public void showLocationJDialog()
+	{
+		locationJDialog.setLocationRelativeTo(contentPane);
 		locationJDialog.setVisible(true);
 	}
 }
