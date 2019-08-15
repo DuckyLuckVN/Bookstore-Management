@@ -53,6 +53,9 @@ import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import java.awt.GridLayout;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -139,13 +142,23 @@ public class AuthorJDialog extends JDialog {
 		panel.setLayout(null);
 		
 		tblAuthor = new JTableBlue();
-		tblAuthor.addMouseListener(new MouseAdapter() {
+		tblAuthor.getSelectionModel().addListSelectionListener(new ListSelectionListener() 
+		{
 			@Override
-			public void mouseClicked(MouseEvent arg0) 
+			public void valueChanged(ListSelectionEvent arg0) 
 			{
-				showDetail();
-				unlockForm();
-				setControllMode_Edit();
+				index = tblAuthor.getSelectedRow();
+				if (index != -1) 
+				{
+					showDetail();
+					unlockForm();
+					setControllMode_Edit();
+				}
+				else
+				{
+					clearForm();
+					lockForm();
+				}
 			}
 		});
 		tblAuthor.setRowHeight(30);
@@ -211,7 +224,8 @@ public class AuthorJDialog extends JDialog {
 		txtNgayMat.setBounds(227, 83, 231, 25);
 		panel.add(txtNgayMat);
 		
-		lblAvatar = new JLabel("");
+		lblAvatar = new JLabel("Không có ảnh");
+		lblAvatar.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAvatar.setBorder(new LineBorder(new Color(0, 0, 0)));
 		lblAvatar.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblAvatar.setBounds(10, 17, 120, 140);
@@ -372,14 +386,25 @@ public class AuthorJDialog extends JDialog {
 		}
 		if (txtBirthDay.getDate() == null) 
 		{
-			message +="   +Ngày sinh không được để trống -- Hoặc sai dịnh dạng \n";
+			message +="   +Ngày sinh không được để trống hoặc sai dịnh dạng \n";
 			loiRong = true;
+		} 
+		else if (txtDateOfDeath.getDate() != null)
+		{
+			if (txtBirthDay.getDate().getTime() >= txtDateOfDeath.getDate().getTime()) 
+			{
+				message +="   +Ngày mất phải lớn hơn ngày sinh \n";
+				loiRong = true;
+			}
 		}
+		
+		
 		if (txtIntroduction.getText().equals(""))
 		{
 			message +="   +Thông tin về tác giả không được để trống \n" ;
 			loiRong = true;
 		}
+		
 		if (loiRong == true) 
 		{
 			MessageOptionPane.showMessageDialog(this, message);
@@ -410,11 +435,6 @@ public class AuthorJDialog extends JDialog {
 	
 	public void showDetail()
 	{
-		index = tblAuthor.getSelectedRow();
-		if (index < 0) 
-		{
-			MessageOptionPane.showMessageDialog(this, "Bạn chưa chọn hàng !");
-		}
 		
 		try 
 		{
@@ -558,7 +578,7 @@ public class AuthorJDialog extends JDialog {
 				loadAuthorToList();
 				setControllMode_Nothing();
 			}
-			MessageOptionPane.showMessageDialog(this, "Sửa thành công tác giả có tên " +list.get(index).getFullName());
+			MessageOptionPane.showAlertDialog(this, "Sửa thông tin tác giả thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 //			tblAuthor.setRowSelectionInterval(index, index);
 		} catch (Exception e) 
 		{
