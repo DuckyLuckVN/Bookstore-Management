@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.duan.helper.JDBCHelper;
+import com.duan.model.Admin;
 import com.duan.model.Author;
 
 public class AuthorDAO
@@ -23,6 +24,17 @@ public class AuthorDAO
 		}
 		return list;
 	}
+	
+	 public static Author findByID(int id) throws SQLException
+	    {
+	        String sql = "SELECT * FROM [AUTHOR] Where id = ?";
+	        ResultSet rs = JDBCHelper.executeQuery(sql, id);
+	        if (rs.next())
+	        {
+	        	return readFromResultSet(rs);
+	        }
+	        return null;
+	    }
 	
 	public static boolean insert (Author at) throws SQLException
 	{
@@ -51,7 +63,7 @@ public class AuthorDAO
 		int count = pret.executeUpdate();
 		return count > 0 ;
 	}
-	public static boolean delete(Author at,int id) throws SQLException
+	public static boolean delete(int id) throws SQLException
 	{
 		String sql = "DELETE FROM AUTHOR WHERE ID = ?";
 		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, id);

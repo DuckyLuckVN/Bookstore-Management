@@ -15,7 +15,7 @@ public class DateHelper
 {
 	static String TEST = "AAA";
 	
-	//Chuyển từ Date sang String
+	//Chuyển từ Date sang String					//dd-MM-yyy
 	public static String dateToString(Date date, String format)
 	{
 		

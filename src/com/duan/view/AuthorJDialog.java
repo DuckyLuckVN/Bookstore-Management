@@ -12,15 +12,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import com.duan.custom.JTableBlue;
-import com.duan.custom.MessageOptionPane;
+import com.duan.dao.AdminDAO;
 import com.duan.dao.AuthorDAO;
 import com.duan.custom.common.JDateChooserCustom;
 import com.duan.custom.common.JTableBlue;
+import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.LocationDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Admin;
 import com.duan.model.Author;
 import com.duan.model.Location;
 import com.toedter.calendar.JDateChooser;
@@ -70,11 +71,12 @@ import java.net.URL;
 
 public class AuthorJDialog extends JDialog {
 
+	private static final Date Date = null;
 	private JPanel contentPane;
 	private JTableBlue tblAuthor;
 	private JTextField txtName;
-	private JTextField txtBirthDay;
-	private JTextField txtDateOfDeath;
+	private JDateChooserCustom txtBirthDay;
+	private JDateChooserCustom txtDateOfDeath;
 	private JTableBlue tblLocation;
 	private JTextField txtMaKeSach;
 	private JDateChooserCustom txtTenKe;
@@ -142,6 +144,8 @@ public class AuthorJDialog extends JDialog {
 			public void mouseClicked(MouseEvent arg0) 
 			{
 				showDetail();
+				unlockForm();
+				setControllMode_Edit();
 			}
 		});
 		tblAuthor.setRowHeight(30);
@@ -168,9 +172,8 @@ public class AuthorJDialog extends JDialog {
 		panel.add(txtName);
 		txtName.setColumns(10);
 		
-		txtBirthDay = new JTextField();
+		txtBirthDay = new JDateChooserCustom();
 		txtBirthDay.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtBirthDay.setColumns(10);
 		txtBirthDay.setBounds(227, 47, 231, 25);
 		panel.add(txtBirthDay);
 		txtTenKe = new JDateChooserCustom();
@@ -199,9 +202,8 @@ public class AuthorJDialog extends JDialog {
 		lblSLngLu.setBounds(140, 83, 77, 25);
 		panel.add(lblSLngLu);
 		
-		txtDateOfDeath = new JTextField();
+		txtDateOfDeath = new JDateChooserCustom();
 		txtDateOfDeath.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtDateOfDeath.setColumns(10);
 		txtDateOfDeath.setBounds(227, 83, 231, 25);
 		panel.add(txtDateOfDeath);
 		txtNgayMat = new JDateChooserCustom();
@@ -243,6 +245,12 @@ public class AuthorJDialog extends JDialog {
 		panel.add(btnChn);
 		
 		JButton btnXa_1 = new JButton("Xóa");
+		btnXa_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				clearAvatar();
+			}
+		});
 		btnXa_1.setBounds(71, 160, 59, 33);
 		panel.add(btnXa_1);
 		
@@ -258,16 +266,15 @@ public class AuthorJDialog extends JDialog {
 			{
 				try 
 				{
-					insert();
-				} catch (ParseException e)
-				{
-					MessageOptionPane.showAlertDialog(null, "Lỗi NGÀY THÁNG" +"\n Bạn phải thêm đúng định dạng yyyy-MM-dd");
-				
-				} catch (IOException e) 
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if(checkForm())
+					{
+						insert();
+					}
 				}
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				} 
 			}
 		});
 		
@@ -275,10 +282,13 @@ public class AuthorJDialog extends JDialog {
 		btnNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
+				index = -1;
 				clearForm();
 				setControllMode_Insert();
 				unlockForm();
 				tblAuthor.setRequestFocusEnabled(false);
+				System.out.println(lblAvatar.getText());
+				System.out.println(index);
 			}
 		});
 		pnlControll.add(btnNew);
@@ -289,16 +299,43 @@ public class AuthorJDialog extends JDialog {
 		btnInsert.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		
 		btnUpdate = new JButton("Cập nhật");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (checkForm()) 
+				{
+					update();
+					clearAvatar();
+				}
+
+			}
+		});
 		pnlControll.add(btnUpdate);
 		btnUpdate.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnUpdate.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		btnDelete = new JButton("Xóa");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				int count = JOptionPane.showConfirmDialog(null, "Bạn thực sự muốn xóa ? ","Thông báo",JOptionPane.YES_NO_OPTION);
+				if (count == JOptionPane.YES_OPTION) 
+				{
+					delete();
+					clearAvatar();
+					clearForm();
+					lockForm();
+					setControllMode_Nothing();
+				}
+				
+			}
+		});
 		pnlControll.add(btnDelete);
 		btnDelete.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		btnDelete.setHorizontalAlignment(SwingConstants.LEFT);
 		setLocationRelativeTo(getOwner());
 		loadAuthorToList();
+		setControllMode_Nothing();
 
 	}
 	
@@ -319,18 +356,54 @@ public class AuthorJDialog extends JDialog {
 		}
 	}
 	
+	public boolean checkForm()
+	{
+		String message = "Đã có lỗi xảy ra : \n";
+		boolean loiRong = false;
+		if (txtName.getText().equals("")) 
+		{
+			message+="   +Tên của tác giả không được để trống \n";
+			loiRong = true;
+		}
+		else if (!txtName.getText().matches("^[a-zA-Z\\p{L} ]{1,}$"))
+		{
+			message +="   +Họ tên chỉ được nhập chữ \n";
+			loiRong = true;
+		}
+		if (txtBirthDay.getDate() == null) 
+		{
+			message +="   +Ngày sinh không được để trống -- Hoặc sai dịnh dạng \n";
+			loiRong = true;
+		}
+		if (txtIntroduction.getText().equals(""))
+		{
+			message +="   +Thông tin về tác giả không được để trống \n" ;
+			loiRong = true;
+		}
+		if (loiRong == true) 
+		{
+			MessageOptionPane.showMessageDialog(this, message);
+			return false;
+		}
+		return true;
+	}
+	
 	public void fillToTable()
 	{
 		 model = (DefaultTableModel) tblAuthor.getModel();
 		 model.setRowCount(0);
-		
+		 String death = "";
 		 for (Author at : list) 
 		 {
 			 if (at.getDateOfDeath() == null) 
 			 {
-				 at.setDateOfDeath(null);
+				 death = "Chưa có";
 			 }
-			 Object[] rows = new Object[] {at.getId(), at.getFullName(), at.getDateOfBirth(), at.getDateOfDeath(), at.getCreatedDate()};
+			 if(at.getDateOfDeath() != null)
+			 {
+				 death = format.format(at.getDateOfDeath());
+			 }
+			 Object[] rows = new Object[] {at.getId(), at.getFullName(), at.getDateOfBirth(), death, at.getCreatedDate()};
 			 model.addRow(rows);
 		 }
 	}
@@ -342,53 +415,73 @@ public class AuthorJDialog extends JDialog {
 		{
 			MessageOptionPane.showMessageDialog(this, "Bạn chưa chọn hàng !");
 		}
-		Author author = list.get(index);
-		txtName.setText(author.getFullName());
-		txtBirthDay.setText(format.format(author.getDateOfBirth()));
-		if (author.getDateOfDeath() == null) 
-			{
-				txtDateOfDeath.setText("Chưa có");
-			}
-		else {
-			txtDateOfDeath.setText(format.format(author.getDateOfDeath()));
-		}
-		txtIntroduction.setText(author.getIntroduce());
 		
-	}
-	
-	public void insert() throws ParseException, IOException 
-	{
-		
-		String fullName = txtName.getText();
-		Date dateOfBirth = format.parse(txtBirthDay.getText());
-		Date dateOfDeath = null ; 
-		
-		if (txtDateOfDeath.getText().equals("")) 
-		{
-			dateOfDeath = null;
-		}
-		else 
-		{
-			dateOfDeath = format.parse(txtDateOfDeath.getText());
-		}
-		
-		String image  = null;
-		if (image != null) 
-		{
-			image = fileImageSelected.getName();
-		}
-		else {
-			lblAvatar.setText("chưa có ảnh");
-		}
-		
-		String introduce = txtIntroduction.getText();
-		Date createdDate = new java.sql.Date(new Date().getTime());
-		
-		Author at = new Author(0, fullName, dateOfBirth, dateOfDeath, image, introduce, createdDate);
 		try 
 		{
-			if (dao.insert(at)) 
+			int id = Integer.parseInt(String.valueOf(tblAuthor.getValueAt(this.index, 0)));
+			Author author  = dao.findByID(id);
+			if (author != null) 
 			{
+				
+				txtName.setText(author.getFullName());
+				txtBirthDay.setDate(author.getDateOfBirth());
+				txtDateOfDeath.setDate(author.getDateOfDeath());
+				txtIntroduction.setText(author.getIntroduce());
+				 if (author.getImage() != null && author.getImage().length() > 0)
+		         	setAvatar(author.getImage());
+		         else
+		         	clearAvatar();
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
+	Author getModel()
+	{
+		Author at = new Author();
+		
+			try 
+			{
+				if (index != -1 ) 
+				{
+					int id = Integer.parseInt(tblAuthor.getValueAt(tblAuthor.getSelectedRow(), 0).toString());
+					at = dao.findByID(id);
+				}
+				at.setFullName(txtName.getText());
+				at.setDateOfBirth(txtBirthDay.getDate());
+				at.setDateOfDeath(txtDateOfDeath.getDate());
+				if (fileImageSelected != null)
+				{
+					at.setImage(fileImageSelected.getName());
+				}
+				at.setIntroduce(txtIntroduction.getText());
+				
+				at.setCreatedDate(new Date());
+				return at;
+				
+			} 
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+			return null;
+		
+	}
+	public void insert() throws  IOException 
+	{
+		Author at = getModel();
+		try 
+		{
+			boolean issucces = dao.insert(at);
+			if (issucces) 
+			{
+				clearForm();
+				clearAvatar();
+				lockForm();
+				setControllMode_Nothing();
 				//Neu file anh da duoc chon thi bat dau ghi file vao source project
 				if (fileImageSelected != null)
 				{
@@ -398,22 +491,80 @@ public class AuthorJDialog extends JDialog {
 					//Ghi file tu mang byte cua anh
 					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
 					fileImageSelected = null;
-					
 				}
-					MessageOptionPane.showMessageDialog(this, "thêm thành công Tác giả " + txtName.getText());
+				
+				MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+				list.add(at);
+				loadAuthorToList();
+				fillToTable();
 				
 			}
-		} 
+			
+		}
 		catch (SQLException e) 
 		{
-			if (e.getErrorCode() == 2627) 
-			{
-				MessageOptionPane.showMessageDialog(this, "Tài khoản này đã tồn tại");
-			}
-			MessageOptionPane.showAlertDialog(contentPane, "Thêm tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void delete()
+	{
+		int id = Integer.parseInt(String.valueOf(tblAuthor.getValueAt(this.index, 0)));
+		try 
+		{
+			if (dao.delete(id))
+			{
+				MessageOptionPane.showAlertDialog(this, "Xóa thành công tác giả có tên : " +txtName.getText());
+				list.remove(index);
+				fillToTable();
+			}
+		} catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void update()
+	{
+
+		Author at = getModel();
+		int id = Integer.parseInt(String.valueOf(tblAuthor.getValueAt(this.index, 0)));
+		try 
+		{
+			if (lblAvatar.getIcon() == null) 
+			{
+				at.setImage(null);
+			}
+			else
+			{
+				if (fileImageSelected != null)
+				{
+					at.setImage(fileImageSelected.getName());
+					
+					//Lay ra mang byte tu file da chon
+					byte[] byteArrFileImage = DataHelper.getArrayByteFromFile(fileImageSelected);
+					
+					//Ghi file tu mang byte cua anh
+					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
+					fileImageSelected = null;
+				}
+			}
+			boolean issucess = dao.update(at, id);
+			if (issucess) 
+			{
+				
+				clearForm();
+				loadAuthorToList();
+				setControllMode_Nothing();
+			}
+			MessageOptionPane.showMessageDialog(this, "Sửa thành công tác giả có tên " +list.get(index).getFullName());
+//			tblAuthor.setRowSelectionInterval(index, index);
+		} catch (Exception e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setAvatar(File file)
@@ -439,30 +590,21 @@ public class AuthorJDialog extends JDialog {
 		}
 	}
 	
+	public void clearAvatar()
+	{
+		lblAvatar.setIcon(null);
+		lblAvatar.setText("Không có ảnh");
+	}
+	
 	public void lockForm()
 	{
-		txtName.setEditable(false);
-		txtBirthDay.setEditable(false);
-		txtDateOfDeath.setEditable(false);
-		txtIntroduction.setEditable(false);
-	}
-	public void unlockForm() 
-	{
 		txtName.setEditable(true);
-		txtBirthDay.setEditable(true);
-		txtDateOfDeath.setEditable(true);
 		txtIntroduction.setEditable(true);
-		txtMaKeSach.setEnabled(false);
-		txtTenKe.setEnabled(false);
-		txtNgayMat.setEnabled(false);
-		txtGhiChu.setEditable(false);
 	}
 	public void unlockForm() 
 	{
-		txtMaKeSach.setEditable(true);
-		txtTenKe.setEnabled(true);
 		txtNgayMat.setEnabled(true);
-		txtGhiChu.setEditable(true);
+		txtIntroduction.setEditable(true);
 	}
 	public void setControllMode_Nothing()
 	{
@@ -490,11 +632,9 @@ public class AuthorJDialog extends JDialog {
 	{
 		txtIntroduction.setText("");
 		txtName.setText("");
-		txtDateOfDeath.setText("");
-		txtBirthDay.setText("");
-		txtGhiChu.setText("");
-		txtMaKeSach.setText("");
-		txtNgayMat.setDate(null);;
-		txtTenKe.setDate(null);;
+		txtDateOfDeath.setDate(null);;
+		txtBirthDay.setDate(null);
+		clearAvatar();
+
 	}
 }
