@@ -46,6 +46,8 @@ import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import java.awt.GridLayout;
+import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
 
 /*
  * 15/05/2019
@@ -68,6 +70,7 @@ public class LoginJFrame extends JDialog
 	private JProgressBar proLoading;
 	private Admin admin;
 	private JLabel lblWelcomeName;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 
 	public static void main(String[] args) 
@@ -188,20 +191,22 @@ public class LoginJFrame extends JDialog
 		panel_1.setLayout(null);
 		
 		JLabel lblngNhpVi = new JLabel("Đăng nhập với tư cách:");
-		lblngNhpVi.setBounds(10, 0, 138, 29);
-		lblngNhpVi.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblngNhpVi.setBounds(10, 0, 151, 29);
+		lblngNhpVi.setFont(new Font("Tahoma", Font.BOLD, 12));
 		panel_1.add(lblngNhpVi);
 		
 		JRadioButton rdbtnNhnVin = new JRadioButton("Nhân viên");
+		buttonGroup.add(rdbtnNhnVin);
 		rdbtnNhnVin.setSelected(true);
 		rdbtnNhnVin.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		rdbtnNhnVin.setBounds(154, 0, 88, 29);
+		rdbtnNhnVin.setBounds(165, 0, 88, 29);
 		rdbtnNhnVin.setBackground(Color.WHITE);
 		panel_1.add(rdbtnNhnVin);
 		
 		JRadioButton rdbtnKhch = new JRadioButton("Khách");
+		buttonGroup.add(rdbtnKhch);
 		rdbtnKhch.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		rdbtnKhch.setBounds(246, 0, 88, 29);
+		rdbtnKhch.setBounds(260, 0, 74, 29);
 		rdbtnKhch.setBackground(Color.WHITE);
 		panel_1.add(rdbtnKhch);
 		

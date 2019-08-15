@@ -9,6 +9,7 @@ import java.util.Date;
 import com.duan.helper.JDBCHelper;
 import com.duan.model.Admin;
 import com.duan.model.Author;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class AuthorDAO
 {
@@ -70,6 +71,18 @@ public class AuthorDAO
 		int count = pre.executeUpdate();
 		return count > 0;
 		
+	}
+	
+	public static Author findById(int id) throws SQLException
+	{
+		String sql = "SELECT * FROM dbo.AUTHOR WHERE ID = ?";
+		ResultSet rs = JDBCHelper.executeQuery(sql, id);
+		
+		if(rs.next()) 
+		{
+			return readFromResultSet(rs);
+		}
+		return null;
 	}
 	
 	public static Author readFromResultSet(ResultSet rs) throws SQLException

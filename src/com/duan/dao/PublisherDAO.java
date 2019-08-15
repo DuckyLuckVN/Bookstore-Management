@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.naming.spi.DirStateFactory.Result;
 
 import com.duan.helper.JDBCHelper;
+import com.duan.model.Author;
 import com.duan.model.Publisher;
 
 public class PublisherDAO 
@@ -58,6 +59,18 @@ public class PublisherDAO
 		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, id);
 		int count = pre.executeUpdate();
 		return count > 0;
+	}
+	
+	public static Publisher findById(int id) throws SQLException
+	{
+		String sql = "SELECT * FROM dbo.PUBLISHER WHERE ID = ?";
+		ResultSet rs = JDBCHelper.executeQuery(sql, id);
+		
+		if(rs.next()) 
+		{
+			return readFromResultSet(rs);
+		}
+		return null;
 	}
 	
 	public static Publisher readFromResultSet(ResultSet rs) throws SQLException
