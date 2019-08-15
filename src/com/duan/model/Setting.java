@@ -4,6 +4,15 @@ import java.io.Serializable;
 
 public class Setting implements Serializable
 {
+	public static final String SYMBOL_USER_FULLNAME = "%user_fullname%";
+	public static final String SYMBOL_USER_USERNAME = "%user_username%";
+	public static final String SYMBOL_ADMIN_FULLNAME = "%admin_fullname%";
+	public static final String SYMBOL_ADMIN_USERNAME = "%admin_username%";
+	public static final String SYMBOL_RENT_ID = "%rent_id%";
+	public static final String SYMBOL_RENT_TOTALBOOK = "%rent_totalbook%";
+	public static final String SYMBOL_RENT_EXPIRATION_DAY = "%rent_expiration_day%";
+	public static final String SYMBOL_RENT_CREATED_DATE = "%rent_createdDate%";
+	
 	private String hostDB = "localhost";
 	private String portDB = "1433";
 	private String nameDB = "BookStore";
@@ -15,6 +24,12 @@ public class Setting implements Serializable
 	private String usernameEmail = "razzermkd@gmail.com";
 	private String passwordEmail = "123456789";
 	private int dayExpiration = 7;
+	private double costRentBook = 5000;
+	private double costRentExpiration = 1000; //cost * số sach * ngày quá hạn
+	private double costBookLost = 2;
+	private String messageReportExpiration = "Xin chào " + SYMBOL_USER_FULLNAME + ", đon thuê số (" + SYMBOL_RENT_ID + ") "
+											+ "của bạn đã quá hạn trả sách " + SYMBOL_RENT_EXPIRATION_DAY + " ngày rồi. "
+											+ "Đừng để lâu quá phí phạt quá hạn trả sẽ tăng đó!.";
 	
 	public Setting()
 	{
@@ -22,11 +37,11 @@ public class Setting implements Serializable
 	}
 
 	
-	
+
 	public Setting(String hostDB, String portDB, String nameDB, String usernameDB, String passwordDB,
 			String moneySymbol, String dateFormat, String timeFormat, String usernameEmail, String passwordEmail,
-			int dayExpiration) {
-		super();
+			int dayExpiration, double costRentBook, double costRentExpiration, double costBookLost,
+			String messageReportExpiration) {
 		this.hostDB = hostDB;
 		this.portDB = portDB;
 		this.nameDB = nameDB;
@@ -38,7 +53,13 @@ public class Setting implements Serializable
 		this.usernameEmail = usernameEmail;
 		this.passwordEmail = passwordEmail;
 		this.dayExpiration = dayExpiration;
+		this.costRentBook = costRentBook;
+		this.costRentExpiration = costRentExpiration;
+		this.costBookLost = costBookLost;
+		this.messageReportExpiration = messageReportExpiration;
 	}
+
+
 
 
 
@@ -120,6 +141,43 @@ public class Setting implements Serializable
 	public void setTimeFormat(String timeFormat) {
 		this.timeFormat = timeFormat;
 	}
+
+	public double getCostRentBook() {
+		return costRentBook;
+	}
+
+	public void setCostRentBook(double costRentBook) {
+		this.costRentBook = costRentBook;
+	}
+
+	public double getCostRentExpiration() {
+		return costRentExpiration;
+	}
+
+	public void setCostRentExpiration(double costRentExpiration) {
+		this.costRentExpiration = costRentExpiration;
+	}
+
+	public double getCostBookLost() {
+		return costBookLost;
+	}
+
+	public void setCostBookLost(double costBookLost) {
+		this.costBookLost = costBookLost;
+	}
+
+	public String getMessageReportExpiration() {
+		return messageReportExpiration;
+	}
+
+	public void setMessageReportExpiration(String messageReportExpiration) {
+		this.messageReportExpiration = messageReportExpiration;
+	}
 	
+	public static void main(String[] args) {
+		System.out.println("Xin chào " + SYMBOL_USER_FULLNAME + ", đon thuê số (" + SYMBOL_RENT_ID + ") "
+											+ "của bạn đã quá hạn trả sách " + SYMBOL_RENT_EXPIRATION_DAY + " ngày rồi. "
+											+ "Đừng để lâu quá phí phạt trả muộn sẽ tăng đó!.");
+	}
 	
 }

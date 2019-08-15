@@ -71,7 +71,7 @@ public class BookDAO
 					                + "image=?, "
 					                + "location_id=?, "
 					                + "description=?, "
-					                + "introduce=?"
+					                + "introduce=?,"
 					                + "created_date=? "
 					                + "WHERE ID = ?";
         

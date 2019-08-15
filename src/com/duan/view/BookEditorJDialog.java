@@ -87,6 +87,7 @@ public class BookEditorJDialog extends JDialog {
 	private Book bookEdit;
 	private JComboBox cboPublisher;
 	private JComboBox cboAuthor;
+	private JTextArea txtIntroduct;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -298,11 +299,11 @@ public class BookEditorJDialog extends JDialog {
 		lblMT.setBounds(10, 256, 75, 24);
 		pnlForm.add(lblMT);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textArea.setBorder(new LineBorder(SystemColor.inactiveCaption));
-		textArea.setBounds(95, 256, 293, 84);
-		pnlForm.add(textArea);
+		txtIntroduct = new JTextArea();
+		txtIntroduct.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtIntroduct.setBorder(new LineBorder(SystemColor.inactiveCaption));
+		txtIntroduct.setBounds(95, 256, 293, 84);
+		pnlForm.add(txtIntroduct);
 		
 		JPanel pnlControllImage = new JPanel();
 		pnlControllImage.setBounds(418, 244, 214, 61);
@@ -453,7 +454,7 @@ public class BookEditorJDialog extends JDialog {
 		}
 		
 		for (Publisher e : listPublisher) {
-			cboAuthor.addItem(e.getName());
+			cboPublisher.addItem(e.getName());
 		}
 		
 		
@@ -495,6 +496,7 @@ public class BookEditorJDialog extends JDialog {
 		this.bookEdit.setDescription(txtGhiChu.getText());
 		this.bookEdit.setCreatedDate(createdDate);
 		this.bookEdit.setImage(imageName);
+		this.bookEdit.setIntroduce(txtIntroduct.getText());
 		
 		return this.bookEdit;
 		
