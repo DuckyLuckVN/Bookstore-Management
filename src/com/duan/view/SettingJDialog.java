@@ -37,6 +37,9 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.LineBorder;
 
 public class SettingJDialog extends JDialog {
 	private JTextField txtHost;
@@ -51,6 +54,10 @@ public class SettingJDialog extends JDialog {
 	private JTextField txtUsernameMail;
 	private JTextField txtPasswordEmail;
 	private JTextField txtDayExpiration;
+	private JTextField txtCostRentExpiration;
+	private JTextField txtCostBookLost;
+	private JTextField txtCostRent;
+	private JTextArea txtMessageReportExpiration;
 
 
 	public static void main(String[] args) 
@@ -79,12 +86,12 @@ public class SettingJDialog extends JDialog {
 		setTitle("Cài đặt");
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 387, 602);
+		setBounds(100, 100, 829, 602);
 		getContentPane().setLayout(null);
 		
 		JPanel pnlDB = new JPanel();
-		pnlDB.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		pnlDB.setBounds(10, 11, 362, 198);
+		pnlDB.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlDB.setBounds(10, 11, 411, 198);
 		getContentPane().add(pnlDB);
 		pnlDB.setLayout(null);
 		
@@ -94,7 +101,7 @@ public class SettingJDialog extends JDialog {
 		pnlDB.add(lblaChHost);
 		
 		txtHost = new JTextField();
-		txtHost.setBounds(125, 21, 124, 24);
+		txtHost.setBounds(125, 21, 177, 24);
 		pnlDB.add(txtHost);
 		txtHost.setColumns(10);
 		
@@ -105,18 +112,18 @@ public class SettingJDialog extends JDialog {
 		
 		JLabel lblPort = new JLabel("Port:");
 		lblPort.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblPort.setBounds(259, 21, 42, 24);
+		lblPort.setBounds(312, 21, 42, 24);
 		pnlDB.add(lblPort);
 		
 		txtPort = new JTextField();
 		txtPort.setColumns(10);
-		txtPort.setBounds(298, 21, 50, 24);
+		txtPort.setBounds(351, 21, 50, 24);
 		pnlDB.add(txtPort);
 		
 		txtNameDB = new JTextField();
 		txtNameDB.setEditable(false);
 		txtNameDB.setColumns(10);
-		txtNameDB.setBounds(125, 56, 223, 24);
+		txtNameDB.setBounds(125, 56, 276, 24);
 		pnlDB.add(txtNameDB);
 		
 		JLabel lblTiKhongDb = new JLabel("Tài khoảng SQL:");
@@ -126,7 +133,7 @@ public class SettingJDialog extends JDialog {
 		
 		txtUsernameDB = new JTextField();
 		txtUsernameDB.setColumns(10);
-		txtUsernameDB.setBounds(125, 91, 223, 24);
+		txtUsernameDB.setBounds(125, 91, 276, 24);
 		pnlDB.add(txtUsernameDB);
 		
 		JLabel lblMtKhuDb = new JLabel("Mật khẩu SQL:");
@@ -134,25 +141,25 @@ public class SettingJDialog extends JDialog {
 		lblMtKhuDb.setBounds(10, 126, 105, 24);
 		pnlDB.add(lblMtKhuDb);
 		
-		txtPasswordDB = new JTextField();
+		txtPasswordDB = new JPasswordField();
 		txtPasswordDB.setColumns(10);
-		txtPasswordDB.setBounds(125, 126, 223, 24);
+		txtPasswordDB.setBounds(125, 126, 276, 24);
 		pnlDB.add(txtPasswordDB);
 		
-		JButton btnTestConnect = new JButton("Thử kết nối");
+		JButton btnTestConnect = new JButton("Kiểm tra kết nối");
 		btnTestConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
 				testConnect();
 			}
 		});
-		btnTestConnect.setBounds(259, 161, 89, 23);
+		btnTestConnect.setBounds(275, 161, 126, 23);
 		pnlDB.add(btnTestConnect);
 		
 		JPanel pnlFormat = new JPanel();
 		pnlFormat.setLayout(null);
-		pnlFormat.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		pnlFormat.setBounds(10, 220, 362, 126);
+		pnlFormat.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlFormat.setBounds(10, 220, 411, 126);
 		getContentPane().add(pnlFormat);
 		
 		JLabel lblnVTin = new JLabel("Đơn vị tiền:");
@@ -163,7 +170,7 @@ public class SettingJDialog extends JDialog {
 		txtMoneySymbol = new JTextField();
 		txtMoneySymbol.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtMoneySymbol.setColumns(10);
-		txtMoneySymbol.setBounds(125, 21, 227, 24);
+		txtMoneySymbol.setBounds(125, 21, 276, 24);
 		pnlFormat.add(txtMoneySymbol);
 		
 		JLabel lblnhDngNgy = new JLabel("Định dạng ngày:");
@@ -179,13 +186,13 @@ public class SettingJDialog extends JDialog {
 		cboDateFormat = new JComboBox();
 		cboDateFormat.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		cboDateFormat.setModel(new DefaultComboBoxModel(new String[] {"dd-MM-yyyy", "dd/MM/yyyy", "yyyy-MM-dd", "yyyy/MM/dd", "MM-dd-yyyy", "MM/dd/yyyy"}));
-		cboDateFormat.setBounds(125, 56, 227, 24);
+		cboDateFormat.setBounds(125, 56, 276, 24);
 		pnlFormat.add(cboDateFormat);
 		
 		cboTimeFormat = new JComboBox();
 		cboTimeFormat.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		cboTimeFormat.setModel(new DefaultComboBoxModel(new String[] {"hh:mm:ss", "hh:mm", "hh,mm", "mm:ss", "hh"}));
-		cboTimeFormat.setBounds(125, 91, 227, 24);
+		cboTimeFormat.setBounds(125, 91, 276, 24);
 		pnlFormat.add(cboTimeFormat);
 		
 		JButton btnSave = new JButton("Lưu lại");
@@ -195,7 +202,7 @@ public class SettingJDialog extends JDialog {
 					saveSetting();
 			}
 		});
-		btnSave.setBounds(282, 538, 89, 25);
+		btnSave.setBounds(704, 538, 89, 25);
 		getContentPane().add(btnSave);
 		
 		JButton btnDefault = new JButton("Mặc định");
@@ -206,43 +213,72 @@ public class SettingJDialog extends JDialog {
 				showDetail();
 			}
 		});
-		btnDefault.setBounds(183, 538, 89, 25);
+		btnDefault.setBounds(605, 538, 89, 25);
 		getContentPane().add(btnDefault);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "T\u00E0i kho\u1EA3ng Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(10, 357, 362, 97);
+		panel.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "Th\u01B0 Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(431, 11, 382, 516);
 		getContentPane().add(panel);
 		
 		JLabel lblTiKhonMail = new JLabel("Tài khoản mail:");
 		lblTiKhonMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblTiKhonMail.setBounds(10, 21, 105, 24);
+		lblTiKhonMail.setBounds(20, 21, 217, 24);
 		panel.add(lblTiKhonMail);
 		
 		txtUsernameMail = new JTextField();
 		txtUsernameMail.setText("razzermkd@gmail.com");
 		txtUsernameMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtUsernameMail.setColumns(10);
-		txtUsernameMail.setBounds(125, 21, 227, 24);
+		txtUsernameMail.setBounds(125, 21, 247, 24);
 		panel.add(txtUsernameMail);
 		
 		JLabel lblMtKhuMail = new JLabel("Mật khẩu mail:");
 		lblMtKhuMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblMtKhuMail.setBounds(10, 56, 105, 24);
+		lblMtKhuMail.setBounds(20, 56, 217, 24);
 		panel.add(lblMtKhuMail);
 		
 		txtPasswordEmail = new JPasswordField();
 		txtPasswordEmail.setText("123456789");
 		txtPasswordEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtPasswordEmail.setColumns(10);
-		txtPasswordEmail.setBounds(125, 56, 227, 24);
+		txtPasswordEmail.setBounds(125, 56, 247, 24);
 		panel.add(txtPasswordEmail);
+		
+		JLabel lblNiDungBo = new JLabel("Nội dung mail báo quá hạn trả sách:");
+		lblNiDungBo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNiDungBo.setBounds(20, 91, 217, 24);
+		panel.add(lblNiDungBo);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(20, 126, 352, 154);
+		panel.add(scrollPane);
+		
+		txtMessageReportExpiration = new JTextArea();
+		txtMessageReportExpiration.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtMessageReportExpiration.setWrapStyleWord(true);
+		txtMessageReportExpiration.setLineWrap(true);
+		scrollPane.setViewportView(txtMessageReportExpiration);
+		
+		JTextArea txtruserfullnameH = new JTextArea();
+		txtruserfullnameH.setText("%user_fullname% = họ tên khách hàng\r\n%user_username% = tài khoản của khách hàng\r\n%admin_fullname% = họ tên nhân viên trực\r\n%admin_username% = tài khoảng nhân viên trực\r\n%rent_id% = mã số đơn thuê\r\n%rent_totalbook% = tổng số sách đã thuê\r\n%rent_expiration_day% = số ngày quá hạn\r\n%rent_createdDate% = ngày thuê");
+		txtruserfullnameH.setOpaque(false);
+		txtruserfullnameH.setWrapStyleWord(true);
+		txtruserfullnameH.setLineWrap(true);
+		txtruserfullnameH.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtruserfullnameH.setBounds(20, 317, 352, 154);
+		panel.add(txtruserfullnameH);
+		
+		JLabel lblCcKHiu = new JLabel("Các ký hiệu thay thế");
+		lblCcKHiu.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblCcKHiu.setBounds(20, 291, 352, 24);
+		panel.add(lblCcKHiu);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_1.setBounds(10, 465, 362, 62);
+		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBounds(10, 357, 411, 170);
 		getContentPane().add(panel_1);
 		
 		JLabel lblHnThuSch = new JLabel("Hạn thuê sách:");
@@ -254,13 +290,64 @@ public class SettingJDialog extends JDialog {
 		txtDayExpiration.setText("17");
 		txtDayExpiration.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtDayExpiration.setColumns(10);
-		txtDayExpiration.setBounds(125, 21, 43, 24);
+		txtDayExpiration.setBounds(125, 21, 53, 24);
 		panel_1.add(txtDayExpiration);
 		
 		JLabel lblNgay = new JLabel("ngày");
 		lblNgay.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNgay.setBounds(178, 21, 43, 24);
+		lblNgay.setBounds(188, 21, 213, 24);
 		panel_1.add(lblNgay);
+		
+		JLabel lblPhQuHn = new JLabel("Phí phạt quá hạn:");
+		lblPhQuHn.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblPhQuHn.setBounds(10, 91, 105, 24);
+		panel_1.add(lblPhQuHn);
+		
+		txtCostRentExpiration = new JTextField();
+		txtCostRentExpiration.setText("17");
+		txtCostRentExpiration.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtCostRentExpiration.setColumns(10);
+		txtCostRentExpiration.setBounds(125, 91, 53, 24);
+		panel_1.add(txtCostRentExpiration);
+		
+		JLabel lblXX = new JLabel("* <ngày quá hạn> * <số sách>");
+		lblXX.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblXX.setBounds(188, 91, 213, 24);
+		panel_1.add(lblXX);
+		
+		JLabel lblPhPhtMt = new JLabel("Phí mất sách:");
+		lblPhPhtMt.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblPhPhtMt.setBounds(10, 126, 105, 24);
+		panel_1.add(lblPhPhtMt);
+		
+		txtCostBookLost = new JTextField();
+		txtCostBookLost.setText("17");
+		txtCostBookLost.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtCostBookLost.setColumns(10);
+		txtCostBookLost.setBounds(125, 126, 53, 24);
+		panel_1.add(txtCostBookLost);
+		
+		JLabel label_1 = new JLabel("* <giá bán lúc thuê> * <số sách>");
+		label_1.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		label_1.setBounds(188, 126, 213, 24);
+		panel_1.add(label_1);
+		
+		JLabel lblPhThuSch = new JLabel("Phí thuê sách:");
+		lblPhThuSch.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblPhThuSch.setBounds(10, 56, 105, 24);
+		panel_1.add(lblPhThuSch);
+		
+		txtCostRent = new JTextField();
+		txtCostRent.setText("17");
+		txtCostRent.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtCostRent.setColumns(10);
+		txtCostRent.setBounds(125, 56, 53, 24);
+		panel_1.add(txtCostRent);
+		
+		JLabel lblQuyn = new JLabel("* <số sách>");
+		lblQuyn.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblQuyn.setBounds(188, 56, 213, 24);
+		panel_1.add(lblQuyn);
 		setLocationRelativeTo(getOwner());
 		showDetail();
 	}
@@ -283,12 +370,17 @@ public class SettingJDialog extends JDialog {
 		cboDateFormat.setSelectedItem(setting.getDateFormat());
 		cboTimeFormat.setSelectedItem(setting.getTimeFormat());
 		
+		//setting chung
+		txtDayExpiration.setText(setting.getDayExpiration() + "");
+		txtCostRent.setText(setting.getCostRentBook() + "");
+		txtCostRentExpiration.setText(setting.getCostRentExpiration() + "");
+		txtCostBookLost.setText(setting.getCostBookLost() + "");
+		
 		//setting của email
 		txtUsernameMail.setText(setting.getUsernameEmail());
 		txtPasswordEmail.setText(setting.getPasswordEmail());
+		txtMessageReportExpiration.setText(setting.getMessageReportExpiration());
 		
-		//setting chung
-		txtDayExpiration.setText(setting.getDayExpiration() + "");
 	}
 	
 	//Thự hiện test connect tới máy chủ dc nhập từ form
@@ -323,7 +415,7 @@ public class SettingJDialog extends JDialog {
 			//Tiến hành set Setting vào SettingSave và ghi ra file lưu trữ
 			SettingSave.setSetting(getSettingFromForm());
 			SettingSave.writeSetting();
-			MessageOptionPane.showMessageDialog(getContentPane(), "Lưu lại thay đổi thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			MessageOptionPane.showAlertDialog(getContentPane(), "Lưu lại thay đổi thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			String msg = "Bạn cần phải reload lại ứng dụng để các tùy chỉnh này hoạt động chính xác!";
 			if (MessageOptionPane.showConfirmDialog(getContentPane(), msg, MessageOptionPane.ICON_NAME_QUESTION, 12))
 			{
@@ -427,7 +519,11 @@ public class SettingJDialog extends JDialog {
 		String usernameEmail = txtUsernameMail.getText();
 		String passwordEmail = txtPasswordEmail.getText();
 		int dayExpiration = DataHelper.getInt(txtDayExpiration.getText());
+		double costRent = DataHelper.getDouble(txtCostRent.getText());
+		double costRentExpiration = DataHelper.getDouble(txtCostRentExpiration.getText());
+		double costBookLost = DataHelper.getDouble(txtCostBookLost.getText());
+		String msgReportExpiration = txtMessageReportExpiration.getText();
 		
-		return new Setting(host, port, nameDB, usernameDB, passwordDB, moneySymbol, dateFormat, timeFormat, usernameEmail, passwordEmail, dayExpiration);
+		return new Setting(host, port, nameDB, usernameDB, passwordDB, moneySymbol, dateFormat, timeFormat, usernameEmail, passwordEmail, dayExpiration, costRent, costRentExpiration, costBookLost, msgReportExpiration);
 	}
 }

@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.common.JDateChooserCustom;
 import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DateHelper;
@@ -128,10 +129,10 @@ public class UserJFrame extends JFrame {
 		JPanel pnlController = new JPanel();
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
-		JLabel lblTmKim = new JLabel("Tìm kiếm");
+		JLabel lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		txtsearch = new JTextField();
+		txtsearch = new JTextFieldDark();
 		txtsearch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 

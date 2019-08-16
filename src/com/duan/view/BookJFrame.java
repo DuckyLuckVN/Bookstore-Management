@@ -23,8 +23,10 @@ import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
@@ -75,6 +77,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.Desktop;
+import javax.swing.border.LineBorder;
 
 public class BookJFrame extends JFrame{
 
@@ -282,7 +285,7 @@ public class BookJFrame extends JFrame{
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		scrollPane.setBorder(new TitledBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)), "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		pnlSelect = new JPanel();
 		
@@ -548,12 +551,13 @@ public class BookJFrame extends JFrame{
 		{
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 
@@ -599,13 +603,14 @@ public class BookJFrame extends JFrame{
 				continue;
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 

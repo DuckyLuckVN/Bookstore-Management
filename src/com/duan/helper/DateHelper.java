@@ -15,7 +15,7 @@ public class DateHelper
 {
 	static String TEST = "AAA";
 	
-	//Chuyển từ Date sang String
+	//Chuyển từ Date sang String					//dd-MM-yyy
 	public static String dateToString(Date date, String format)
 	{
 		
@@ -53,6 +53,13 @@ public class DateHelper
 		long miliSecBetween = date2.getTime() - date1.getTime();
 		return (int) TimeUnit.DAYS.convert(miliSecBetween, TimeUnit.MILLISECONDS);
 	}
+	
+	//Trả về Date với số ngày được thêm vào
+	public static Date addDay(Date date, int dayNum)
+	{
+		long dayMinisec = 1000 * 60 * 60 * 24 * dayNum;
+		return new Date(date.getTime() + dayMinisec);
+	}
 //	
 //	public static int getDay(Date date)
 //	{
@@ -68,6 +75,7 @@ public class DateHelper
 	
 	public static void main(String[] args) throws ParseException 
 	{
+		System.out.println(getDayBetweenTwoDate(new Date(0), new Date()));
 	}
 	
 	
