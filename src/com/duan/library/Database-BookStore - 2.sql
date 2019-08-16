@@ -213,7 +213,7 @@ VALUES  (N'Đỗ Văn Hoàng', GETDATE(), N'', N'Tác giả này tên là Đỗ 
 		(N'Lê Văn Thuyết', GETDATE(), N'', N'', GETDATE())
 GO
 
-INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduct, created_date)
+INSERT INTO dbo.PUBLISHER(name, phone_number, email, introduce, created_date)
 VALUES  (N'BXB Trẻ', '0376546521', 'contact@nxbtre.com', N'Đây là nhà xuất bản khá trẻ :v', GETDATE()),
 		(N'BXB Nhi Đồng', '0186224665', 'contact@nxbnhidong.com', N'Đây là nhà xuất bản nhi đồng', GETDATE())
 GO
@@ -255,10 +255,11 @@ VALUES	(101,'GH12',3,300000),
 		(102,'GH12',2,400000)
 GO
 
-INSERT INTO BOOK_LOST(rentbook_id,admin_id,created_date)
+INSERT INTO BOOK_LOST(rentbook_id, admin_id, created_date)
 VALUES (102,101,GETDATE()),
-		(101,102,GETDATE())
+		(101,105,GETDATE())
 GO
+
 
 INSERT INTO BOOK_LOST_DETAIL(rentbook_id,book_id,amount,cost)
 VALUES (101,'GH12',2, 10000),
@@ -492,7 +493,7 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
-CREATE PROC sp_getStatisticOverviewInMonth 
+ALTER PROC sp_getStatisticOverviewInMonth 
 AS BEGIN
 	DECLARE @totalOrder FLOAT = 0
 	DECLARE @totalRent FLOAT = 0
@@ -559,13 +560,19 @@ AS BEGIN
 	AND YEAR(STORAGE.created_date) = YEAR(GETDATE())
 	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
 
+	IF (@totalOrder IS NULL)
+		SET @totalOrder = 0
+	IF (@totalRent IS NULL)
+		SET @totalRent = 0
+	IF (@totalAddStorage IS NULL)
+		SET @totalAddStorage = 0
 	IF (@totalLost IS NULL)
 		SET @totalLost = 0
 	IF (@totalSumOrder IS NULL)
 		SET @totalSumOrder = 0
 	IF (@totalSumRentLost IS NULL)
 		SET @totalSumRentLost = 0
-	IF (@totalSumLost IS NULL)
+	IF (@totalSumLost IS NULL) 
 		SET @totalSumLost = 0
 	IF (@totalSumMoneyStorage IS NULL)
 		SET @totalSumMoneyStorage = 0
@@ -577,6 +584,27 @@ END
 GO
 
 EXEC sp_getStatisticOverviewInMonth
+GO
+/****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getTotalBookOrder EXEC sp_getTotalBookOrder @month = 8
+CREATE PROC sp_getTotalBookOrder (@month int)
+AS BEGIN
+	SELECT BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date,SUM(ORDER_DETAIL.amount) AS [Total Order]
+	FROM BOOK, AUTHOR, CATEGORY, ORDER_DETAIL, [ORDER]
+	WHERE BOOK.category_id = CATEGORY.id
+	AND BOOK.author_id = AUTHOR.id
+	AND  ORDER_DETAIL.order_id = [ORDER].id 
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = @month
+	AND ORDER_DETAIL.book_id = BOOK.id
+	GROUP BY BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date
+END
+
+SELECT * FROM [ORDER]
+SELECT * FROM ORDER_DETAIL
+SELECT * FROM BOOK
+SELECT * FROM CATEGORY
+SELECT * FROM AUTHOR
 
 INSERT dbo.ADMIN
         ( username ,

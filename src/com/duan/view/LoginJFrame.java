@@ -69,7 +69,7 @@ public class LoginJFrame extends JDialog
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
 	private JRadioButton rdbtnKhch;
-	private JRadioButton rdbtnNhnVin;
+	private JRadioButton rdoLoginAdmin;
 	private JProgressBar proLoading;
 	private Admin admin;
 	private User user;
@@ -199,13 +199,13 @@ public class LoginJFrame extends JDialog
 		lblngNhpVi.setFont(new Font("Tahoma", Font.BOLD, 12));
 		panel_1.add(lblngNhpVi);
 		
-		rdbtnNhnVin = new JRadioButton("Nhân viên");
-		buttonGroup.add(rdbtnNhnVin);
-		rdbtnNhnVin.setSelected(true);
-		rdbtnNhnVin.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		rdbtnNhnVin.setBounds(165, 0, 88, 29);
-		rdbtnNhnVin.setBackground(Color.WHITE);
-		panel_1.add(rdbtnNhnVin);
+		rdoLoginAdmin = new JRadioButton("Nhân viên");
+		buttonGroup.add(rdoLoginAdmin);
+		rdoLoginAdmin.setSelected(true);
+		rdoLoginAdmin.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdoLoginAdmin.setBounds(165, 0, 88, 29);
+		rdoLoginAdmin.setBackground(Color.WHITE);
+		panel_1.add(rdoLoginAdmin);
 		
 		rdbtnKhch = new JRadioButton("Khách");
 		buttonGroup.add(rdbtnKhch);
@@ -280,7 +280,7 @@ public class LoginJFrame extends JDialog
 					try {	
 						admin = adminDao.findByUsername(username); 
 						user = userDao.findByUser(username);
-						if (rdbtnNhnVin.isSelected() == true) 
+						if (rdoLoginAdmin.isSelected() == true) 
 						{
 							if (admin != null) 
 							{
@@ -472,7 +472,10 @@ public class LoginJFrame extends JDialog
 						else
 						{
 							dispose();
-							showMainJFrame();
+							if (rdoLoginAdmin.isSelected())
+								showMainJFrame();
+							else
+								showUserJFrame();
 							break;
 						}
 					}
@@ -492,15 +495,22 @@ public class LoginJFrame extends JDialog
 		mainJFrame.setVisible(true);
 	}
 	
+	public void showUserJFrame()
+	{
+		
+	}
+	
 	//Goi ham nay khi login thanh cong
 	public void active()
 	{
-		if (rdbtnNhnVin.isSelected() == true) {
+		if (rdoLoginAdmin.isSelected() == true) {
 			lblWelcomeName.setText(admin.getFullname());
 			AccountSave.setAdmin(admin);
 			animationWelcome();
 			runProcessBar();
-		} else {
+		} 
+		else
+		{
 			lblWelcomeName.setText(user.getFullname());
 			AccountSave.setUser(user);
 			animationWelcome();
