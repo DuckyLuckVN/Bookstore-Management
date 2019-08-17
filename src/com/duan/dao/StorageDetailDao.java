@@ -92,6 +92,17 @@ public class StorageDetailDao
 		
 	}
 	
+	//Xóa row có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
+	public static boolean delete(int StorageId, String book_id) throws SQLException
+	{
+		String sql = "DELETE FROM STORAGE_DETAIL WHERE storage_id=? AND book_id=?";
+		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, StorageId, book_id);
+		
+		int count = pre.executeUpdate();
+		return count > 0;
+		
+	}
+	
 	//Tìm và trả về model StorageDetail có id = id truyền vào.
 	public static StorageDetail findById(int storageId) throws SQLException
 	{

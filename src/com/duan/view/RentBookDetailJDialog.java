@@ -343,7 +343,7 @@ public class RentBookDetailJDialog extends JDialog {
 				double totalCostExpiration = totalDayExpiration * rentBook.getCostExpiration() * RentBookDetailDAO.getTotalBookRented(rentBook.getId());
 				lblTotalCostExpiration.setText(DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol() + " (" + totalDayExpiration + " ngày)");
 			}
-			else if (DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
+			else if (rentBook.getStatus() == 1 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
 			{
 				pnlTotalCost.add(pnlTotalCostExpiration, BorderLayout.EAST);
 				

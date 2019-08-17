@@ -101,7 +101,7 @@ public class BookDetailJDialog extends JDialog {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 669, 556);
+		setBounds(100, 100, 669, 601);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -114,7 +114,7 @@ public class BookDetailJDialog extends JDialog {
 		contentPane.add(lblImage);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBorder(new TitledBorder(null, "Th\u00F4ng tin v\u1EC1 s\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_3.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u00F4ng tin v\u1EC1 s\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel_3.setBounds(298, 11, 355, 365);
 		contentPane.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
@@ -297,8 +297,8 @@ public class BookDetailJDialog extends JDialog {
 		item9.add(lblChoThue);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		scrollPane.setBounds(10, 387, 643, 97);
+		scrollPane.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		scrollPane.setBounds(10, 384, 643, 149);
 		contentPane.add(scrollPane);
 		
 		txtIntroduce = new JTextArea();
@@ -314,7 +314,7 @@ public class BookDetailJDialog extends JDialog {
 		lblGhiCh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblGhiCh.setForeground(Color.DARK_GRAY);
 		lblGhiCh.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblGhiCh.setBounds(10, 494, 56, 17);
+		lblGhiCh.setBounds(10, 544, 56, 17);
 		contentPane.add(lblGhiCh);
 		
 		txtDescription = new JTextField();

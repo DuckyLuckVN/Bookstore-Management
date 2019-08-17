@@ -95,11 +95,11 @@ public class StorageDAO
 	{
 		if (update(storage))
 		{
-			//Xóa hết các dữ liệu detail cũ, và insert cái mới từ listProduct vào
-			StorageDetailDao.delete(storage.getId());
 			
 			for (BookProduct p : listProduct)
 			{
+				//Xóa hết các dữ liệu detail cũ, và insert cái mới từ listProduct vào
+				StorageDetailDao.delete(storage.getId(), p.getBook().getId());
 				StorageDetail detail = new StorageDetail(storage.getId(), p.getBook().getId(), p.getAmount(), p.getPrice());
 				StorageDetailDao.insert(detail);
 			}

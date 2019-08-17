@@ -247,9 +247,7 @@ public class AdminJFrame extends JFrame {
 		btnDelete = new JButton(" Xóa");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(contentPane, "Bạn thực sự muốn xóa tài khoản này?", 
-						"Quản lý người dùng", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE)== JOptionPane.YES_NO_OPTION) 
+				if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn thực sự muốn xóa tài khoản này?")) 
 				{
 					delete();
 					loadTable();

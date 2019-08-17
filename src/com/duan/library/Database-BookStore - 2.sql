@@ -247,9 +247,9 @@ VALUES	(100,'GH12',3,200000),
 		(101,'JH42', 2, 300000)
 GO
 
-INSERT INTO dbo.RENTBOOK(user_id , admin_id, cost_rent, cost_expiration, expiration_day, created_date ,status)
-VALUES  (100, 101, 5000, 1000, 7, GETDATE() , 0),
-		(101, 103, 5000, 1000, 7, GETDATE() , 1)
+INSERT INTO dbo.RENTBOOK(user_id , admin_id, cost_rent, cost_expiration, expiration_day, created_date, returned_date, status)
+VALUES  (100, 101, 5000, 1000, 7, GETDATE() , NULL, 0),
+		(101, 103, 5000, 1000, 7, GETDATE() , GETDATE(), 1)
 GO
 
 INSERT INTO RENTBOOK_DETAIL (rentbook_id , book_id , amount, price)
@@ -257,6 +257,7 @@ VALUES	(100,'GH12',3,300000),
 		(101,'JH42',4,400000),
 		(101,'GH12',2,400000)
 GO
+
 
 INSERT INTO dbo.STORAGE( admin_id, description, created_date)
 VALUES  ( 101, N'Không ghi chú gì hết', GETDATE())
@@ -601,12 +602,20 @@ AS
 BEGIN
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @amount_insertd INT
+	DECLARE cs CURSOR FOR SELECT Inserted.book_id, Inserted.amount FROM Inserted
+	
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id, @amount_insertd
 
-	--Lấy ra mã sách và số lượng insert
-	SELECT @book_id = Inserted.book_id, @amount_insertd = Inserted.amount FROM Inserted
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Giảm trừ số lượng đã insert vào số lượng sách đang có
+		UPDATE dbo.BOOK SET amount = (amount - @amount_insertd) WHERE id = @book_id
 
-	--Giảm trừ số lượng đã insert vào số lượng sách đang có
-	UPDATE dbo.BOOK SET amount = (amount - @amount_insertd) WHERE id = @book_id
+		--Di chuyển tới dòng tiếp theo
+		FETCH NEXT FROM cs INTO @book_id, @amount_insertd
+	END
+
 END
 GO
 
@@ -617,44 +626,19 @@ AS
 BEGIN
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @amount_deleted INT
+	DECLARE cs CURSOR FOR SELECT Deleted.book_id, Deleted.amount FROM Deleted
+	OPEN cs
 
-	--Lấy ra mã sách và số lượng insert
-	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
+	FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Tăng số lượng từ bảng đã xóa vào số lượng sách đang có
+		UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
+		FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+	END
 
-	--Tăng số lượng từ bảng đã xóa vào số lượng sách đang có
-	UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
-END
-GO
-
---Gọi khi bảng STORAGE_DETAIL có INSERT
-CREATE TRIGGER tg_InsertStorageDetail ON dbo.STORAGE_DETAIL
-FOR INSERT
-AS
-BEGIN
-	DECLARE @book_id VARCHAR(50)
-	DECLARE @amount_insertd INT
-
-	--Lấy ra mã sách và số lượng insert
-	SELECT @book_id = Inserted.book_id, @amount_insertd = Inserted.amount FROM Inserted
-
-	--Thêm số lượng đã insert vào số lượng sách đang có
-	UPDATE dbo.BOOK SET amount = (amount + @amount_insertd) WHERE id = @book_id
-END
-GO
-
---Gọi khi bảng STORAGE_DETAIL có delete
-CREATE TRIGGER tg_DeleteStorageDetail ON dbo.STORAGE_DETAIL
-FOR DELETE
-AS
-BEGIN
-	DECLARE @book_id VARCHAR(50)
-	DECLARE @amount_deleted INT
-
-	--Lấy ra mã sách và số lượng insert
-	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
-
-	--Giảm số lượng từ bảng đã xóa vào số lượng sách đang có
-	UPDATE dbo.BOOK SET amount = (amount - @amount_deleted) WHERE id = @book_id
+	CLOSE cs
+	DEALLOCATE cs	
 END
 GO
 
@@ -665,12 +649,22 @@ AS
 BEGIN
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @amount_inserted INT
+	DECLARE cs CURSOR FOR SELECT Inserted.book_id, Inserted.amount FROM Inserted
+	OPEN cs
 
-	--Lấy ra mã sách và số lượng insert
-	SELECT @book_id = Inserted.book_id, @amount_inserted = Inserted.amount FROM Inserted
+	FETCH NEXT FROM cs INTO @book_id, @amount_inserted
 
-	--Giảm số lượng sách đang có dựa vào số lượng sách thuê đã insert
-	UPDATE dbo.BOOK SET amount = (amount  - @amount_inserted) WHERE id = @book_id
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Giảm số lượng sách đang có dựa vào số lượng sách thuê đã insert
+		UPDATE dbo.BOOK SET amount = (amount  - @amount_inserted) WHERE id = @book_id
+
+		--Đi tới dòng tiếp theo
+		FETCH NEXT FROM cs INTO @book_id, @amount_inserted
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
 END
 GO
 
@@ -681,28 +675,41 @@ AS
 BEGIN
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @amount_deleted INT
+	DECLARE @rentbook_id INT
+	DECLARE @status INT
+	DECLARE cs CURSOR FOR SELECT Deleted.book_id, Deleted.amount FROM Deleted
+	
+	-- Nếu xóa chi tiết của đơn thuê đã trả rồi thì ko xử lý nữa
+	SELECT @status = status FROM dbo.RENTBOOK WHERE id = @rentbook_id
+	IF (@status = 1)
+		ROLLBACK
 
-	--Lấy ra mã sách và số lượng delete
-	SELECT @book_id = Deleted.book_id, @amount_deleted = Deleted.amount FROM Deleted
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id, @amount_deleted
 
-	--tăng số lượng sách đang có dựa vào số lượng sách thuê đã delete
-	UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--tăng số lượng sách đang có dựa vào số lượng sách thuê đã delete
+		UPDATE dbo.BOOK SET amount = (amount + @amount_deleted) WHERE id = @book_id
+
+		--Di chuyển tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
 END
 GO
 
 --Gọi khi bảng RENTBOOK có update status = 1 => đã trả sách
 CREATE TRIGGER tg_updateRentBook ON dbo.RENTBOOK
-FOR INSERT
+FOR UPDATE
 AS
 BEGIN
 	DECLARE @status INT
 	DECLARE @rentbook_id INT
-
-	DECLARE @tblRentBookDetail TABLE
-	(
-		book_id VARCHAR(50),
-		amount INT
-	)
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount INT
 
 	--Lấy ra mã sách và số lượng insert
 	SELECT @status = @status, @rentbook_id = @rentbook_id FROM Inserted
@@ -710,8 +717,123 @@ BEGIN
 	--Mã status = 1 => đã trả sách
 	IF (@status = 1)
 	BEGIN
-		INSERT INTO @tblRentBookDetail SELECT book_id, amount FROM dbo.RENTBOOK_DETAIL WHERE rentbook_id = @rentbook_id
+		DECLARE cs CURSOR FOR SELECT dt.book_id, dt.amount 
+		FROM dbo.RENTBOOK_DETAIL dt WHERE rentbook_id = @rentbook_id
+
+		OPEN cs
+		FETCH NEXT FROM cs INTO @book_id, @amount
+
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			--Lấy số lượng trong chi tiết + ngược lại vào số lượng sách đang có
+			UPDATE dbo.BOOK SET amount = (amount + @amount) WHERE id = @book_id
+
+			--Duyệt tiếp
+			FETCH NEXT FROM cs INTO @book_id, @amount
+		END
 	END
+END
+GO
+
+--Gọi khi bảng BOOK_LOST_DETAIL có insert	
+CREATE TRIGGER tg_insertBookLostDetail ON dbo.BOOK_LOST_DETAIL
+FOR INSERT
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_inserted INT
+	DECLARE cs CURSOR FOR SELECT Inserted.book_id, Inserted.amount FROM Inserted
+	
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id, @amount_inserted
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Giảm số lượng sách đang có dựa vào số lượng sách mất đã insert
+		UPDATE dbo.BOOK SET amount = (amount  - @amount_inserted) WHERE id = @book_id
+		
+		--Next tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @book_id, @amount_inserted  
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
+END
+GO
+
+--Gọi khi bảng BOOK_LOST_DETAIL có delete	
+CREATE TRIGGER tg_deleteBookLostDetail ON dbo.BOOK_LOST_DETAIL
+FOR DELETE
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_deleted INT
+	DECLARE cs CURSOR FOR SELECT Deleted.book_id, Deleted.amount FROM Deleted
+
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--tăng số lượng sách đang có dựa vào số lượng sách mất đã deleted
+		UPDATE dbo.BOOK SET amount = (amount  + @amount_deleted) WHERE id = @book_id
+
+		--Next tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
+END
+GO
+
+--Gọi khi bảng STORAGE_DETAIL có INSERT
+CREATE TRIGGER tg_InsertStorageDetail ON dbo.STORAGE_DETAIL 
+FOR INSERT 
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_insertd INT
+
+	--Lấy ra mã sách và số lượng insert
+	Declare cs Cursor
+		FOR SELECT Inserted.book_id, Inserted.amount FROM Inserted
+	Open cs
+	Fetch next from cs INTO @book_id, @amount_insertd
+	While @@FETCH_STATUS = 0
+	BEGIN
+		--Thêm số lượng đã insert vào số lượng sách đang có
+		UPDATE dbo.BOOK SET amount = (amount + @amount_insertd) WHERE id = @book_id
+		
+		-- Next dòng tiếp theo
+		Fetch next from cs INTO @book_id, @amount_insertd
+	END
+	close cs -- đóng con trỏ
+	deallocate cs -- hủy bộ nhớ
+END
+GO
+
+--Gọi khi bảng STORAGE_DETAIL có delete
+CREATE TRIGGER tg_DeleteStorageDetail ON dbo.STORAGE_DETAIL
+FOR DELETE
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @amount_deleted INT
+	DECLARE cs CURSOR FOR SELECT Deleted.book_id, Deleted.amount FROM Deleted
+
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Giảm số lượng từ bảng đã xóa vào số lượng sách đang có
+		UPDATE dbo.BOOK SET amount = (amount - @amount_deleted) WHERE id = @book_id
+		--Di chuyển tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @book_id, @amount_deleted
+	END
+	CLOSE cs
+	DEALLOCATE cs
 END
 GO
 
@@ -743,4 +865,28 @@ DELETE FROM dbo.RENTBOOK
 261aa
 
 PRINT DATEDIFF(DAY, '3/1/2011', '3/1/2011')
+
+UPDATE dbo.BOOK SET amount = 0
+DELETE FROM dbo.STORAGE_DETAIL WHERE storage_id = 103 
+GO
+
+SELECT * FROM dbo.BOOK
+SELECT * FROM dbo.ORDER_DETAIL
+
+SELECT * FROM dbo.STORAGE
+SELECT * FROM dbo.STORAGE_DETAIL
+
+
+INSERT dbo.STORAGE( admin_id ,description ,created_date)
+VALUES  ( 101 , N'test' , GETDATE() )
+
+INSERT dbo.STORAGE_DETAIL( storage_id, book_id, amount, price )
+VALUES  ( 103, 'GH12', 10,  100000 )
+
+INSERT dbo.STORAGE_DETAIL( storage_id, book_id, amount, price )
+VALUES	( 103, 'JH42', 10,  100000 ),
+		( 103, 'GH12', 10,  100000 )
 */
+
+
+

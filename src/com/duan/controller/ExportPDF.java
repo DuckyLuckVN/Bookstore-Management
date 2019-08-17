@@ -491,7 +491,7 @@ public class ExportPDF
 			tblList.addCell(header2);
 			
 			//-Header 3 - Giá
-			PdfPCell header3 = new PdfPCell(new Paragraph("Giá", fHeaderList));
+			PdfPCell header3 = new PdfPCell(new Paragraph("Giá bán lúc thuê", fHeaderList));
 			header3.setHorizontalAlignment(Element.ALIGN_CENTER);
 			header3.setBackgroundColor(BaseColor.DARK_GRAY);
 			header3.setPadding(8);

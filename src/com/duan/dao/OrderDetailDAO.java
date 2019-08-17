@@ -74,6 +74,15 @@ public class OrderDetailDAO
         return count > 0;
     }
     
+    public static boolean delete(int order_id, String book_id) throws SQLException
+    {
+        String sql = "DELETE FROM ORDER_DETAIL Where order_id = ? AND book_id = ?";
+        
+        PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, order_id, book_id);
+        int count = pre.executeUpdate();
+        return count > 0;
+    }
+    
     //Trả về danh sách các sách và số lượng, giá dựa vào mã số hóa đơn @order_id
     public static List<BookProduct> getListProducts(int order_id) throws SQLException
     {

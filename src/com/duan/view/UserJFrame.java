@@ -1,27 +1,40 @@
 package com.duan.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.BevelBorder;
-import java.awt.Font;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.common.JDateChooserCustom;
@@ -29,37 +42,8 @@ import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
-import com.duan.helper.DateHelper;
-import com.duan.helper.SettingSave;
 import com.duan.model.User;
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
-
-import java.awt.GridLayout;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
-import java.util.regex.Pattern;
-import java.awt.event.ActionEvent;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JFormattedTextField;
 
 public class UserJFrame extends JFrame {
 
@@ -328,7 +312,7 @@ public class UserJFrame extends JFrame {
 				{
 					if (index < 0) 
 					{
-						JOptionPane.showMessageDialog(null, "Chưa chọn user để cập nhật");
+						MessageOptionPane.showAlertDialog(null, "Chưa chọn user để cập nhật", MessageOptionPane.ICON_NAME_WARNING);
 						return;
 					}
 					update();
@@ -348,8 +332,8 @@ public class UserJFrame extends JFrame {
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa?", "Thông báo", JOptionPane.YES_NO_OPTION);
-				if (luachon == JOptionPane.YES_OPTION) 
+				boolean isConfirm = MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa?", MessageOptionPane.ICON_NAME_QUESTION);
+				if (isConfirm) 
 				{
 					try {
 						delete();
@@ -556,7 +540,7 @@ public class UserJFrame extends JFrame {
 			if (dao.insert(user)) 
 			{
 				list.add(user);
-				JOptionPane.showMessageDialog(this, "Thêm thành công User có tên : " + user.getFullname());
+				MessageOptionPane.showAlertDialog(this, "Thêm thành công User có tên : " + user.getFullname(), MessageOptionPane.ICON_NAME_SUCCESS);
 				loadListToUser();
 				
 			}

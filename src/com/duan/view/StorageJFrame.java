@@ -36,6 +36,7 @@ import com.duan.model.Admin;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
 import com.duan.model.Storage;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import java.awt.Toolkit;
 import javax.swing.JMenuBar;
@@ -69,6 +70,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JSplitPane;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.JTextArea;
 
 public class StorageJFrame extends JFrame {
@@ -229,7 +232,7 @@ public class StorageJFrame extends JFrame {
 						getDataToList();
 						fillToTableStorage();
 						
-						JOptionPane.showMessageDialog(contentPane, "Cập nhật đơn nhập kho '" + listStorage.get(indexSelect).getId() + "' thành công!");
+						MessageOptionPane.showAlertDialog(contentPane, "Cập nhật đơn nhập kho thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 					}
 				} 
 				catch (SQLException e1) 
@@ -251,16 +254,14 @@ public class StorageJFrame extends JFrame {
 			{
 				try 
 				{
-					if (SwingHelper.showConfirm(contentPane, "Bạn có chắc muốn xóa đơn nhập kho này không?"))
+					if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa đơn nhập kho này không?"))
 					{
 						if(deleteStorage())
 						{
-							JOptionPane.showMessageDialog(contentPane, "Xóa đơn nhập kho số '" + listStorage.get(indexSelect).getId() + "' thành công!");
+							MessageOptionPane.showAlertDialog(contentPane, "Xóa đơn nhập kho số '" + listStorage.get(indexSelect).getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 							getDataToList();
 							fillToTableStorage();
-							
-							if (indexSelect != -1)
-								showDetail();
+							showDetail();
 						}
 					}
 				} 
@@ -302,26 +303,11 @@ public class StorageJFrame extends JFrame {
 		
 		tblStorage = new JTableRed();
 		tblStorage.setShowHorizontalLines(true);
-		tblStorage.addKeyListener(new KeyAdapter() {
+		tblStorage.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
 			@Override
-			public void keyReleased(KeyEvent e) 
-			{
+			public void valueChanged(ListSelectionEvent arg0) {
 				eventTableStorageSelectRow();
-			}
-		});
-		tblStorage.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) 
-			{
-				eventTableStorageSelectRow();
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) 
-			{
-				if (e.getClickCount() >= 2)
-				{
-					//showBookDetail();
-				}
 			}
 		});
 		tblStorage.setRowHeight(35);
@@ -466,6 +452,14 @@ public class StorageJFrame extends JFrame {
 	//Lấy thông tin đã chọn đưới table Storage hiển thị lên form
 	public void showDetail()
 	{
+		if (indexSelect == -1)
+		{
+			clearForm();
+			lockForm();
+			setControllModeTo_Nothing();
+			return;
+		}
+		
 		Storage storage;
 		try 
 		{
@@ -537,6 +531,8 @@ public class StorageJFrame extends JFrame {
 				else
 				{
 					setControllModeTo_Nothing();
+					clearForm();
+					lockForm();
 				}
 			}
 		}
@@ -677,10 +673,10 @@ public class StorageJFrame extends JFrame {
 	//Chỉ gọi khi không có dòng nào trong bảng tblBook được chọn
 	public void setControllModeTo_Nothing()
 	{
-		btnSave.setEnabled(true);
+		btnSave.setEnabled(false);
 		
 		btnDelete.setEnabled(false);
-		btnNew.setEnabled(false);
+		btnNew.setEnabled(true);
 		btnUpdate.setEnabled(false);
 		
 	}
