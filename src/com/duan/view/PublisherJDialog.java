@@ -13,8 +13,15 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.common.JTableBlue;
+import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.AdminDAO;
+import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
+import com.duan.model.Admin;
+import com.duan.model.Category;
 import com.duan.model.Location;
+import com.duan.model.Publisher;
 
 import net.miginfocom.layout.LC;
 
@@ -48,23 +55,25 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class PublisherJDialog extends JDialog {
-
+	String head[] = {"MÃ SỐ","TÊN NXB","SỐ ĐT","EMAIL","ĐỊA CHỈ","NGÀY TẠO"};
+    DefaultTableModel tblModel = new DefaultTableModel(head, 0);
 	private JPanel contentPane;
 	private JTableBlue tblLocation;
-	private JTextField txtMaKeSach;
-	private JTextField txtTenKe;
-	private JTextField txtSucChua;
+	private JTextField txtTenNXB;
+	private JTextField txtSDT;
+	private JTextField txtEmail;
 	
-	LocationDAO dao;
+	PublisherDAO dao;
 	ArrayList<Location> list = new ArrayList<>();
-	DefaultTableModel model;
 	int index = -1;
-	private JTextArea txtGhiChu;
+	private JTextArea txtDiaChi;
 	JButton btnThm;
 	JButton btnCpNht;
 	JButton btnXa;
@@ -131,17 +140,17 @@ public class PublisherJDialog extends JDialog {
 		lblMThLoi.setBounds(10, 16, 87, 25);
 		panel.add(lblMThLoi);
 		
-		txtMaKeSach = new JTextField();
-		txtMaKeSach.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtMaKeSach.setBounds(107, 16, 264, 25);
-		panel.add(txtMaKeSach);
-		txtMaKeSach.setColumns(10);
+		txtTenNXB = new JTextField();
+		txtTenNXB.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtTenNXB.setBounds(107, 16, 264, 25);
+		panel.add(txtTenNXB);
+		txtTenNXB.setColumns(10);
 		
-		txtTenKe = new JTextField();
-		txtTenKe.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtTenKe.setColumns(10);
-		txtTenKe.setBounds(107, 52, 264, 25);
-		panel.add(txtTenKe);
+		txtSDT = new JTextField();
+		txtSDT.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtSDT.setColumns(10);
+		txtSDT.setBounds(107, 52, 264, 25);
+		panel.add(txtSDT);
 		
 		JLabel lblTnThLoi = new JLabel("Số điện thoại:");
 		lblTnThLoi.setFont(new Font("Tahoma", Font.PLAIN, 13));
@@ -153,33 +162,33 @@ public class PublisherJDialog extends JDialog {
 		lblGhiCh.setBounds(10, 124, 87, 25);
 		panel.add(lblGhiCh);
 		
-		txtGhiChu = new JTextArea();
-		txtGhiChu.setBorder(new LineBorder(SystemColor.controlShadow));
-		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtGhiChu.setBounds(107, 124, 264, 62);
-		panel.add(txtGhiChu);
+		txtDiaChi = new JTextArea();
+		txtDiaChi.setBorder(new LineBorder(SystemColor.controlShadow));
+		txtDiaChi.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtDiaChi.setBounds(107, 124, 264, 62);
+		panel.add(txtDiaChi);
 		
 		JLabel lblSLngLu = new JLabel("Email:");
 		lblSLngLu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblSLngLu.setBounds(10, 88, 87, 25);
 		panel.add(lblSLngLu);
 		
-		txtSucChua = new JTextField();
-		txtSucChua.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtSucChua.setColumns(10);
-		txtSucChua.setBounds(107, 88, 264, 25);
-		panel.add(txtSucChua);
+		txtEmail = new JTextField();
+		txtEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtEmail.setColumns(10);
+		txtEmail.setBounds(107, 88, 264, 25);
+		panel.add(txtEmail);
+		
+		JLabel lblMT = new JLabel("Mô tả:");
+		lblMT.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblMT.setBounds(10, 197, 87, 25);
+		panel.add(lblMT);
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		textArea.setBorder(new LineBorder(SystemColor.controlShadow));
 		textArea.setBounds(107, 197, 264, 62);
 		panel.add(textArea);
-		
-		JLabel lblMT = new JLabel("Mô tả:");
-		lblMT.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblMT.setBounds(10, 197, 87, 25);
-		panel.add(lblMT);
 		
 		JPanel pnlControll = new JPanel();
 		pnlControll.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -188,6 +197,11 @@ public class PublisherJDialog extends JDialog {
 		pnlControll.setLayout(new GridLayout(0, 1, 0, 10));
 		
 		btnThm = new JButton(" Lưu");
+		btnThm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				insert();
+			}
+		});
 		
 		btnMi = new JButton(" Mới");
 		btnMi.addActionListener(new ActionListener() {
@@ -207,34 +221,146 @@ public class PublisherJDialog extends JDialog {
 		btnThm.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Accept.png")));
 		
 		btnCpNht = new JButton("Cập nhật");
+		btnCpNht.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (checkForm()) 
+				{
+					update();
+					clearForm();
+					lockForm();
+					setControllMode_Nothing();
+				}
+			}
+		});
 		pnlControll.add(btnCpNht);
 		btnCpNht.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Notes.png")));
 		btnCpNht.setHorizontalAlignment(SwingConstants.LEFT);
 		
 		btnXa = new JButton("Xóa");
+		btnXa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa ? ","Thông báo",JOptionPane.YES_NO_OPTION);
+					if (luachon == JOptionPane.YES_OPTION) 
+					{
+						delete();
+						loadTable();
+					}
+				}
+		});
 		pnlControll.add(btnXa);
 		btnXa.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_delete_32px_1.png")));
 		btnXa.setHorizontalAlignment(SwingConstants.LEFT);
 		setLocationRelativeTo(getOwner());
-
 	}
 	
+PublisherDAO publisherDao = new PublisherDAO();
+	//ĐỔ DỮ LIỆU VÀO PUBLISHER VÀO JTABLE
+	private void loadTable() {
+		DefaultTableModel model = (DefaultTableModel) tblLocation.getModel();
+		model.setRowCount(0);
+		try {
+			List<Publisher> list = publisherDao.getAll();
+			for (Publisher publisher : list) {
+				Object[] rowObjects = 
+					{
+						publisher.getId(),
+						publisher.getName(),
+						publisher.getPhoneNumber(),
+						publisher.getEmail(),
+						publisher.getAddress(),
+					    publisher.getIntroduct(),
+					    publisher.getCreatedDate()
+					};
+				model.addRow(rowObjects);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	Publisher getModel() {
+		Publisher publisher = new Publisher();
+		try {
+			if(index != -1) {
+				int id = Integer.parseInt(tblLocation.getValueAt(tblLocation.getSelectedRow(), 0).toString());
+				publisher = PublisherDAO.findByID(id);
+			}
+			publisher.setName(txtTenNXB.getText());
+			publisher.setPhoneNumber(txtSDT.getText());
+			publisher.setEmail(txtEmail.getText());
+			publisher.setAddress(txtDiaChi.getText());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
+	private void delete() {
+	     Publisher pub = getModel();
+		int id = Integer.parseInt(String.valueOf(tblLocation.getValueAt(this.index, 0)));
+		try {
+			PublisherDAO.delete(pub ,id);
+			clearForm();
+			loadTable();
+			setControllMode_Nothing();
+			lockForm();
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa dữ liệu thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			MessageOptionPane.showAlertDialog(contentPane, "Xóa dữ liệu thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+		}
+	}
 
-	
+	private void update() {
+		Publisher pub = getModel();
+		int id = Integer.parseInt(String.valueOf(tblLocation.getValueAt(this.index, 0)));
+        try {
+			boolean isSuccess = PublisherDAO.update(pub, id);
+           if(isSuccess) {
+        	    clearForm();
+				loadTable();
+				setControllMode_Edit();
+				
+				MessageOptionPane.showAlertDialog(contentPane, "Cập nhật dữ liệu thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+
+           }
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			MessageOptionPane.showAlertDialog(contentPane, "Cập nhật dữ liệu thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+		}
+		
+			}
+
+	public void insert() {
+	     Publisher pub = getModel();
+		try {
+			boolean isSuccess = PublisherDAO.insert(pub);
+			if(isSuccess) {
+				clearForm();
+				loadTable();
+				setControllMode_Nothing();
+				lockForm();
+				MessageOptionPane.showAlertDialog(contentPane, "Thêm dữ liệu thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			}
+		} catch (Exception e) {
+			MessageOptionPane.showAlertDialog(contentPane, "Thêm dữ liệu thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+			e.printStackTrace();
+		}
+	}
 	public void lockForm()
 	{
-		txtMaKeSach.setEditable(false);
-		txtTenKe.setEditable(false);
-		txtSucChua.setEditable(false);
-		txtGhiChu.setEditable(false);
+		txtTenNXB.setEditable(false);
+		txtSDT.setEditable(false);
+		txtEmail.setEditable(false);
+		txtDiaChi.setEditable(false);
 	}
 	public void unlockForm() 
 	{
-		txtMaKeSach.setEditable(true);
-		txtTenKe.setEditable(true);
-		txtSucChua.setEditable(true);
-		txtGhiChu.setEditable(true);
+		txtTenNXB.setEditable(true);
+		txtSDT.setEditable(true);
+		txtEmail.setEditable(true);
+		txtDiaChi.setEditable(true);
 	}
 	public void setControllMode_Nothing()
 	{
@@ -259,10 +385,48 @@ public class PublisherJDialog extends JDialog {
 		btnCpNht.setEnabled(false);
 	}
 	public void clearForm()
-	{
-		txtGhiChu.setText("");
-		txtMaKeSach.setText("");
-		txtSucChua.setText("");
-		txtTenKe.setText("");
+	{   
+		txtDiaChi.setText("");
+		txtTenNXB.setText("");
+		txtEmail.setText("");
+		txtSDT.setText("");
 	}
+	// KIỂM TRA CÁC ĐIỀU KIỆN CỦA FROM
+	public boolean checkForm() {
+		String msg = "Đã có lỗi : \n";
+		boolean loiRong = false;
+		String pattern = "0[0-9]{10}";
+		String Email = "\\w+@\\w+\\.w+";
+		if (txtTenNXB.getText().equals("")) 
+		{
+			msg+="Tên nhà xuất bản không được để trống ! \n";
+			loiRong = true;
+		}
+		if (txtEmail.getText().equals("")) 
+		{
+			msg+="Email không được để trống !\n";
+			loiRong=true;
+		}
+		try {
+			if (txtSDT.getText().equals("")) 
+			{
+				msg+="Số điện thoại không được để trống !\n";
+			}
+			else if (txtSDT.getText().matches(pattern)) 
+			{
+				msg+="Số điện thoại phải đủ 10 số ";
+				loiRong = true;
+			}
+		} catch (NumberFormatException e) {
+			msg+="Số điện thoại không đúng dịnh dạng !";
+			loiRong = true;
+		}
+		if (loiRong == true) 
+		{
+			JOptionPane.showMessageDialog(this, msg);
+			return false;
+		}	
+		return true;
+	}
+
 }

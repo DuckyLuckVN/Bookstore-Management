@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.naming.spi.DirStateFactory.Result;
 
 import com.duan.helper.JDBCHelper;
+import com.duan.model.Admin;
 import com.duan.model.Publisher;
 
 public class PublisherDAO 
@@ -71,4 +72,14 @@ public class PublisherDAO
 		Date createdDate = rs.getDate(7);
 		return new Publisher(id, name, phoneNumber, email, address, introduct, createdDate);
 	}
+	public static Publisher findByID(int id) throws SQLException
+    {
+        String sql = "SELECT * FROM [PUBLISHER] Where id = ?";
+        ResultSet rs = JDBCHelper.executeQuery(sql, id);
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        return null;
+    }
 }

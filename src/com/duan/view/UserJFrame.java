@@ -24,9 +24,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+<<<<<<< Updated upstream
 import com.duan.custom.common.JDateChooserCustom;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.message.MessageOptionPane;
+=======
+import com.duan.custom.CustomJTableRed;
+>>>>>>> Stashed changes
 import com.duan.dao.UserDAO;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
@@ -141,6 +145,15 @@ public class UserJFrame extends JFrame {
 			}
 		});
 		txtsearch.setColumns(10);
+<<<<<<< Updated upstream
+=======
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+>>>>>>> Stashed changes
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -524,7 +537,7 @@ public class UserJFrame extends JFrame {
 		
 		if (rong == true) 
 		{
-			MessageOptionPane.showMessageDialog(this, thongbao, MessageOptionPane.ICON_NAME_WARNING);
+			JOptionPane.showMessageDialog(this, thongbao);
 			return false;
 		}
 		return true;
@@ -563,7 +576,7 @@ public class UserJFrame extends JFrame {
 		catch (SQLException e) {
 			if (e.getErrorCode() == 2627) 
 			{
-				MessageOptionPane.showMessageDialog(this, "ID này đã tồn tại!\n" + " Bạn cần Nhấn 'THÊM MỚI' để thêm USER mới", MessageOptionPane.ICON_NAME_WARNING);
+				JOptionPane.showMessageDialog(this, "ID này đã tồn tại!\n" + " Bạn cần Nhấn 'THÊM MỚI' để thêm USER mới");
 			}
 			// TODO Auto-generated catch block
 		}
@@ -600,7 +613,7 @@ public class UserJFrame extends JFrame {
 			if (dao.update(user, list.get(index).getId())) 
 			{
 				list.set(index, user);
-				MessageOptionPane.showAlertDialog(this, "Cập nhật thành công USER có mã : "+ list.get(index).getId(), MessageOptionPane.ICON_NAME_SUCCESS);
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công USER có mã : "+ list.get(index).getId());
 				fillToTable();
 				txtUsername.setText("");
 				txtPassword.setText("");
@@ -612,7 +625,6 @@ public class UserJFrame extends JFrame {
 			}
 		} catch (SQLException e) 
 		{
-			
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -627,7 +639,7 @@ public class UserJFrame extends JFrame {
 		{
 			if (dao.delete(list.get(index).getId())) 
 			{
-				MessageOptionPane.showAlertDialog(this, "Xóa thành công USER có mã : " + list.get(index).getId(), MessageOptionPane.ICON_NAME_SUCCESS);
+				JOptionPane.showMessageDialog(this, "Xóa thành công USER có mã : " + list.get(index).getId());
 				list.remove(index);
 				fillToTable();
 			}
