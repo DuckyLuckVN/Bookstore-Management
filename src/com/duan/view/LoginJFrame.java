@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.sql.SQLException;
 
+import javax.management.loading.PrivateClassLoader;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -67,8 +68,11 @@ public class LoginJFrame extends JDialog
 	
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
+	private JRadioButton rdbtnKhch;
+	private JRadioButton rdoLoginAdmin;
 	private JProgressBar proLoading;
 	private Admin admin;
+	private User user;
 	private JLabel lblWelcomeName;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -195,15 +199,15 @@ public class LoginJFrame extends JDialog
 		lblngNhpVi.setFont(new Font("Tahoma", Font.BOLD, 12));
 		panel_1.add(lblngNhpVi);
 		
-		JRadioButton rdbtnNhnVin = new JRadioButton("Nhân viên");
-		buttonGroup.add(rdbtnNhnVin);
-		rdbtnNhnVin.setSelected(true);
-		rdbtnNhnVin.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		rdbtnNhnVin.setBounds(165, 0, 88, 29);
-		rdbtnNhnVin.setBackground(Color.WHITE);
-		panel_1.add(rdbtnNhnVin);
+		rdoLoginAdmin = new JRadioButton("Nhân viên");
+		buttonGroup.add(rdoLoginAdmin);
+		rdoLoginAdmin.setSelected(true);
+		rdoLoginAdmin.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdoLoginAdmin.setBounds(165, 0, 88, 29);
+		rdoLoginAdmin.setBackground(Color.WHITE);
+		panel_1.add(rdoLoginAdmin);
 		
-		JRadioButton rdbtnKhch = new JRadioButton("Khách");
+		rdbtnKhch = new JRadioButton("Khách");
 		buttonGroup.add(rdbtnKhch);
 		rdbtnKhch.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		rdbtnKhch.setBounds(260, 0, 74, 29);
@@ -260,8 +264,9 @@ public class LoginJFrame extends JDialog
 		pnlForm.add(txtPassword);
 		
 		btnLogin = new JButton("Đăng Nhập");
-		AdminDAO dao = new AdminDAO();
-		
+		AdminDAO adminDao = new AdminDAO();
+		UserDAO userDao = new UserDAO();
+				
 		btnLogin = new JButton("Đăng Nhập");
 		btnLogin.addActionListener(new ActionListener() 
 		{
@@ -273,26 +278,53 @@ public class LoginJFrame extends JDialog
 					String username = txtUsername.getText();
 					String password = txtPassword.getText();
 					try {	
-						admin = dao.findByUsername(username); 
-						if (admin != null) 
+						admin = adminDao.findByUsername(username); 
+						user = userDao.findByUser(username);
+						if (rdoLoginAdmin.isSelected() == true) 
 						{
-							if (password.equals(admin.getPassword())) 
+							if (admin != null) 
 							{
-								AccountSave.setAdmin(admin);
-								MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-								active();
+								if (password.equals(admin.getPassword())) 
+								{
+									AccountSave.setAdmin(admin);
+									MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+									active();
+								}
+								else 
+								{
+									MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
+									txtPassword.requestFocus();
+								}
 							}
 							else 
 							{
-								MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
-								txtPassword.requestFocus();
+								MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
+								txtUsername.requestFocus();
+							}
+						} 
+						else
+						{
+							if (user != null) 
+							{
+								if (password.equals(user.getPassword())) 
+								{
+									AccountSave.setUser(user);
+									MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+									active();
+								}
+								else 
+								{
+									MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
+									txtPassword.requestFocus();
+								}
+							}
+							else 
+							{
+								MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
+								txtUsername.requestFocus();
 							}
 						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
-							txtUsername.requestFocus();
-						}
+						
 					} catch (Exception e2) 
 					{
 						e2.printStackTrace();
@@ -440,7 +472,10 @@ public class LoginJFrame extends JDialog
 						else
 						{
 							dispose();
-							showMainJFrame();
+							if (rdoLoginAdmin.isSelected())
+								showMainJFrame();
+							else
+								showUserJFrame();
 							break;
 						}
 					}
@@ -460,12 +495,27 @@ public class LoginJFrame extends JDialog
 		mainJFrame.setVisible(true);
 	}
 	
+	public void showUserJFrame()
+	{
+		
+	}
+	
 	//Goi ham nay khi login thanh cong
 	public void active()
 	{
-		lblWelcomeName.setText(admin.getFullname());
-		AccountSave.setAdmin(admin);
-		animationWelcome();
-		runProcessBar();
+		if (rdoLoginAdmin.isSelected() == true) {
+			lblWelcomeName.setText(admin.getFullname());
+			AccountSave.setAdmin(admin);
+			animationWelcome();
+			runProcessBar();
+		} 
+		else
+		{
+			lblWelcomeName.setText(user.getFullname());
+			AccountSave.setUser(user);
+			animationWelcome();
+			runProcessBar();
+		}
+		
 	}
 }
