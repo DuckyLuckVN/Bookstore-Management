@@ -30,6 +30,20 @@ public class RentBookDAO
         return list;
     }
     
+    //Tra ve danh sach model RentBook co user_id = id truyen vao
+    public static ArrayList<RentBook> getAllOfUser(int id) throws SQLException
+    {
+        ArrayList<RentBook> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK WHERE user_id = ?", id);
+
+        while (rs.next())
+        {
+        	RentBook e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+    }
+    
     public static ArrayList<RentBook> getAllReturned() throws SQLException
     {
         ArrayList<RentBook> list = new ArrayList<>();

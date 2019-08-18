@@ -397,9 +397,7 @@ public class OrderJFrame extends JFrame {
 		orderDetailJDialog.setDetailModel(order_id);
 		orderDetailJDialog.showDetail();
 		orderDetailJDialog.fillToTable();
-		
 		orderDetailJDialog.setVisible(true);
-		
 	}
 	
 	
