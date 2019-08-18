@@ -104,11 +104,11 @@ public class OrderDAO
     {
         if (findByID(order.getId()) != null)
         {
-        	//Xóa toàn bộ chi tiết cũ đi, sau đó cập nhật lại order, và thêm lại order chi tiết
-        	OrderDetailDAO.delete(order.getId());
         	update(order, order.getId());
         	for (BookProduct p : products)
         	{
+        		//Xóa toàn bộ chi tiết cũ đi, sau đó cập nhật lại order, và thêm lại order chi tiết
+        		OrderDetailDAO.delete(order.getId(), p.getBook().getId());
         		OrderDetail detail = new OrderDetail(order.getId(), p.getBook().getId(), p.getAmount(), p.getPrice());
         		OrderDetailDAO.insert(detail);
         	}

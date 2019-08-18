@@ -1,64 +1,56 @@
 package com.duan.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.border.EmptyBorder;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.BevelBorder;
 import java.awt.Font;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
-import com.duan.custom.common.JDateChooserCustom;
-import com.duan.custom.common.JTableRed;
-import com.duan.custom.message.MessageOptionPane;
-import com.duan.dao.UserDAO;
-import com.duan.helper.DateHelper;
-import com.duan.helper.SettingSave;
-import com.duan.model.User;
-import com.toedter.calendar.JCalendar;
-import com.toedter.calendar.JDateChooser;
-
 import java.awt.GridLayout;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.regex.Pattern;
-import java.awt.event.ActionEvent;
-import javax.swing.border.EtchedBorder;
-import javax.swing.JRadioButton;
+
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JFormattedTextField;
+import org.apache.commons.collections4.functors.TruePredicate;
+
+import com.duan.custom.common.JDateChooserCustom;
+import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
+import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.UserDAO;
+import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
+import com.duan.model.User;
+import com.toedter.calendar.JDateChooser;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class UserJFrame extends JFrame {
 
@@ -83,6 +75,8 @@ public class UserJFrame extends JFrame {
 	JButton btnCpNht;
 	JButton btnThem;
 	JButton btnXa;
+	private JLabel lblTrngThi;
+	private JComboBox cboActive;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -128,10 +122,10 @@ public class UserJFrame extends JFrame {
 		JPanel pnlController = new JPanel();
 		pnlController.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		
-		JLabel lblTmKim = new JLabel("Tìm kiếm");
+		JLabel lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		txtsearch = new JTextField();
+		txtsearch = new JTextFieldDark();
 		txtsearch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -141,38 +135,6 @@ public class UserJFrame extends JFrame {
 			}
 		});
 		txtsearch.setColumns(10);
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
-					.addGap(1))
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(lblTmKim)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
-					.addGap(392))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGap(36)))
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
-		);
 		
 		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -222,78 +184,6 @@ public class UserJFrame extends JFrame {
 		
 		rdoNu = new JRadioButton("Nữ");
 		buttonGroup.add(rdoNu);
-		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
-		gl_pnlForm.setHorizontalGroup(
-			gl_pnlForm.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnlForm.createSequentialGroup()
-					.addGap(8)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtBirthDay, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
-							.addGap(2)
-							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)))
-					.addGap(8))
-		);
-		gl_pnlForm.setVerticalGroup(
-			gl_pnlForm.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnlForm.createSequentialGroup()
-					.addGap(9)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtBirthDay, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtPhoneNum, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
-		);
-		pnlForm.setLayout(gl_pnlForm);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
 		JButton btnTaoMoi = new JButton("Tạo mới");
@@ -327,7 +217,7 @@ public class UserJFrame extends JFrame {
 				{
 					if (index < 0) 
 					{
-						JOptionPane.showMessageDialog(null, "Chưa chọn user để cập nhật");
+						MessageOptionPane.showAlertDialog(null, "Chưa chọn user để cập nhật", MessageOptionPane.ICON_NAME_WARNING);
 						return;
 					}
 					update();
@@ -347,8 +237,8 @@ public class UserJFrame extends JFrame {
 		btnXa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				int luachon = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa?", "Thông báo", JOptionPane.YES_NO_OPTION);
-				if (luachon == JOptionPane.YES_OPTION) 
+				boolean isConfirm = MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn xóa?", MessageOptionPane.ICON_NAME_QUESTION);
+				if (isConfirm) 
 				{
 					try {
 						delete();
@@ -392,11 +282,126 @@ public class UserJFrame extends JFrame {
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
-		contentPane.setLayout(gl_contentPane);
 		loadListToUser();
 		btnCpNht.setEnabled(false);
 		btnThem.setEnabled(false);
 		btnXa.setEnabled(false);
+		
+		lblTrngThi = new JLabel("Trạng thái:");
+		lblTrngThi.setFont(new Font("Tahoma", Font.BOLD, 14));
+		
+		cboActive = new JComboBox();
+		cboActive.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		cboActive.setModel(new DefaultComboBoxModel(new String[] {"Kích hoạt", "Khóa tài khoản"}));
+		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
+		gl_pnlForm.setHorizontalGroup(
+			gl_pnlForm.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlForm.createSequentialGroup()
+					.addGap(8)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtBirthDay, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+							.addGap(4))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addGap(2)
+							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+							.addComponent(lblTrngThi, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(cboActive, GroupLayout.PREFERRED_SIZE, 133, GroupLayout.PREFERRED_SIZE)))
+					.addGap(4))
+		);
+		gl_pnlForm.setVerticalGroup(
+			gl_pnlForm.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlForm.createSequentialGroup()
+					.addGap(9)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtBirthDay, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPhoneNum, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblTrngThi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addGap(2)
+							.addComponent(cboActive, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))))
+		);
+		pnlForm.setLayout(gl_pnlForm);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+					.addGap(6)
+					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblTmKim)
+					.addGap(10)
+					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE))
+				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 315, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
+		);
+		contentPane.setLayout(gl_contentPane);
 		btnTaoMoi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -440,7 +445,8 @@ public class UserJFrame extends JFrame {
 		model.setRowCount(0);
 		for (User user : list) 
 		{
-			Object[] rows = new Object[]{user.getId() , user.getUsername() , user.getPassword() , user.getFullname() , user.getDateOfBirth(), user.getEmail() , user.getPhoneNumber()};
+			String dateOfBirth = DateHelper.dateToString(user.getDateOfBirth(), SettingSave.getSetting().getDateFormat());
+			Object[] rows = new Object[]{user.getId() , user.getUsername() , user.getPassword() , user.getFullname() , dateOfBirth, user.getEmail() , user.getPhoneNumber()};
 			model.addRow(rows);
 		}
 	}
@@ -467,6 +473,8 @@ public class UserJFrame extends JFrame {
 		{
 			rdoNu.setSelected(true);
 		}
+		
+		cboActive.setSelectedIndex((user.isActive()) ? 0 : 1);
 		
 	}
 
@@ -541,6 +549,7 @@ public class UserJFrame extends JFrame {
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
 		boolean gioitinh = true;
+		boolean isActive = (cboActive.getSelectedIndex()==0) ? true : false;
 		if (gioitinh == true) 
 		{
 			rdoNam.setSelected(true);
@@ -549,13 +558,13 @@ public class UserJFrame extends JFrame {
 		{
 			rdoNu.setSelected(true);
 		}
-		user = new User(0,taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		user = new User(0,taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, isActive, new Date());
 		try 
 		{
 			if (dao.insert(user)) 
 			{
 				list.add(user);
-				JOptionPane.showMessageDialog(this, "Thêm thành công User có tên : " + user.getFullname());
+				MessageOptionPane.showAlertDialog(this, "Thêm thành công User có tên : " + user.getFullname(), MessageOptionPane.ICON_NAME_SUCCESS);
 				loadListToUser();
 				
 			}
@@ -585,6 +594,8 @@ public class UserJFrame extends JFrame {
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
 		boolean gioitinh = false;
+		boolean isActive = (cboActive.getSelectedIndex()==0) ? true : false;
+		
 		if (rdoNam.isSelected()) 
 		{
 			gioitinh = true;
@@ -594,7 +605,7 @@ public class UserJFrame extends JFrame {
 			gioitinh = false;
 		}
 		
-		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh,list.get(index).getCreatedDate() );
+		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, isActive,list.get(index).getCreatedDate() );
 		try 
 		{
 			if (dao.update(user, list.get(index).getId())) 
@@ -634,28 +645,17 @@ public class UserJFrame extends JFrame {
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			switch (e.getErrorCode()) 
+			{
+			case 547:
+				MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng này không thể xóa, hãy khóa tài khoản này lại nếu cần!", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+
+			default:
+				e.printStackTrace();
+				MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại! [ERROR CODE: " + e.getErrorCode() + "]", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+			}
 		}
 	}
-//	
-//	public void fillToTableSearch()
-//    {
-//		index = tblUser.getSelectedRow();
-//		
-//        
-//        model = (DefaultTableModel) tblUser.getModel();
-//        model.setRowCount(0);
-//        
-//        for (User user : list) 
-//        {
-//            boolean isFound = Pattern.compile("^(?i)[([\\w\\s][\\p{L}\\s])]*" + txtsearch.getText() + "[([\\w\\s][\\p{L}\\s])]*$", 
-//					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(user.getFullname()).matches();
-//            
-//            if (isFound) 
-//            {
-//                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};                
-//                model.addRow(rows);
-//            }
-//        }  
-//    }
 }

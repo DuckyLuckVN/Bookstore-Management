@@ -77,6 +77,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.Desktop;
+import javax.swing.border.LineBorder;
 
 public class BookJFrame extends JFrame{
 
@@ -284,7 +285,7 @@ public class BookJFrame extends JFrame{
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		scrollPane.setBorder(new TitledBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)), "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		pnlSelect = new JPanel();
 		
@@ -663,6 +664,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để insertBook
 	public void showInsertBook()
 	{
+		inserBookJFrame = new BookEditorJDialog();
+		inserBookJFrame.setLocationRelativeTo(this);
 		inserBookJFrame.setBookJFrame(this);
 		inserBookJFrame.setVisible(true);
 	}
@@ -670,6 +673,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để edit book
 	public void showEditorBook(Book book) throws SQLException
 	{
+		editorBookJDialog = new BookEditorJDialog();
+		editorBookJDialog.setLocationRelativeTo(this);
 		editorBookJDialog.setBookEditor(book);
 		editorBookJDialog.setBookJFrame(this);
 		editorBookJDialog.showDataToForm(book);

@@ -30,6 +30,7 @@ import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
 import com.duan.dao.PublisherDAO;
+import com.duan.dao.StorageDetailDao;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
@@ -39,6 +40,7 @@ import com.duan.model.Book;
 import com.duan.model.Category;
 import com.duan.model.Location;
 import com.duan.model.Publisher;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -187,7 +189,7 @@ public class BookEditorJDialog extends JDialog {
 		btnEditTheLoai.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				showCategoryJFrame();
+				showCategoryJDialog();
 			}
 		});
 		btnEditTheLoai.setBounds(352, 81, 36, 24);
@@ -282,6 +284,12 @@ public class BookEditorJDialog extends JDialog {
 		pnlForm.add(cboAuthor);
 		
 		JButton btnEditAuthor = new JButton("...");
+		btnEditAuthor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				showAuthorJDialog();
+			}
+		});
 		btnEditAuthor.setBounds(352, 151, 36, 24);
 		pnlForm.add(btnEditAuthor);
 		
@@ -353,7 +361,7 @@ public class BookEditorJDialog extends JDialog {
 				{
 					if(isEditMode == true)
 					{
-						if (updateBook())
+						if (validateAll() && updateBook())
 						{
 							//Tiến hành ghi file ảnh vào folder image sau khi insert Book thành công
 							if (fileImage != null)
@@ -370,16 +378,12 @@ public class BookEditorJDialog extends JDialog {
 							
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thất bại", MessageOptionPane.ICON_NAME_WARNING);
+							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thông tin sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					}
 					else if (isEditMode == false)
 					{
-						if (insertBook())
+						if (validateAll() && insertBook())
 						{
 							//Tiến hành ghi file ảnh vào folder image sau khi insert Book thành công
 							if (fileImage != null)
@@ -397,16 +401,13 @@ public class BookEditorJDialog extends JDialog {
 							//Sau đó đổ lại dữ liệu vào JFrame Book và fill ngược vào table
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Thêm sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(getContentPane(), "INSERT thất bại", MessageOptionPane.ICON_NAME_WARNING);
+							MessageOptionPane.showAlertDialog(getContentPane(), "Thêm sách mới thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					}
 				} 
 				catch (SQLException e1) 
 				{
+					MessageOptionPane.showAlertDialog(getContentPane(), "Tiến trình xử lý thất bại [ERROR CODE: " + e1.getErrorCode() + "]", MessageOptionPane.ICON_NAME_WARNING);
 					e1.printStackTrace();
 				}
 			}
@@ -535,6 +536,80 @@ public class BookEditorJDialog extends JDialog {
 		}
 	}
 	
+	//Kiểm tra bắt lỗi dữ liệu trên form, trả về TRUE nếu hợp lệ
+	public boolean validateAll() throws SQLException
+	{
+		boolean isSuccess = true;
+		String msg = "";
+		
+		//CHECK - Mã Sách
+		if (txtMaSach.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Mã sách đang để trống\n";
+		}
+		else if (isEditMode == false && BookDAO.findByID(txtMaSach.getText()) != null)
+		{
+			isSuccess = false;
+			msg += "+ Mã sách '" + txtMaSach.getText() + "' này đã tồn tại\n";
+		}
+		
+		//CHECK - Tiêu Đề
+		if (txtTenSach.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Tiêu đề sách đang để trống\n";
+		}
+		
+		//CHECK - Số Trang
+		if (txtSoTrang.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Số trang đang để trống\n";
+		} 
+		else if (DataHelper.isInteger(txtSoTrang.getText()) == false)
+		{
+			isSuccess = false;
+			msg += "+ Số trang nhập vào phải là số nguyên\n";
+		}
+		else if (DataHelper.getInt(txtSoTrang.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Số trang nhập vào phải lớn hơn 0\n";
+		}
+		
+		
+		//CHECK - Giá bán
+		if (txtGia.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Giá bán đang để trống\n";
+		} 
+		else if (DataHelper.isDouble(txtGia.getText()) == false)
+		{
+			isSuccess = false;
+			msg += "+ Giá bán nhập vào phải là số\n";
+		}
+		else if (DataHelper.getDouble(txtGia.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Giá bán nhập vào phải lớn hơn 0\n";
+		}
+		else if (isEditMode && DataHelper.getDouble(txtGia.getText()) <= StorageDetailDao.getClosestPriceStorageWithBook(bookEdit.getId()))
+		{
+			String priceStorageStr = DataHelper.getFormatForMoney(StorageDetailDao.getClosestPriceStorageWithBook(bookEdit.getId())) + SettingSave.getSetting().getMoneySymbol();
+			isSuccess = false;
+			msg += "+ Giá bán ra phải lớn hơn giá tiền nhập sách vào ("+ priceStorageStr + ")\n";
+		}
+		
+		if (isSuccess == false)
+		{
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg, MessageOptionPane.ICON_NAME_WARNING);
+		}
+		
+		return isSuccess;
+	}
+	
 	//Set BookJFrame để sau khi update xong thì có thể gọi hàm fillToTable bên bookJframe bênt kia
 	public void setBookJFrame(BookJFrame bookJFrame)
 	{
@@ -609,9 +684,13 @@ public class BookEditorJDialog extends JDialog {
 	//Cập nhật lại icon cho lblImage = file vừa truyền vào
 	public void setImage(File file)
 	{
-		ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-		lblImage.setIcon(icon);
-		SwingHelper.setAutoResizeIcon(lblImage);
+		if (file.exists())
+		{
+			lblImage.setText("");
+			ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+			lblImage.setIcon(icon);
+			SwingHelper.setAutoResizeIcon(lblImage);
+		}
 	}
 	
 	//Cập nhật lại icon cho lblImage lấy ảnh từ folder image có nameFile.
@@ -619,6 +698,7 @@ public class BookEditorJDialog extends JDialog {
 	{
 		if (imageName != null && imageName.length() > 0)
 		{
+			lblImage.setText("");
 			ImageIcon icon = new ImageIcon(DataHelper.getFileFromSource("/com/duan/image/" + imageName).getAbsolutePath());
 			lblImage.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblImage);
@@ -639,13 +719,27 @@ public class BookEditorJDialog extends JDialog {
 	}
 	
 	
-	public void showCategoryJFrame()
+	public void showCategoryJDialog()
 	{
+		categoryJDialog.setLocationRelativeTo(contentPane);
 		categoryJDialog.setVisible(true);
 	}
 	
-	public void showLocationJFrame()
+	public void showAuthorJDialog()
 	{
+		authorJDialog.setLocationRelativeTo(contentPane);
+		authorJDialog.setVisible(true);
+	}
+	
+	public void showPublisherJDialog()
+	{
+		publisherJDialog.setLocationRelativeTo(contentPane);
+		publisherJDialog.setVisible(true);
+	}
+	
+	public void showLocationJDialog()
+	{
+		locationJDialog.setLocationRelativeTo(contentPane);
 		locationJDialog.setVisible(true);
 	}
 }

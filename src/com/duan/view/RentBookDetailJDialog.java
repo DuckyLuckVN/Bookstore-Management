@@ -48,6 +48,7 @@ import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JTextField;
@@ -72,13 +73,17 @@ public class RentBookDetailJDialog extends JDialog {
 	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
 	private RentBook rentBook;
 	private JLabel lblTngCng;
-	private JLabel lblTotalBook;
+	private JLabel lblTotalCostRent;
 	private JLabel lblTnhTrng;
 	private JLabel lblStatus;
 	private JButton btnGiMail;
 	private JLabel lblReturnedDate;
 	
 	private SendMailJDialog sendMailJDialog;
+	private JLabel lblTotalCostExpiration;
+	private JLabel lblPhiPhatQuaHan;
+	private JPanel pnlTotalCostExpiration;
+	private JPanel pnlTotalCost;
 
 	public static void main(String[] args) 
 	{
@@ -114,7 +119,7 @@ public class RentBookDetailJDialog extends JDialog {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 542, 401);
+		setBounds(100, 100, 542, 399);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -189,18 +194,6 @@ public class RentBookDetailJDialog extends JDialog {
 		SwingHelper.setTextBelowIconButton(btnPrint);
 		contentPane.add(btnPrint);
 		
-		lblTngCng = new JLabel("Tổng cộng:");
-		lblTngCng.setForeground(Color.DARK_GRAY);
-		lblTngCng.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTngCng.setBounds(10, 340, 69, 21);
-		contentPane.add(lblTngCng);
-		
-		lblTotalBook = new JLabel("35 quyển");
-		lblTotalBook.setForeground(Color.BLUE);
-		lblTotalBook.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblTotalBook.setBounds(89, 340, 169, 21);
-		contentPane.add(lblTotalBook);
-		
 		lblTnhTrng = new JLabel("Tình trạng:");
 		lblTnhTrng.setForeground(Color.DARK_GRAY);
 		lblTnhTrng.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -246,6 +239,39 @@ public class RentBookDetailJDialog extends JDialog {
 		lblReturnedDate.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblReturnedDate.setBounds(125, 75, 299, 21);
 		contentPane.add(lblReturnedDate);
+		
+		pnlTotalCost = new JPanel();
+		pnlTotalCost.setBounds(10, 340, 516, 23);
+		contentPane.add(pnlTotalCost);
+		pnlTotalCost.setLayout(new BorderLayout(0, 0));
+		
+		JPanel pnlTotalCostRent = new JPanel();
+		pnlTotalCost.add(pnlTotalCostRent, BorderLayout.WEST);
+		pnlTotalCostRent.setLayout(new BorderLayout(3, 0));
+		
+		lblTngCng = new JLabel("Tổng phí thuê:");
+		pnlTotalCostRent.add(lblTngCng, BorderLayout.WEST);
+		lblTngCng.setForeground(Color.DARK_GRAY);
+		lblTngCng.setFont(new Font("Tahoma", Font.BOLD, 12));
+		
+		lblTotalCostRent = new JLabel("50,000đ (10 quyển)");
+		pnlTotalCostRent.add(lblTotalCostRent, BorderLayout.EAST);
+		lblTotalCostRent.setForeground(Color.BLUE);
+		lblTotalCostRent.setFont(new Font("Tahoma", Font.BOLD, 12));
+		
+		pnlTotalCostExpiration = new JPanel();
+//		pnlTotalCost.add(pnlTotalCostExpiration, BorderLayout.EAST);
+		pnlTotalCostExpiration.setLayout(new BorderLayout(4, 0));
+		
+		lblPhiPhatQuaHan = new JLabel("Phí phạt quá hạn:");
+		pnlTotalCostExpiration.add(lblPhiPhatQuaHan, BorderLayout.WEST);
+		lblPhiPhatQuaHan.setForeground(Color.DARK_GRAY);
+		lblPhiPhatQuaHan.setFont(new Font("Tahoma", Font.BOLD, 12));
+		
+		lblTotalCostExpiration = new JLabel("35,000đ (3 ngày)");
+		pnlTotalCostExpiration.add(lblTotalCostExpiration, BorderLayout.EAST);
+		lblTotalCostExpiration.setForeground(Color.RED);
+		lblTotalCostExpiration.setFont(new Font("Tahoma", Font.BOLD, 12));
 	}
 	
 	public void setDetailModel(int rentbook_id)
@@ -285,7 +311,9 @@ public class RentBookDetailJDialog extends JDialog {
 			user = UserDAO.findByID(rentBook.getUserId());
 			Admin admin = AdminDAO.findByID(rentBook.getAdminId());
 			createdDate = DateHelper.dateToString(rentBook.getCreatedDate(), SettingSave.getSetting().getDateFormat());
-			
+			int totalBook = RentBookDetailDAO.getTotalBookRented(rentBook.getId());
+			double totalCostRent = rentBook.getCostRent() * totalBook;
+			String totalCostRentStr = DataHelper.getFormatForMoney(totalCostRent) + SettingSave.getSetting().getMoneySymbol();
 			
 			setTitle("Chi tiết đơn thuê số: " + rentBook.getId());
 			
@@ -301,16 +329,29 @@ public class RentBookDetailJDialog extends JDialog {
 			
 			lblCreatedDate.setText(createdDate);
 			lblAdmin.setText(admin.getFullname() + " (" + admin.getUsername() + ")");
-			lblTotalBook.setText(RentBookDetailDAO.getTotalBookRented(rentBook.getId()) + " quyển");
+			lblTotalCostRent.setText(totalCostRentStr + " (" + totalBook + " quyển)");
 			lblReturnedDate.setText(returnedDate);
+			lblStatus.setText(rentBook.getTitleStatus());
 			
-			if(rentBook.getStatus() == 0)
+			if(rentBook.getStatus() == 0 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), new Date()) > rentBook.getExpirationDay())
 			{
-				lblStatus.setText("Đang thuê");
+				pnlTotalCost.add(pnlTotalCostExpiration, BorderLayout.EAST);
+				
+				//Lấy ra tổng số ngày quá hạn
+				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), new Date()) - rentBook.getExpirationDay();
+				
+				double totalCostExpiration = totalDayExpiration * rentBook.getCostExpiration() * RentBookDetailDAO.getTotalBookRented(rentBook.getId());
+				lblTotalCostExpiration.setText(DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol() + " (" + totalDayExpiration + " ngày)");
 			}
-			else
+			else if (rentBook.getStatus() == 1 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
 			{
-				lblStatus.setText("Đã trả");
+				pnlTotalCost.add(pnlTotalCostExpiration, BorderLayout.EAST);
+				
+				//Lấy ra tổng số ngày quá hạn
+				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) - rentBook.getExpirationDay();
+				
+				double totalCostExpiration = totalDayExpiration * rentBook.getCostExpiration() * RentBookDetailDAO.getTotalBookRented(rentBook.getId());
+				lblTotalCostExpiration.setText(DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol() + " (" + totalDayExpiration + " ngày)");
 			}
 		} 
 		catch (SQLException e) 

@@ -51,6 +51,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
+
+import org.apache.commons.collections4.functors.IfClosure;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Frame;
@@ -83,7 +86,6 @@ public class MainJFrame extends JFrame {
 	
 	private int posX;
 	private int posY;
-	
 	
 	
 	private BorderLayout borderLayout = new BorderLayout(0, 0);

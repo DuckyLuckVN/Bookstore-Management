@@ -40,6 +40,7 @@ import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
 import com.duan.model.RentBook;
@@ -73,10 +74,13 @@ public class RentBookEditorJDialog extends JDialog {
 	private RentBookJFrame rentBookJFrame;
 	private boolean isEditMode = false;
 	
-	private RentBook rentBook;
-	private User userSelect;
+	private RentBook rentBookEdit;
+	private User userSelected;
 	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
 	private List<BookProduct> listBookProductEdit = new ArrayList<BookProduct>();
+	private JLabel lblTotalCostRent;
+	private JLabel lblPhiPhatQuaHan;
+	private JLabel lblTotalCostExpiration;
 	
 	public static void main(String[] args) 
 	{
@@ -113,7 +117,7 @@ public class RentBookEditorJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 608, 492);
+		setBounds(100, 100, 608, 532);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -228,18 +232,18 @@ public class RentBookEditorJDialog extends JDialog {
 				}
 			}
 		});
-		btnConfirm.setBounds(406, 416, 186, 36);
+		btnConfirm.setBounds(378, 456, 214, 36);
 		contentPane.add(btnConfirm);
 		
 		JLabel lblTinhTrang = new JLabel("Tình trạng:");
 		lblTinhTrang.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblTinhTrang.setBounds(10, 419, 68, 26);
+		lblTinhTrang.setBounds(300, 419, 68, 26);
 		contentPane.add(lblTinhTrang);
 		
 		cboStatus = new JComboBox();
 		cboStatus.setEnabled(false);
 		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Đang thuê", "Đã trả sách"}));
-		cboStatus.setBounds(88, 419, 214, 26);
+		cboStatus.setBounds(378, 419, 214, 26);
 		contentPane.add(cboStatus);
 		
 		txtSoLuong = new JTextField();
@@ -325,6 +329,7 @@ public class RentBookEditorJDialog extends JDialog {
 			{
 				deleteBook();
 				updateAmountNumber();
+				updateTotalCostRent();
 			}
 		});
 		btnDeleteBook.setBounds(503, 235, 89, 26);
@@ -341,6 +346,28 @@ public class RentBookEditorJDialog extends JDialog {
 		txtMaTaiKhoang.setColumns(10);
 		txtMaTaiKhoang.setBounds(124, 15, 369, 26);
 		contentPane.add(txtMaTaiKhoang);
+		
+		JLabel lblTngPhThu = new JLabel("Tổng phí thuê:");
+		lblTngPhThu.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTngPhThu.setBounds(10, 419, 91, 26);
+		contentPane.add(lblTngPhThu);
+		
+		lblTotalCostRent = new JLabel("0đ");
+		lblTotalCostRent.setForeground(Color.BLUE);
+		lblTotalCostRent.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblTotalCostRent.setBounds(111, 419, 191, 26);
+		contentPane.add(lblTotalCostRent);
+		
+		lblPhiPhatQuaHan = new JLabel("Phí phạt quá hạn:");
+		lblPhiPhatQuaHan.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblPhiPhatQuaHan.setBounds(10, 456, 109, 26);
+//		contentPane.add(lblPhiPhatQuaHan);
+		
+		lblTotalCostExpiration = new JLabel("0đ");
+		lblTotalCostExpiration.setForeground(Color.RED);
+		lblTotalCostExpiration.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblTotalCostExpiration.setBounds(129, 456, 191, 26);
+//		contentPane.add(lblTotalCostExpiration);
 	}
 	
 	//Khi sự kiện tableChanged dc gọi, thì nó sẽ chạy vào hàm này
@@ -354,7 +381,9 @@ public class RentBookEditorJDialog extends JDialog {
 			{
 				if (checkAmountAt(e.getFirstRow()))
 				{
-					updateAmountNumber();				}
+					updateAmountNumber();		
+					updateTotalCostRent();
+				}
 			}
 		}
 	}
@@ -401,12 +430,20 @@ public class RentBookEditorJDialog extends JDialog {
 	{
 		selectUserJDialog.setLocationRelativeTo(this);
 		selectUserJDialog.openSelectDialog();
-		
+		User userTemp;
 		//Kiểm tra nếu như đã có user được chọn thì lấy user đó về lưu vào userSelect
 		if (selectUserJDialog.getStatus() == selectUserJDialog.STATUS_SELECTED)
 		{
-			userSelect = selectUserJDialog.getUserSelected();
-			showUserDetail(userSelect);
+			userTemp = selectUserJDialog.getUserSelected();
+			if (userTemp.isActive() == true)
+			{
+				userSelected = userTemp;
+				showUserDetail(userSelected);
+			}
+			else
+			{
+				MessageOptionPane.showAlertDialog(this, "Tài khoảng '" + userTemp.getUsername() + "' đang bị khóa, không thể giao dịch!");
+			}
 		}
 	}
 	
@@ -421,6 +458,7 @@ public class RentBookEditorJDialog extends JDialog {
 			listBookProduct = selectBookJDialog.getListBookProductSelected();
 			fillToTable();
 			updateAmountNumber();
+			updateTotalCostRent();
 		}
 	}
 	
@@ -438,7 +476,11 @@ public class RentBookEditorJDialog extends JDialog {
 	//Thực hiện insert dữ liệu vào bảng Rentbook
 	public void insertRentbook() throws SQLException
 	{
-		RentBook rb = new RentBook(0, userSelect.getId(), AccountSave.getAdmin().getId(), new Date(), null, 0);
+		double costRent = SettingSave.getSetting().getCostRentBook();
+		double costExpiration = SettingSave.getSetting().getCostRentExpiration();
+		int expirationDay = SettingSave.getSetting().getDayExpiration();
+		
+		RentBook rb = new RentBook(0, userSelected.getId(), AccountSave.getAdmin().getId(), costRent, costExpiration, expirationDay, new Date(), null, 0);
 		boolean isSuccess = RentBookDAO.insert(rb, getListBookProduct());
 		
 		if (isSuccess)
@@ -459,26 +501,51 @@ public class RentBookEditorJDialog extends JDialog {
 		//Status = 1 -> đã trả sách, cập nhật lại ngày trả sách
 		if (status == 1)
 		{
-			rentBook.setReturnedDate(new Date());
+			rentBookEdit.setReturnedDate(new Date());
 		}
-		rentBook.setUserId(userSelect.getId());
-		rentBook.setStatus(status);
+		rentBookEdit.setUserId(userSelected.getId());
+		rentBookEdit.setStatus(status);
 		
-		boolean isSuccess = RentBookDAO.update(rentBook, getListBookProduct());
+		boolean isSuccess = RentBookDAO.update(rentBookEdit, getListBookProduct());
 		if (isSuccess)
 		{
 			rentBookJFrame.getDataToList();
 			rentBookJFrame.fillToTable();
 			dispose();
-			MessageOptionPane.showAlertDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBook.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			MessageOptionPane.showAlertDialog(this, "Đã cập nhật lại phiếu thuê sách '" + rentBookEdit.getId() + "' thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 		}
 	}
 	
 	//Cập nhật lại tổng số lượng sách
 	public void updateAmountNumber()
 	{
-		
 		txtSoLuong.setText(getQualityNumber() + " quyển");
+	}
+	
+	//Cập nhật lại giá thuê
+	public void updateTotalCostRent()
+	{
+		double costRent = (rentBookEdit != null) ? rentBookEdit.getCostRent() : SettingSave.getSetting().getCostRentBook();
+		String totalCostRentStr = DataHelper.getFormatForMoney(costRent * getQualityNumber());
+		lblTotalCostRent.setText(totalCostRentStr + SettingSave.getSetting().getMoneySymbol());
+	}
+	
+	//Cập nhật lại phí quá hạn (nếu có)
+	public void updateTotalCostExpiration()
+	{
+		//Kiểm tra không null và tình trạng phải khác = 1 (status = 1 là đã trả sách)
+		if (rentBookEdit != null && rentBookEdit.getStatus() != 1)
+		{
+			//Kiểm tra nếu ngày tạo đơn thuê đến bây giờ mà lớn hơn số ngày quá hạn quy định thì mới update
+			if (DateHelper.getDayBetweenTwoDate(rentBookEdit.getCreatedDate(), new Date()) > rentBookEdit.getExpirationDay())
+			{
+				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBookEdit.getCreatedDate(), new Date()) - rentBookEdit.getExpirationDay()
+						;
+				//Tổng phí phạt quá hạn = <số ngày quá hạn> * <phí phạt quá hạn> * <tổng số sách>
+				double totalCostExpiration = totalDayExpiration * rentBookEdit.getCostExpiration() * getQualityNumber();
+				lblTotalCostExpiration.setText(DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol());
+			}
+		}
 	}
 	
 	//Trả về tổng số lượng sách đang có trong bảng
@@ -524,7 +591,7 @@ public class RentBookEditorJDialog extends JDialog {
 		int rowCount = tblBook.getRowCount();
 		
 		//CHECK - USER
-		if (userSelect == null)
+		if (userSelected == null)
 		{
 			msg += "+ Bạn chưa chọn tài khoảng thuê\n";
 			isSuccess = false;
@@ -568,7 +635,7 @@ public class RentBookEditorJDialog extends JDialog {
 					int amount_temp = DataHelper.getInt(amount_temp_str);
 					List<BookProduct> list_temp = getListBookProduct();
 
-					for (BookProduct product : RentBookDetailDAO.getListProducts(rentBook.getId()))
+					for (BookProduct product : RentBookDetailDAO.getListProducts(rentBookEdit.getId()))
 					{
 						//Nếu mã sách trên table trùng với 1 mã sách trong rentbookDetail thì kiểm tra số lượng hợp lệ
 						if (product.getBook().getId().equals(bookId))
@@ -625,7 +692,7 @@ public class RentBookEditorJDialog extends JDialog {
 	//Hiển thị thông tin user truyền vào lên form
 	public void showUserDetail(User user)
 	{
-		userSelect = user;
+		userSelected = user;
 		String ngaySinh = DateHelper.dateToString(user.getDateOfBirth(), "dd/MM/yyyy");
 		txtMaTaiKhoang.setText(user.getId() + "");
 		txtTaiKhoang.setText(user.getUsername());
@@ -645,11 +712,9 @@ public class RentBookEditorJDialog extends JDialog {
 		}
 		else
 		{
-			cboStatus.setEnabled(true);
-			setTitle("Chỉnh Sửa Đơn Thuê | Mã Số: " + this.rentBook.getId());
+			setTitle("Chỉnh Sửa Đơn Thuê | Mã Số: " + this.rentBookEdit.getId());
 			btnSelectBook.setEnabled(false);
 			btnDeleteBook.setEnabled(false);
-			
 		}
 	}
 	
@@ -670,24 +735,48 @@ public class RentBookEditorJDialog extends JDialog {
 	
 	public void setEditModel(RentBook rentBook)
 	{
-		this.rentBook = rentBook;
+		this.rentBookEdit = rentBook;
 		DefaultTableModel model = (DefaultTableModel) tblBook.getModel();
 		model.setRowCount(0);
 		
 		try 
 		{
 			//Hiển thị thông tin người thuê
-			this.userSelect = UserDAO.findByID(rentBook.getUserId());
-			showUserDetail(userSelect);
+			this.userSelected = UserDAO.findByID(rentBook.getUserId());
+			showUserDetail(userSelected);
 			
 			//Hiển thị lại trạng thái cho cboStatus
 			cboStatus.setSelectedIndex(rentBook.getStatus());
+			
+			//Nếu đã trả rồi thì khóa cboStatus lại
+			if (rentBook.getStatus() == 1)
+			{
+				cboStatus.setEnabled(false);
+				if (DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
+				{
+					contentPane.add(lblPhiPhatQuaHan);
+					contentPane.add(lblTotalCostExpiration);
+				}
+			}
+			else
+			{
+				if (DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), new Date()) > rentBook.getExpirationDay())
+				{
+					contentPane.add(lblPhiPhatQuaHan);
+					contentPane.add(lblTotalCostExpiration);
+				}
+				cboStatus.setEnabled(true);
+			}
+			
+			//Nếu hóa đơn này đã quá hạn thì hiển thị phí phạt lên
 			
 			//Lấy về danh sách các sách chi tiết dựa vào mã số thuê @rentbook_id
 			this.listBookProduct = RentBookDetailDAO.getListProducts(rentBook.getId());
 			
 			fillToTable();
 			updateAmountNumber();
+			updateTotalCostRent();
+			updateTotalCostExpiration();
 		} 
 		catch (SQLException e) 
 		{

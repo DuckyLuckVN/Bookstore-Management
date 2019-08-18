@@ -42,6 +42,10 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.SystemColor;
 
 public class BookDetailJDialog extends JDialog {
 
@@ -60,6 +64,8 @@ public class BookDetailJDialog extends JDialog {
 	private JLabel lblViTri;
 	private JTextField txtDescription;
 	private JTextArea txtIntroduce;
+	
+	private Book book;
 
 	public static void main(String[] args) 
 	{
@@ -95,7 +101,7 @@ public class BookDetailJDialog extends JDialog {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 608, 556);
+		setBounds(100, 100, 669, 601);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -108,8 +114,8 @@ public class BookDetailJDialog extends JDialog {
 		contentPane.add(lblImage);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBorder(new TitledBorder(null, "Th\u00F4ng tin v\u1EC1 s\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_3.setBounds(298, 11, 294, 365);
+		panel_3.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u00F4ng tin v\u1EC1 s\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_3.setBounds(298, 11, 355, 365);
 		contentPane.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -155,7 +161,19 @@ public class BookDetailJDialog extends JDialog {
 		lblTcGi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
 		lblTacGia = new JLabel("Phạm Hoàng Huy");
-		lblTacGia.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTacGia.setForeground(new Color(255, 69, 0));
+		lblTacGia.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				AuthorDetailJDialog authorDetailJDialog = new AuthorDetailJDialog();
+				authorDetailJDialog.setDetailModel(book.getAuthorId());
+				authorDetailJDialog.setLocationRelativeTo(contentPane);
+				authorDetailJDialog.setVisible(true);
+			}
+		});
+		lblTacGia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblTacGia.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item2.add(lblTacGia);
 		
 		JPanel item3 = new JPanel();
@@ -279,11 +297,12 @@ public class BookDetailJDialog extends JDialog {
 		item9.add(lblChoThue);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		scrollPane.setBounds(10, 387, 582, 97);
+		scrollPane.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		scrollPane.setBounds(10, 384, 643, 149);
 		contentPane.add(scrollPane);
 		
 		txtIntroduce = new JTextArea();
+		txtIntroduce.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtIntroduce.setWrapStyleWord(true);
 		txtIntroduce.setLineWrap(true);
 		txtIntroduce.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -295,19 +314,22 @@ public class BookDetailJDialog extends JDialog {
 		lblGhiCh.setHorizontalAlignment(SwingConstants.LEFT);
 		lblGhiCh.setForeground(Color.DARK_GRAY);
 		lblGhiCh.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblGhiCh.setBounds(10, 494, 69, 17);
+		lblGhiCh.setBounds(10, 544, 56, 17);
 		contentPane.add(lblGhiCh);
 		
 		txtDescription = new JTextField();
+		txtDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtDescription.setBorder(null);
 		txtDescription.setEditable(false);
-		txtDescription.setBounds(89, 495, 503, 21);
+		txtDescription.setBounds(76, 494, 577, 17);
 		contentPane.add(txtDescription);
 		txtDescription.setColumns(10);
 	}
 	
 	public void setDetail(Book book) throws SQLException
 	{
+		this.book = book;
+		
 		String price = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 		String publisher = PublisherDAO.findById(book.getPublisherId()).getName() + " (" + book.getPublicationYear() + ")";
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
@@ -325,6 +347,8 @@ public class BookDetailJDialog extends JDialog {
 		lblGia.setText(price);
 		lblDaBan.setText(BookDAO.getCountSold(book.getId()) + " quyển");
 		lblChoThue.setText(BookDAO.getCountBeingRented(book.getId()) + " quyển");
+		txtIntroduce.setText(book.getIntroduce());
+		txtDescription.setText(book.getDescription());
 		setTitle("Thông tin sách | " + book.getTitle());
 		
 		//Set image
@@ -343,7 +367,6 @@ public class BookDetailJDialog extends JDialog {
 		{
 			setImage(null);
 		}
-		
 	}
 	
 	//Cập nhật lại ảnh của sách

@@ -154,11 +154,15 @@ public class Admin
 		return "Không xác định";
 	}
 	
+	public String getActiveTitle()
+	{
+		return (isActive()) ? "Kích hoạt" : "Đã Khóa";
+	}
 	public String getSearchString()
 	{
 		String createdDateStr = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
 		String sexString = (sex) ? "Nam" : "Nữ";
-		return id + " " + username + " " + password + " " + fullname + " " + email + " " + phoneNumber + " " + sexString + " " + getRoleTitle() + " " + createdDateStr;
+		return id + " " + username + " " + password + " " + fullname + " " + email + " " + phoneNumber + " " + sexString + " " + getRoleTitle() + " " + getActiveTitle() + " " + createdDateStr;
 	}
     
 }

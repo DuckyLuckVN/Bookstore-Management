@@ -111,7 +111,7 @@ public class MessageJDialog extends CustomJDialog {
 		getContentPane().setBackground(Color.WHITE);
 		setUndecorated(true);
 		setResizable(false);
-		setSize(507, 230);
+		setSize(554, 230);
 		getContentPane().setLayout(null);
 		
 		JLabel lblClose = new JLabel("X");
@@ -138,7 +138,7 @@ public class MessageJDialog extends CustomJDialog {
 		lblClose.setHorizontalAlignment(SwingConstants.CENTER);
 		lblClose.setForeground(Color.BLACK);
 		lblClose.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblClose.setBounds(482, 0, 25, 25);
+		lblClose.setBounds(529, 0, 25, 25);
 		getContentPane().add(lblClose);
 		
 		lblIcon = new JLabel("");
@@ -149,7 +149,7 @@ public class MessageJDialog extends CustomJDialog {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
-		scrollPane.setBounds(129, 49, 364, 139);
+		scrollPane.setBounds(129, 49, 418, 139);
 		getContentPane().add(scrollPane);
 		
 		txtContent = new JTextArea();
@@ -163,7 +163,7 @@ public class MessageJDialog extends CustomJDialog {
 		lblTitle = new JLabel("Thông Báo");
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTitle.setBounds(0, 5, 507, 30);
+		lblTitle.setBounds(0, 5, 547, 30);
 		getContentPane().add(lblTitle);
 		
 		JButton btnOk = new JButton("OK");
@@ -177,7 +177,7 @@ public class MessageJDialog extends CustomJDialog {
 		});
 		btnOk.setForeground(SystemColor.windowText);
 		btnOk.setBackground(SystemColor.controlHighlight);
-		btnOk.setBounds(404, 196, 89, 23);
+		btnOk.setBounds(458, 199, 89, 23);
 		getContentPane().add(btnOk);
 		
 		setLocationRelativeTo(getOwner());

@@ -395,7 +395,7 @@ public class StatisticalJFrame extends JFrame {
 		JScrollPane scrollPane_2 = new JScrollPane();
 		
 		tblSachThue = new JTable();
-		tblSachThue.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ LƯỢNG", "ĐÃ TRẢ", "CHƯA TRẢ", "QUÁ THỜI HẠN"}) 
+		tblSachThue.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "TỔNG ĐÃ THUÊ", "ĐÃ TRẢ", "CHƯA TRẢ", "QUÁ THỜI HẠN"}) 
 		{
 			boolean[] columnEditables = new boolean[] {
 				false
@@ -437,7 +437,7 @@ public class StatisticalJFrame extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
 		tblDoanhThu = new JTable();
-		tblDoanhThu.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ LƯỢNG", "TỔNG TIỀN"}) 
+		tblDoanhThu.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "TIỀN NHẬP", "TIỀN BÁN", "TIỀN THUÊ", "TIỀN PHẠT", "TỔNG TIỀN"}) 
 		{
 			boolean[] columnEditables = new boolean[] {
 				false
@@ -489,4 +489,26 @@ public class StatisticalJFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	public String getRoleTitle(int role) 
+	{
+		switch (role) 
+		{
+		case 0: return "Toàn bộ";
+		case 1: return "Tháng 1";
+		case 2: return "Tháng 2";
+		case 3: return "Tháng 3";
+		case 4: return "Tháng 4";
+		case 5: return "Tháng 5";
+		case 6: return "Tháng 6";
+		case 7: return "Tháng 7";
+		case 8: return "Tháng 8";
+		case 9: return "Tháng 9";
+		case 10: return "Tháng 10";
+		case 11: return "Tháng 11";
+		case 12: return "Tháng 12";
+		}
+		return "Không xác định";
+	}
+	
 }

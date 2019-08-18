@@ -39,6 +39,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.LineBorder;
 
 public class SettingJDialog extends JDialog {
 	private JTextField txtHost;
@@ -85,11 +86,11 @@ public class SettingJDialog extends JDialog {
 		setTitle("Cài đặt");
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 807, 602);
+		setBounds(100, 100, 829, 602);
 		getContentPane().setLayout(null);
 		
 		JPanel pnlDB = new JPanel();
-		pnlDB.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlDB.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlDB.setBounds(10, 11, 411, 198);
 		getContentPane().add(pnlDB);
 		pnlDB.setLayout(null);
@@ -157,7 +158,7 @@ public class SettingJDialog extends JDialog {
 		
 		JPanel pnlFormat = new JPanel();
 		pnlFormat.setLayout(null);
-		pnlFormat.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlFormat.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlFormat.setBounds(10, 220, 411, 126);
 		getContentPane().add(pnlFormat);
 		
@@ -201,10 +202,10 @@ public class SettingJDialog extends JDialog {
 					saveSetting();
 			}
 		});
-		btnSave.setBounds(704, 538, 89, 25);
+		btnSave.setBounds(724, 538, 89, 25);
 		getContentPane().add(btnSave);
 		
-		JButton btnDefault = new JButton("Mặc định");
+		JButton btnDefault = new JButton("Phục hồi mặc định");
 		btnDefault.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -212,46 +213,46 @@ public class SettingJDialog extends JDialog {
 				showDetail();
 			}
 		});
-		btnDefault.setBounds(605, 538, 89, 25);
+		btnDefault.setBounds(590, 538, 124, 25);
 		getContentPane().add(btnDefault);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Th\u01B0 Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(431, 11, 362, 516);
+		panel.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u01B0 Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBounds(431, 11, 382, 516);
 		getContentPane().add(panel);
 		
 		JLabel lblTiKhonMail = new JLabel("Tài khoản mail:");
 		lblTiKhonMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblTiKhonMail.setBounds(10, 21, 105, 24);
+		lblTiKhonMail.setBounds(20, 21, 217, 24);
 		panel.add(lblTiKhonMail);
 		
 		txtUsernameMail = new JTextField();
 		txtUsernameMail.setText("razzermkd@gmail.com");
 		txtUsernameMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtUsernameMail.setColumns(10);
-		txtUsernameMail.setBounds(125, 21, 227, 24);
+		txtUsernameMail.setBounds(125, 21, 247, 24);
 		panel.add(txtUsernameMail);
 		
 		JLabel lblMtKhuMail = new JLabel("Mật khẩu mail:");
 		lblMtKhuMail.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblMtKhuMail.setBounds(10, 56, 105, 24);
+		lblMtKhuMail.setBounds(20, 56, 217, 24);
 		panel.add(lblMtKhuMail);
 		
 		txtPasswordEmail = new JPasswordField();
 		txtPasswordEmail.setText("123456789");
 		txtPasswordEmail.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtPasswordEmail.setColumns(10);
-		txtPasswordEmail.setBounds(125, 56, 227, 24);
+		txtPasswordEmail.setBounds(125, 56, 247, 24);
 		panel.add(txtPasswordEmail);
 		
 		JLabel lblNiDungBo = new JLabel("Nội dung mail báo quá hạn trả sách:");
 		lblNiDungBo.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNiDungBo.setBounds(10, 91, 227, 24);
+		lblNiDungBo.setBounds(20, 91, 217, 24);
 		panel.add(lblNiDungBo);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 126, 342, 154);
+		scrollPane.setBounds(20, 126, 352, 154);
 		panel.add(scrollPane);
 		
 		txtMessageReportExpiration = new JTextArea();
@@ -266,17 +267,17 @@ public class SettingJDialog extends JDialog {
 		txtruserfullnameH.setWrapStyleWord(true);
 		txtruserfullnameH.setLineWrap(true);
 		txtruserfullnameH.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		txtruserfullnameH.setBounds(10, 317, 342, 154);
+		txtruserfullnameH.setBounds(20, 317, 352, 154);
 		panel.add(txtruserfullnameH);
 		
 		JLabel lblCcKHiu = new JLabel("Các ký hiệu thay thế");
 		lblCcKHiu.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblCcKHiu.setBounds(10, 291, 213, 24);
+		lblCcKHiu.setBounds(20, 291, 352, 24);
 		panel.add(lblCcKHiu);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel_1.setBounds(10, 357, 411, 170);
 		getContentPane().add(panel_1);
 		
@@ -289,12 +290,12 @@ public class SettingJDialog extends JDialog {
 		txtDayExpiration.setText("17");
 		txtDayExpiration.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		txtDayExpiration.setColumns(10);
-		txtDayExpiration.setBounds(125, 21, 43, 24);
+		txtDayExpiration.setBounds(125, 21, 53, 24);
 		panel_1.add(txtDayExpiration);
 		
 		JLabel lblNgay = new JLabel("ngày");
 		lblNgay.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNgay.setBounds(178, 21, 43, 24);
+		lblNgay.setBounds(188, 21, 213, 24);
 		panel_1.add(lblNgay);
 		
 		JLabel lblPhQuHn = new JLabel("Phí phạt quá hạn:");
@@ -414,7 +415,7 @@ public class SettingJDialog extends JDialog {
 			//Tiến hành set Setting vào SettingSave và ghi ra file lưu trữ
 			SettingSave.setSetting(getSettingFromForm());
 			SettingSave.writeSetting();
-			MessageOptionPane.showMessageDialog(getContentPane(), "Lưu lại thay đổi thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+			MessageOptionPane.showAlertDialog(getContentPane(), "Lưu lại thay đổi thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 			String msg = "Bạn cần phải reload lại ứng dụng để các tùy chỉnh này hoạt động chính xác!";
 			if (MessageOptionPane.showConfirmDialog(getContentPane(), msg, MessageOptionPane.ICON_NAME_QUESTION, 12))
 			{
