@@ -5,12 +5,14 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 import java.awt.GridLayout;
 import javax.swing.JButton;
 import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -60,9 +62,18 @@ import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class UserMainJFrame extends JFrame {
 	
+	private JPopupMenu popupMenu;
+	private int indexSelect = -1;
+	private BookDetailJDialog bookDetailJDialog = new BookDetailJDialog(this);
+	private OrderDetailJDialog orderDetailJDialog = new OrderDetailJDialog(this);
+	private RentBookDetailJDialog rentBookDetailJDialog = new RentBookDetailJDialog(this);
 	DefaultTableModel model;
 	ArrayList<Book> listBook = new ArrayList<Book>();
 	ArrayList<Order> listOrder = new ArrayList<Order>();
@@ -132,6 +143,19 @@ public class UserMainJFrame extends JFrame {
 		pnlBook.add(lblSearchBook);
 		
 		txtSearchBook = new JTextField();
+		txtSearchBook.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				try 
+				{
+					searchBook();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		txtSearchBook.setBounds(105, 11, 240, 27);
 		pnlBook.add(txtSearchBook);
 		txtSearchBook.setColumns(10);
@@ -141,6 +165,21 @@ public class UserMainJFrame extends JFrame {
 		pnlBook.add(scrollPaneBook);
 		
 		tblBook = new JTableRed();
+		tblBook.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e)
+			{
+				if (e.getClickCount() >= 2 ) 
+				{
+					showBookDetail();
+				}
+				if (indexSelect != -1 && SwingUtilities.isRightMouseButton(e))
+				{
+					popupMenu.show(tblBook, e.getX(), e.getY());
+				}
+			}
+		});
+		tblBook.setRowHeight(30);
 		tblBook.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "TÁC GIẢ", "NHÀ XUẤT BẢN", "NĂM XUẤT BẢN", "SỐ TRANG", "GIÁ BÁN"}) 
 		{
 			public boolean isCellEditable(int row, int column) 
@@ -161,6 +200,18 @@ public class UserMainJFrame extends JFrame {
 		pnlRentBook.add(lblSearchRentBook);
 		
 		txtSearchRentBook = new JTextField();
+		txtSearchRentBook.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				try {
+					searchRentBook();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		txtSearchRentBook.setColumns(10);
 		txtSearchRentBook.setBounds(101, 11, 240, 27);
 		pnlRentBook.add(txtSearchRentBook);
@@ -170,6 +221,17 @@ public class UserMainJFrame extends JFrame {
 		pnlRentBook.add(scrollPaneRentBook);
 		
 		 tblRentBook = new JTableRed();
+		 tblRentBook.addMouseListener(new MouseAdapter() {
+		 	@Override
+		 	public void mouseClicked(MouseEvent e) 
+		 	{
+		 		if (e.getClickCount() >= 0) 
+		 		{
+		 			showRentBookDetail();
+				}
+		 	}
+		 });
+		 tblRentBook.setRowHeight(30);
 		tblRentBook.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "NGƯỜI THUÊ", "NHÂN VIÊN TRỰC", "NGÀY THUÊ", "NGÀY TRẢ", "TỔNG SÁCH", "TỔNG PHÍ"}) 
 		{
 			public boolean isCellEditable(int row, int column) 
@@ -190,6 +252,20 @@ public class UserMainJFrame extends JFrame {
 		pnlOrder.add(lblSearchOrder);
 		
 		txtSearchOrder = new JTextField();
+		txtSearchOrder.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				try 
+				{
+					searchOrder();
+				} catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		txtSearchOrder.setColumns(10);
 		txtSearchOrder.setBounds(101, 11, 240, 27);
 		pnlOrder.add(txtSearchOrder);
@@ -199,6 +275,26 @@ public class UserMainJFrame extends JFrame {
 		pnlOrder.add(scrollPane);
 		
 		 tblOrder = new JTableRed();
+		 tblOrder.addMouseListener(new MouseAdapter() {
+		 	@Override
+		 	public void mouseClicked(MouseEvent evt)
+		 	{
+		 		if (evt.getClickCount() >= 2)
+				{
+					showOrderDetail();
+				}
+		 		
+		 	}
+		 	
+		 });
+		 tblOrder.addKeyListener(new KeyAdapter() {
+		 	@Override
+		 	public void keyReleased(KeyEvent e) 
+		 	{
+		 	}
+		 	
+		 });
+		 tblOrder.setRowHeight(30);
 		tblOrder.setModel(new DefaultTableModel(null, new String[] {"MÃ ĐƠN", "NGƯỜI MUA", "NHÂN VIÊN TRỰC", "NGÀY MUA", "TỔNG SÁCH", "TỔNG PHÍ"}) 
 		{
 			public boolean isCellEditable(int row, int column) 
@@ -291,13 +387,33 @@ public class UserMainJFrame extends JFrame {
 			String [] rows = {b.getId(),b.getTitle(),nameAuthor,namePublisher,format.format(b.getPublicationYear()),b.getPageNum()+"",price};
 			model.addRow(rows);
 		}
+	}	
+	
+	public void searchBook() throws SQLException
+	{
+		model = (DefaultTableModel) tblBook.getModel();
+		model.setRowCount(0);
+		String search = txtSearchBook.getText();
+		for (Book b : listBook) 
+		{
+			if (DataHelper.search(b.getSearchString(), search) == true)
+			{
+				String price = DataHelper.getFormatForMoney(b.getPrice()) + SettingSave.getSetting().getMoneySymbol();
+				String nameAuthor = AuthorDAO.findById(b.getAuthorId()).getFullName();
+				String namePublisher = PublisherDAO.findById(b.getPublisherId()).getName();
+				String [] rows = {b.getId(),b.getTitle(),nameAuthor,namePublisher,format.format(b.getPublicationYear()),b.getPageNum()+"",price};
+				model.addRow(rows);
+			}
+			
+		}
 	}
 	
 	public void loadDataRentbook()
 	{
 		try 
 		{
-			listRentBook = RentBookDAO.getAllOfUser(100);
+			User user = AccountSave.getUser();
+			listRentBook = RentBookDAO.getAllOfUser(user.getId());
 			if (listRentBook.size() > 0) 
 			{
 				fillToTblrentbook();
@@ -320,8 +436,28 @@ public class UserMainJFrame extends JFrame {
 			
 			int amount = RentBookDetailDAO.findById(rb.getId()).getAmount();
 			double price = RentBookDetailDAO.findById(rb.getId()).getPrice();
-			Object [] rows = {rb.getId(),nameUser,nameAdmin,rb.getCreatedDate(),rb.getReturnedDate(),amount,price};
+			Object [] rows = {rb.getId(),nameUser,nameAdmin,rb.getCreatedDate(),rb.getReturnedDate(),amount,rb.getCostRent()*amount};
 			model.addRow(rows);
+		}
+	}
+	
+	public void searchRentBook() throws SQLException
+	{
+		model = (DefaultTableModel) tblRentBook.getModel();
+		model.setRowCount(0);
+		String search = txtSearchRentBook.getText();
+		for (RentBook rb : listRentBook) 
+		{
+			if (DataHelper.search(rb.getSearchString(), search) == true) 
+			{
+				String nameUser = UserDAO.findByID(rb.getUserId()).getFullname();
+				String nameAdmin = AdminDAO.findByID(rb.getAdminId()).getFullname();	
+				
+				int amount = RentBookDetailDAO.findById(rb.getId()).getAmount();
+				double price = RentBookDetailDAO.findById(rb.getId()).getPrice();
+				Object [] rows = {rb.getId(),nameUser,nameAdmin,rb.getCreatedDate(),rb.getReturnedDate(),amount,price};
+				model.addRow(rows);
+			}
 		}
 	}
 	
@@ -329,7 +465,8 @@ public class UserMainJFrame extends JFrame {
 	{
 		try 
 		{
-			listOrder = OrderDAO.getAllOfUser(new User().getId());
+			User user = AccountSave.getUser();
+			listOrder = OrderDAO.getAllOfUser(user.getId());
 			if (listOrder.size() > 0) 
 			{
 				fillToTblOrder();
@@ -351,11 +488,12 @@ public class UserMainJFrame extends JFrame {
 			String nameAdmin = AdminDAO.findByID(od.getAdminId()).getFullname();
 			int amount = OrderDetailDAO.findByID(od.getId()).getAmount();
 			double price = OrderDetailDAO.findByID(od.getId()).getPrice();
-			Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(),amount,price};
+			Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(),amount,price*amount};
 			model.addRow(rows);
 		}
 		showDetail();
 	}
+
 	
 	public void showDetail()
 	{
@@ -368,6 +506,69 @@ public class UserMainJFrame extends JFrame {
 		profileUserJDialog.setMainJFrame(this);
 		profileUserJDialog.setLocationRelativeTo(getContentPane());
 		profileUserJDialog.setVisible(true);
+	}
+
+	public void searchOrder() throws SQLException
+	{
+		model = (DefaultTableModel) tblOrder.getModel();
+		model.setRowCount(0);
+		String search = txtSearchOrder.getText();
+		for (Order od : listOrder) 
+		{
+			if (DataHelper.search(od.getSearchString(), search) )
+				{
+				String nameUser = UserDAO.findByID(od.getUserId()).getFullname();
+				String nameAdmin = AdminDAO.findByID(od.getAdminId()).getFullname();
+				int amount = OrderDetailDAO.findByID(od.getId()).getAmount();
+				double price = OrderDetailDAO.findByID(od.getId()).getPrice();
+				Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(),amount,price};
+				model.addRow(rows);
+				}
+			
+		}
+	}
+	public void showBookDetail()
+	{
+		try 
+		{
+			indexSelect = tblBook.getSelectedRow();
+			//Lay ra id sach dang duoc chon
+			String id = (String) tblBook.getValueAt(indexSelect, 0);
+			//Lay ve doi tuong cua id do tren DB
+			Book bookDetail = BookDAO.findByID(id);
+			
+			//Tao 1 jdialog BookDetailJDialog de hien thi
+			bookDetailJDialog = new BookDetailJDialog();
+			bookDetailJDialog.setLocationRelativeTo(this);
+			bookDetailJDialog.setDetail(bookDetail);
+			bookDetailJDialog.setVisible(true);
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	public void showOrderDetail()
+	{
+		indexSelect = tblOrder.getSelectedRow();
+		int order_id = DataHelper.getInt( tblOrder.getValueAt(indexSelect, 0).toString() );
+		orderDetailJDialog.setLocationRelativeTo(this);
+		orderDetailJDialog.setDetailModel(order_id);
+		orderDetailJDialog.showDetail();
+		orderDetailJDialog.fillToTable();
+		orderDetailJDialog.setVisible(true);
+		
+	}
+	public void showRentBookDetail()
+	{
+		indexSelect = tblRentBook.getSelectedRow();
+		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
+		rentBookDetailJDialog = new RentBookDetailJDialog();
+		rentBookDetailJDialog.setLocationRelativeTo(this);
+		rentBookDetailJDialog.setDetailModel(rentbook_id);
+		rentBookDetailJDialog.showDetail();
+		rentBookDetailJDialog.fillToTable();
+		rentBookDetailJDialog.setVisible(true);
 	}
 	
 	public void logout()

@@ -590,6 +590,7 @@ public class BookJFrame extends JFrame{
 		}
 	}
 	
+	//Xóa hết các dòng cũ trên bảng, sau đó duyệt lại list kiểm tra dữ liệu search có tồn tại trong sách nào thì insert sách đó vô bảng
 	public void search() throws SQLException
 	{
 		String search = txtSearch.getText();
@@ -599,8 +600,12 @@ public class BookJFrame extends JFrame{
 		
 		for (Book e : listBook)
 		{
+			//Kiem tra dieu kien, neu chuoi search khong nam trong getSearchString thi bo qua tiep tuc lap bang lenh countinue
 			if (DataHelper.search(e.getSearchString(), search) == false)
+			{
 				continue;
+			}
+			
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
 			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
@@ -646,10 +651,12 @@ public class BookJFrame extends JFrame{
 	{
 		try 
 		{
+			//Lay ra id sach dang duoc chon
 			String id = (String) tblBook.getValueAt(indexSelect, 0);
-			Book bookDetail;
-			bookDetail = BookDAO.findByID(id);
+			//Lay ve doi tuong cua id do tren DB
+			Book bookDetail = BookDAO.findByID(id);
 			
+			//Tao 1 jdialog BookDetailJDialog de hien thi
 			bookDetailJDialog = new BookDetailJDialog();
 			bookDetailJDialog.setLocationRelativeTo(this);
 			bookDetailJDialog.setDetail(bookDetail);
