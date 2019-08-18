@@ -26,6 +26,12 @@ public class Publisher
 		createdDate = createdDate;
 	}
 	
+	public Publisher() 
+	{
+
+	}
+
+	
 	public int getId() {
 		return id;
 	}

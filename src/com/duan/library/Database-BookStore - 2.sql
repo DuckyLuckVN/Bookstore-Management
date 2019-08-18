@@ -243,8 +243,8 @@ VALUES  ( 100 , 101, GETDATE()),
 GO
 
 INSERT INTO ORDER_DETAIL(order_id ,	book_id, amount, price)
-VALUES	(101,'GH12',3,200000),
-		(102,'JH42', 2, 300000)
+VALUES	(100,'GH12',3,200000),
+		(101,'JH42', 2, 300000)
 GO
 
 INSERT INTO dbo.RENTBOOK(user_id , admin_id, cost_rent, cost_expiration, expiration_day, created_date ,status)
@@ -253,20 +253,9 @@ VALUES  (100, 101, 5000, 1000, 7, GETDATE() , 0),
 GO
 
 INSERT INTO RENTBOOK_DETAIL (rentbook_id , book_id , amount, price)
-VALUES	(101,'GH12',3,300000),
+VALUES	(100,'GH12',3,300000),
 		(101,'JH42',4,400000),
-		(102,'GH12',2,400000)
-GO
-
-INSERT INTO BOOK_LOST(rentbook_id, admin_id, created_date)
-VALUES (102,101,GETDATE()),
-		(101,105,GETDATE())
-GO
-
-
-INSERT INTO BOOK_LOST_DETAIL(rentbook_id,book_id,amount,cost)
-VALUES (101,'GH12',2, 10000),
-		(102,'JH42',2, 10000)
+		(101,'GH12',2,400000)
 GO
 
 INSERT INTO dbo.STORAGE( admin_id, description, created_date)
@@ -356,22 +345,19 @@ GO
 /****** Object:  StoredProcedure  [sp_getBookSoldByMonth]  Script Date: 7/17/2019 ******/
 --Trả về thông tin thống kê sách đã bán được theo tháng
 GO
---DROP PROC sp_getBookSoldByMonth
-
 CREATE PROC sp_getBookSoldByMonth(@month INT)
 AS BEGIN
 	SELECT
-		COUNT(ORDER_DETAIL.amount) amount_sold,
-		Book.ID book_id
+		Book.ID book_id, 
+		COUNT(ORDER_DETAIL.amount) amount_sold
 	FROM ORDER_DETAIL
 		join Book ON Book.ID = ORDER_DETAIL.book_id
 		join [ORDER] ON [ORDER].ID = ORDER_DETAIL.order_id
-	WHERE MONTH([ORDER].Date_created) = @month AND YEAR([ORDER].Date_created) = YEAR(GETDATE())
+	WHERE MONTH([ORDER].Date_created) = @month
 	GROUP BY Book.ID 
 END
 
-SELECT * FROM BOOK
-EXEC dbo.sp_getBookSoldByMonth @month = 8 -- int
+EXEC dbo.sp_getBookSoldByMonth @month = 7 -- int
 
 
 /****** Object:  StoredProcedure  [sp_getIncomeByMonth]  Script Date: 7/19/2019 ******/
@@ -496,7 +482,7 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
-ALTER PROC sp_getStatisticOverviewInMonth 
+CREATE PROC sp_getStatisticOverviewInMonth 
 AS BEGIN
 	DECLARE @totalOrder FLOAT = 0
 	DECLARE @totalRent FLOAT = 0
@@ -563,19 +549,13 @@ AS BEGIN
 	AND YEAR(STORAGE.created_date) = YEAR(GETDATE())
 	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
 
-	IF (@totalOrder IS NULL)
-		SET @totalOrder = 0
-	IF (@totalRent IS NULL)
-		SET @totalRent = 0
-	IF (@totalAddStorage IS NULL)
-		SET @totalAddStorage = 0
 	IF (@totalLost IS NULL)
 		SET @totalLost = 0
 	IF (@totalSumOrder IS NULL)
 		SET @totalSumOrder = 0
 	IF (@totalSumRentLost IS NULL)
 		SET @totalSumRentLost = 0
-	IF (@totalSumLost IS NULL) 
+	IF (@totalSumLost IS NULL)
 		SET @totalSumLost = 0
 	IF (@totalSumMoneyStorage IS NULL)
 		SET @totalSumMoneyStorage = 0
@@ -588,9 +568,9 @@ GO
 
 EXEC sp_getStatisticOverviewInMonth
 GO
-/****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/13/2019 ******/
---Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getTotalBookOrder EXEC sp_getTotalBookOrder @month = 8
-CREATE PROC sp_getTotalBookOrder (@month int)
+/****** Object:  StoredProcedure  [sp_getStatisticOrderInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getStatisticOrderInMonth EXEC sp_getStatisticOrderInMonth @month = 8
+CREATE PROC sp_getStatisticOrderInMonth (@month int)
 AS BEGIN
 	SELECT BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date,SUM(ORDER_DETAIL.amount) AS [Total Order]
 	FROM BOOK, AUTHOR, CATEGORY, ORDER_DETAIL, [ORDER]
@@ -600,14 +580,51 @@ AS BEGIN
 	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
 	AND MONTH([ORDER].date_created) = @month
 	AND ORDER_DETAIL.book_id = BOOK.id
+	--them sum (price * amount) tong tien thu duoc
 	GROUP BY BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date
 END
+GO
 
-SELECT * FROM [ORDER]
-SELECT * FROM ORDER_DETAIL
-SELECT * FROM BOOK
-SELECT * FROM CATEGORY
-SELECT * FROM AUTHOR
+EXEC sp_getStatisticOrderInMonth 8
+GO
+/****** Object:  StoredProcedure  [sp_getStatisticRentInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách đã thue theo tháng EXEC sp_getStatisticRentInMonth @month = 8 SELECT * FROM RENTBOOK SELECT * FROM RENTBOOK_DETAIL DROP PROC sp_getStatisticRentInMonth
+CREATE PROC sp_getStatisticRentInMonth (@month INT)
+AS BEGIN
+	DECLARE @bookId NVARCHAR(50)
+
+
+	DECLARE @chuaTra FLOAT = 0
+
+	SELECT @chuaTra = SUM(RENTBOOK_DETAIL.amount)
+	FROM RENTBOOK, RENTBOOK_DETAIL
+	WHERE RENTBOOK.status = 0
+	AND RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+	AND RENTBOOK_DETAIL.book_id = @bookId
+
+	DECLARE @daTra FLOAT = 0
+
+	SELECT @daTra = SUM(RENTBOOK_DETAIL.amount)
+	FROM RENTBOOK, RENTBOOK_DETAIL
+	WHERE RENTBOOK.status = 1
+	AND RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+	AND RENTBOOK_DETAIL.book_id = @bookId
+		
+	SELECT BOOK.id, BOOK.title, SUM(RENTBOOK_DETAIL.amount) AS [SO LUONG], @chuaTra AS [CHUA TRA], @daTra AS [DA TRA]
+	FROM BOOK, RENTBOOK, RENTBOOK_DETAIL
+	WHERE RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+	AND RENTBOOK_DETAIL.book_id = BOOK.id
+	AND YEAR(RENTBOOK.created_date) = YEAR(GETDATE()) 
+	AND MONTH(RENTBOOK.created_date) = @month
+	GROUP BY BOOK.id, BOOK.title
+
+	SELECT DISTINCE dt.book_id FROM RENTBOOK r, RENTBOOK_DETAIL dt 
+	WHERE r.id = dt.rentbook_id AND dt.book_id 
+	IN 
+	(
+		SELECT id FROM BOOK
+	)
+END
 
 INSERT dbo.ADMIN
         ( username ,
@@ -784,4 +801,11 @@ DELETE FROM dbo.RENTBOOK
 261aa
 
 PRINT DATEDIFF(DAY, '3/1/2011', '3/1/2011')
+
+status = 0 AND DATEDIFF(DAY, created_date, GETDATE()) > expiration_day
+
+
+DOANH THU:
+	MA SACH, TEN SACH, TIEN BAN, TIEN THUE, TIEN PHAT, TONG TIEN
+
 */
