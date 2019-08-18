@@ -90,7 +90,7 @@ public class SettingJDialog extends JDialog {
 		getContentPane().setLayout(null);
 		
 		JPanel pnlDB = new JPanel();
-		pnlDB.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlDB.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "C\u01A1 s\u1EDF d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlDB.setBounds(10, 11, 411, 198);
 		getContentPane().add(pnlDB);
 		pnlDB.setLayout(null);
@@ -158,7 +158,7 @@ public class SettingJDialog extends JDialog {
 		
 		JPanel pnlFormat = new JPanel();
 		pnlFormat.setLayout(null);
-		pnlFormat.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		pnlFormat.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "\u0110\u1ECBnh d\u1EA1ng", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlFormat.setBounds(10, 220, 411, 126);
 		getContentPane().add(pnlFormat);
 		
@@ -202,10 +202,10 @@ public class SettingJDialog extends JDialog {
 					saveSetting();
 			}
 		});
-		btnSave.setBounds(704, 538, 89, 25);
+		btnSave.setBounds(724, 538, 89, 25);
 		getContentPane().add(btnSave);
 		
-		JButton btnDefault = new JButton("Mặc định");
+		JButton btnDefault = new JButton("Phục hồi mặc định");
 		btnDefault.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -213,12 +213,12 @@ public class SettingJDialog extends JDialog {
 				showDetail();
 			}
 		});
-		btnDefault.setBounds(605, 538, 89, 25);
+		btnDefault.setBounds(590, 538, 124, 25);
 		getContentPane().add(btnDefault);
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "Th\u01B0 Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u01B0 Email", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel.setBounds(431, 11, 382, 516);
 		getContentPane().add(panel);
 		
@@ -277,7 +277,7 @@ public class SettingJDialog extends JDialog {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);
-		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(128, 128, 128), 2, true), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "C\u1EA5u h\u00ECnh chung", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		panel_1.setBounds(10, 357, 411, 170);
 		getContentPane().add(panel_1);
 		

@@ -11,6 +11,7 @@ import com.duan.helper.JDBCHelper;
 import com.duan.model.BookProduct;
 import com.duan.model.Storage;
 import com.duan.model.StorageDetail;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class StorageDetailDao
 {
@@ -114,6 +115,18 @@ public class StorageDetailDao
 			return readFromResultSet(rs);
 		}
 		return null;
+	}
+	
+	//Trả về giá tiền nhập sách của sách có id truyền vào tại thời điểm gần nhất
+	public static double getClosestPriceStorageWithBook(String book_id) throws SQLException
+	{
+		String sql = "{call sp_getClosestPriceStorageWithBook(?)}";
+		ResultSet rs = JDBCHelper.executeQuery(sql, book_id);
+		if (rs.next())
+		{
+			return rs.getDouble(1);
+		}
+		return 0;
 	}
 	
 	 public static StorageDetail readFromResultSet(ResultSet rs) throws SQLException

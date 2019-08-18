@@ -774,9 +774,19 @@ public class AdminJFrame extends JFrame {
 			setControllMode_Nothing();
 			lockForm();
 			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-		} catch (Exception e) {
-			e.printStackTrace();
-			MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại!", MessageOptionPane.ICON_NAME_ERROR);
+		} catch (SQLException e) 
+		{
+			switch (e.getErrorCode()) 
+			{
+			case 547:
+				MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng này không thể xóa, hãy khóa tài khoản này lại nếu cần!", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+
+			default:
+				e.printStackTrace();
+				MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại! [ERROR CODE: " + e.getErrorCode() + "]", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+			}
 		}
 	}
 

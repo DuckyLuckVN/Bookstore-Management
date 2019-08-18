@@ -278,17 +278,23 @@ public class LoginJFrame extends JDialog
 					String username = txtUsername.getText();
 					String password = txtPassword.getText();
 					try {	
-						admin = adminDao.findByUsername(username); 
-						user = userDao.findByUser(username);
 						if (rdoLoginAdmin.isSelected() == true) 
 						{
+							admin = adminDao.findByUsername(username); 
 							if (admin != null) 
 							{
 								if (password.equals(admin.getPassword())) 
 								{
-									AccountSave.setAdmin(admin);
-									MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-									active();
+									if (admin.isActive())
+									{
+										AccountSave.setAdmin(admin);
+										MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+										active();
+									}
+									else
+									{
+										MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng '" + admin.getUsername() + "' này đang bị khóa!" , MessageOptionPane.ICON_NAME_BLOCK);
+									}
 								}
 								else 
 								{
@@ -304,13 +310,21 @@ public class LoginJFrame extends JDialog
 						} 
 						else
 						{
+							user = userDao.findByUser(username);
 							if (user != null) 
 							{
 								if (password.equals(user.getPassword())) 
 								{
-									AccountSave.setUser(user);
-									MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-									active();
+									if (user.isActive())
+									{
+										AccountSave.setUser(user);
+										MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+										active();
+									}
+									else
+									{
+										MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng '" + user.getUsername() + "' này đang bị khóa!", MessageOptionPane.ICON_NAME_BLOCK);
+									}
 								}
 								else 
 								{
@@ -497,7 +511,9 @@ public class LoginJFrame extends JDialog
 	
 	public void showUserJFrame()
 	{
-		
+		UserMainJFrame userMainJFrame = new UserMainJFrame();
+		userMainJFrame.setLocationRelativeTo(null);
+		userMainJFrame.setVisible(true);
 	}
 	
 	//Goi ham nay khi login thanh cong

@@ -21,6 +21,7 @@ import com.duan.dao.AdminDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
+import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
 import com.duan.model.User;
@@ -183,6 +184,16 @@ public class ProfileUserJDialog extends JDialog {
 		getContentPane().add(txtDateOfBirth);
 		
 		btnXcNhn = new JButton("Xác nhận");
+		btnXcNhn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if (validateAll() && updateProfile())
+				{
+					MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật lại thông tin thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+					mainJFrame.showDetail();
+				}
+			}
+		});
 		btnXcNhn.setBounds(10, 311, 344, 42);
 		getContentPane().add(btnXcNhn);
 		
@@ -208,7 +219,7 @@ public class ProfileUserJDialog extends JDialog {
 		txtPassword.setText(user.getPassword());
 		txtPhoneNum.setText(user.getPhoneNumber());
 		txtUsername.setText(user.getUsername());
-		
+		txtDateOfBirth.setDate(user.getDateOfBirth());
 		
 		if (user.isSex())
 			rdoNam.setSelected(true);
@@ -216,24 +227,26 @@ public class ProfileUserJDialog extends JDialog {
 			rdoNu.setSelected(false);
 	}
 	
-
-	
 	public boolean updateProfile()
 	{
 		try 
 		{
-			user.setFullname(txtFullname.getText());
-			user.setEmail(txtEmail.getText());
-			user.setPassword(txtPassword.getText());
-			user.setSex(rdoNam.isSelected());
-			user.setPhoneNumber(txtPhoneNum.getText());
-			
+			User userTemp = new User();
+			userTemp.setId(user.getId());
+			userTemp.setActive(user.isActive());
+			userTemp.setUsername(user.getUsername());
+			userTemp.setFullname(txtFullname.getText());
+			userTemp.setEmail(txtEmail.getText());
+			userTemp.setPassword(txtPassword.getText());
+			userTemp.setSex(rdoNam.isSelected());
+			userTemp.setPhoneNumber(txtPhoneNum.getText());
+			userTemp.setDateOfBirth(txtDateOfBirth.getDate());
 		
-			boolean isSuccess = UserDAO.update(user, user.getId());
+			boolean isSuccess = UserDAO.update(userTemp, userTemp.getId());
 			
 			if (isSuccess)
 			{
-				AccountSave.setUser(user);
+				AccountSave.setUser(userTemp);
 				return true;
 			}
 		} 

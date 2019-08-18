@@ -332,8 +332,8 @@ public class AuthorJDialog extends JDialog {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				int count = JOptionPane.showConfirmDialog(null, "Bạn thực sự muốn xóa ? ","Thông báo",JOptionPane.YES_NO_OPTION);
-				if (count == JOptionPane.YES_OPTION) 
+				boolean isConfirm = MessageOptionPane.showConfirmDialog(contentPane, "Bạn thực sự muốn xóa ? ");
+				if (isConfirm) 
 				{
 					delete();
 					clearAvatar();
@@ -541,7 +541,17 @@ public class AuthorJDialog extends JDialog {
 			}
 		} catch (SQLException e) 
 		{
-			e.printStackTrace();
+			switch (e.getErrorCode()) 
+			{
+			case 547:
+				MessageOptionPane.showAlertDialog(contentPane, "Tác giả này đang được chọn cho một số sách, không thể xóa!", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+
+			default:
+				e.printStackTrace();
+				MessageOptionPane.showAlertDialog(contentPane, "Xóa tác giả thất bại ! [ERROR CODE: " + e.getErrorCode() + "]", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+			}
 		}
 	}
 	

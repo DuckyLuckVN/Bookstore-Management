@@ -236,7 +236,17 @@ public class RentBookJFrame extends JFrame {
 				}
 				catch (SQLException e1) 
 				{
-					e1.printStackTrace();
+					switch (e1.getErrorCode()) 
+					{
+					case 547:
+						MessageOptionPane.showAlertDialog(contentPane, "Đơn thuê này đang được báo mất, không thể xóa!", MessageOptionPane.ICON_NAME_ERROR);
+						break;
+
+					default:
+						e1.printStackTrace();
+						MessageOptionPane.showAlertDialog(contentPane, "Xóa đơn thuê thất bại! [ERROR CODE: " + e1.getErrorCode() + "]", MessageOptionPane.ICON_NAME_ERROR);
+						break;
+					}
 				}
 			}
 		});

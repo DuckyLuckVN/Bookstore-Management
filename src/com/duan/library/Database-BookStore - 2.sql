@@ -51,16 +51,21 @@ CREATE TABLE BOOK
 	title NVARCHAR(100) NOT NULL,
 	category_id varchar(50) NOT NULL,
 	page_num INT,
-	author_id INT FOREIGN KEY REFERENCES dbo.AUTHOR(id),
+	author_id INT,
 	amount INT ,
-	publisher_id INT FOREIGN KEY REFERENCES dbo.PUBLISHER(id),
+	publisher_id INT,
 	publication_year INT,
 	price MONEY,
 	image NVARCHAR(256),
 	location_id VARCHAR(50),
 	description NVARCHAR(256),
 	introduce NVARCHAR(256),
-	created_date date,
+	created_date DATE,
+    
+	CONSTRAINT FK_Book_category_id FOREIGN KEY (category_id) REFERENCES dbo.CATEGORY(id) ON UPDATE CASCADE,
+	CONSTRAINT FK_Book_Location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE,
+	CONSTRAINT FK_Book_Author_id FOREIGN KEY (author_id) REFERENCES dbo.AUTHOR(id) ON UPDATE CASCADE,
+	CONSTRAINT FK_Book_publisher_id FOREIGN KEY (publisher_id) REFERENCES dbo.PUBLISHER(id) ON UPDATE CASCADE
 )
 GO
 
@@ -101,6 +106,8 @@ CREATE TABLE STORAGE
 	admin_id INT NOT NULL,
 	description NVARCHAR(256) NULL,
 	created_date DATE DEFAULT(GETDATE()),
+
+	CONSTRAINT fk_storage_admin_id FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON UPDATE CASCADE
 )
 GO
 
@@ -110,8 +117,9 @@ CREATE TABLE STORAGE_DETAIL
 	book_id VARCHAR(50),
 	amount INT CHECK (amount > 0),
 	price MONEY,
-
 	PRIMARY KEY (storage_id, book_id),
+	CONSTRAINT fk_storage_detail_storeage_id FOREIGN KEY (storage_id) REFERENCES dbo.STORAGE(id) ON UPDATE CASCADE,
+	CONSTRAINT fk_storage_detail_book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON UPDATE CASCADE
 )
 GO
 
@@ -126,6 +134,9 @@ CREATE TABLE RENTBOOK
 	created_date DATE,
 	returned_date DATE,
 	status INT,
+
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES [USER](id) ON UPDATE CASCADE,
+	CONSTRAINT fk_admin1 FOREIGN KEY (admin_id) REFERENCES Admin(id) ON UPDATE CASCADE
 )
 GO 
 
@@ -136,6 +147,8 @@ CREATE TABLE RENTBOOK_DETAIL
 	amount INT NOT NULL,
 	price money,
 	PRIMARY KEY (rentBook_id,book_id),
+	CONSTRAINT fk_renbook FOREIGN KEY (rentbook_id) REFERENCES dbo.RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_bookID FOREIGN KEY (book_id) REFERENCES Book(id) ON UPDATE CASCADE
 )
 GO
 
@@ -144,7 +157,9 @@ CREATE TABLE [ORDER]
 	id int PRIMARY KEY IDENTITY(100, 1),
 	user_id INT NULL,
 	admin_id int,
-	date_created DATE 
+	date_created DATE ,
+	CONSTRAINT fk_Book FOREIGN KEY (user_id) REFERENCES [USER](id) ON UPDATE CASCADE,
+	CONSTRAINT fk_ADMIN_ORDER FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON UPDATE CASCADE
 )
 GO
 
@@ -155,6 +170,8 @@ CREATE TABLE [ORDER_DETAIL]
 	amount INT NOT NULL,
 	price MONEY NOT NULL,
 	PRIMARY KEY(order_id,book_id), 
+	CONSTRAINT fk_order1_book FOREIGN KEY (order_id) REFERENCES [dbo].[ORDER](id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_book_oder FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON UPDATE CASCADE,
 )
 GO
 
@@ -164,6 +181,8 @@ CREATE TABLE BOOK_LOST
 	admin_id INT,
 	cost_lost SMALLMONEY,
 	created_date DATE,
+	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON UPDATE CASCADE,
+	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES [dbo].[ADMIN](id),
 )
 GO
 
@@ -174,6 +193,8 @@ CREATE TABLE BOOK_LOST_DETAIL
 	amount INT NOT NULL CHECK (amount > 0),
 	cost MONEY,
 	PRIMARY KEY (rentbook_id, book_id),
+	CONSTRAINT fk_LostBook_Detail_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].BOOK_LOST(rentbook_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_LostBook__Detail_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON UPDATE CASCADE
 )
 GO
 
@@ -464,6 +485,16 @@ AS BEGIN
 END
 GO
 
+/****** Object:  StoredProcedure  [sp_getClosestPriceStorageWithBook]  Script Date: 8/13/2019 ******/
+--Trả về giá tiền nhập sách của sách có id truyền vào tại thời điểm gần nhất
+CREATE PROC sp_getClosestPriceStorageWithBook (@bookId VARCHAR(50))
+AS BEGIN
+	SELECT TOP 1 sdt.price FROM dbo.STORAGE s, dbo.STORAGE_DETAIL sdt
+	WHERE s.id = sdt.storage_id AND sdt.book_id = @bookId
+	ORDER BY s.created_date DESC
+END
+GO
+
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
 CREATE PROC sp_getStatisticOverviewInMonth 
@@ -569,6 +600,9 @@ AS BEGIN
 	GROUP BY BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date
 END
 GO
+
+
+
 
 /****** Object:  StoredProcedure  [sp_getStatisticRentbookInMonth]  Script Date: 8/13/2019 ******/
 --Trả về thông tin sách thuê theo tháng
@@ -880,17 +914,22 @@ CREATE TRIGGER tg_updateRentBook ON dbo.RENTBOOK
 FOR UPDATE
 AS
 BEGIN
-	DECLARE @status INT
+	DECLARE @status_before INT
+	DECLARE @status_after INT
 	DECLARE @rentbook_id INT
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @amount INT
 
-	--Lấy ra mã sách và số lượng insert
-	SELECT @status = @status, @rentbook_id = @rentbook_id FROM Inserted
+	--Lấy ra trạng thái sau khi cập nhật và trước đó
+	SELECT @status_before = Deleted.status, @rentbook_id = Deleted.id FROM Deleted
+	SELECT @status_after = Inserted.status FROM Inserted
+
+
 
 	--Mã status = 1 => đã trả sách
-	IF (@status = 1)
+	IF (@status_before = 0 AND @status_after = 1)
 	BEGIN
+	
 		DECLARE cs CURSOR FOR SELECT dt.book_id, dt.amount 
 		FROM dbo.RENTBOOK_DETAIL dt WHERE rentbook_id = @rentbook_id
 
@@ -1022,6 +1061,12 @@ SELECT * FROM dbo.RENTBOOK_DETAIL WHERE rentbook_id = 102
 
 
 /*
+
+
+SELECT * FROM dbo.RENTBOOK
+UPDATE dbo.RENTBOOK SET status = 1 WHERE id = 100
+
+
 SELECT * FROM dbo.BOOK
 SELECT * FROM dbo.[ORDER_DETAIL]
 SELECT * FROM dbo.LOCATION
@@ -1040,7 +1085,6 @@ SELECT * FROM dbo.STORAGE_DETAIL
 SELECT * FROM BOOK_LOST
 DELETE FROM dbo.RENTBOOK
 261aa
-
 PRINT DATEDIFF(DAY, '3/1/2011', '3/1/2011')
 
 UPDATE dbo.BOOK SET amount = 0
@@ -1064,6 +1108,5 @@ INSERT dbo.STORAGE_DETAIL( storage_id, book_id, amount, price )
 VALUES	( 103, 'JH42', 10,  100000 ),
 		( 103, 'GH12', 10,  100000 )
 */
-
 
 

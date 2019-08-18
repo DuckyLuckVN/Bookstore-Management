@@ -44,6 +44,9 @@ import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
+import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.User;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
@@ -442,7 +445,8 @@ public class UserJFrame extends JFrame {
 		model.setRowCount(0);
 		for (User user : list) 
 		{
-			Object[] rows = new Object[]{user.getId() , user.getUsername() , user.getPassword() , user.getFullname() , user.getDateOfBirth(), user.getEmail() , user.getPhoneNumber()};
+			String dateOfBirth = DateHelper.dateToString(user.getDateOfBirth(), SettingSave.getSetting().getDateFormat());
+			Object[] rows = new Object[]{user.getId() , user.getUsername() , user.getPassword() , user.getFullname() , dateOfBirth, user.getEmail() , user.getPhoneNumber()};
 			model.addRow(rows);
 		}
 	}
@@ -641,7 +645,17 @@ public class UserJFrame extends JFrame {
 		} 
 		catch (SQLException e) 
 		{
-			e.printStackTrace();
+			switch (e.getErrorCode()) 
+			{
+			case 547:
+				MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng này không thể xóa, hãy khóa tài khoản này lại nếu cần!", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+
+			default:
+				e.printStackTrace();
+				MessageOptionPane.showAlertDialog(contentPane, "Xóa tài khoản thất bại! [ERROR CODE: " + e.getErrorCode() + "]", MessageOptionPane.ICON_NAME_ERROR);
+				break;
+			}
 		}
 	}
 }

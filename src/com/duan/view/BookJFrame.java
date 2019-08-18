@@ -664,6 +664,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để insertBook
 	public void showInsertBook()
 	{
+		inserBookJFrame = new BookEditorJDialog();
+		inserBookJFrame.setLocationRelativeTo(this);
 		inserBookJFrame.setBookJFrame(this);
 		inserBookJFrame.setVisible(true);
 	}
@@ -671,6 +673,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để edit book
 	public void showEditorBook(Book book) throws SQLException
 	{
+		editorBookJDialog = new BookEditorJDialog();
+		editorBookJDialog.setLocationRelativeTo(this);
 		editorBookJDialog.setBookEditor(book);
 		editorBookJDialog.setBookJFrame(this);
 		editorBookJDialog.showDataToForm(book);

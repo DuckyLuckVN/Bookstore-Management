@@ -20,6 +20,9 @@ import javax.swing.border.MatteBorder;
 
 import com.duan.custom.common.BookJPanel;
 import com.duan.custom.common.JTableRed;
+import com.duan.custom.message.MessageOptionPane;
+import com.duan.helper.AccountSave;
+import com.duan.helper.SettingSave;
 
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
@@ -34,6 +37,9 @@ import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class UserMainJFrame extends JFrame {
 
@@ -44,6 +50,7 @@ public class UserMainJFrame extends JFrame {
 	private JTextField txtSearchOrder;
 
 	private ProfileUserJDialog profileUserJDialog = new ProfileUserJDialog();
+	private JLabel lblUserFullname;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -63,6 +70,16 @@ public class UserMainJFrame extends JFrame {
 	 */
 	public UserMainJFrame() 
 	{
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) 
+			{
+				if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn thoát không?"))
+				{
+					dispose();
+				}
+			}
+		});
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -70,8 +87,8 @@ public class UserMainJFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 881, 689);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setBounds(100, 100, 881, 704);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -166,15 +183,16 @@ public class UserMainJFrame extends JFrame {
 		scrollPane.setViewportView(tblOrder);
 		
 		JPanel pnlProfile = new JPanel();
+		pnlProfile.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u00F4ng tin c\u1EE7a b\u1EA1n", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlProfile.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblNguyniHo = new JLabel("Nguyễn Đại Hào");
-		lblNguyniHo.setForeground(Color.RED);
-		lblNguyniHo.setBorder(null);
-		lblNguyniHo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNguyniHo.setPreferredSize(new Dimension(200, 35));
-		lblNguyniHo.setFont(new Font("Tahoma", Font.BOLD, 15));
-		pnlProfile.add(lblNguyniHo, BorderLayout.WEST);
+		lblUserFullname = new JLabel("Xin chào: Nguyễn Đại Hào");
+		lblUserFullname.setForeground(Color.DARK_GRAY);
+		lblUserFullname.setBorder(null);
+		lblUserFullname.setHorizontalAlignment(SwingConstants.LEFT);
+		lblUserFullname.setPreferredSize(new Dimension(400, 35));
+		lblUserFullname.setFont(new Font("Tahoma", Font.BOLD, 15));
+		pnlProfile.add(lblUserFullname, BorderLayout.WEST);
 		
 		JPanel pnlControllProfile = new JPanel();
 		pnlProfile.add(pnlControllProfile, BorderLayout.EAST);
@@ -184,9 +202,7 @@ public class UserMainJFrame extends JFrame {
 		btnChangeProfile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				profileUserJDialog = new ProfileUserJDialog();
-				profileUserJDialog.setLocationRelativeTo(getContentPane());
-				profileUserJDialog.setVisible(true);
+				showProfileUserJDialog();
 			}
 		});
 		pnlControllProfile.add(btnChangeProfile);
@@ -195,22 +211,46 @@ public class UserMainJFrame extends JFrame {
 		btnLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				
+				if (MessageOptionPane.showConfirmDialog(contentPane, "Bạn có chắc muốn đăng xuất?"))
+				{
+					logout();
+				}
 			}
 		});
 		pnlControllProfile.add(btnLogout);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
-				.addComponent(pnlProfile, GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+				.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
+				.addComponent(pnlProfile, GroupLayout.DEFAULT_SIZE, 855, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
-					.addComponent(pnlProfile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+					.addComponent(pnlProfile, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE))
 		);
 		contentPane.setLayout(gl_contentPane);
+		showDetail();
+	}
+	
+	public void showDetail()
+	{
+		lblUserFullname.setText("Xin chào: " + AccountSave.getUser().getFullname());
+	}
+	
+	public void showProfileUserJDialog()
+	{
+		profileUserJDialog = new ProfileUserJDialog();
+		profileUserJDialog.setMainJFrame(this);
+		profileUserJDialog.setLocationRelativeTo(getContentPane());
+		profileUserJDialog.setVisible(true);
+	}
+	
+	public void logout()
+	{
+		AccountSave.removeUser();
+		dispose();
+		new LoginJFrame().setVisible(true);
 	}
 }
