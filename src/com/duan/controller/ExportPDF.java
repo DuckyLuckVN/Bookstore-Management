@@ -451,7 +451,7 @@ public class ExportPDF
 			tblInfo.addCell(new Paragraph("Tình trạng:", utf8Font));
 			tblInfo.addCell(new Paragraph((rentBook.getStatus() == 0) ? "Đang thuê" : "Đã trả", utf8Font));
 			tblInfo.addCell(new Paragraph("Phí phạt gia tăng:", utf8Font));
-			tblInfo.addCell(new Paragraph(bookLost.getCostLost() + " * <giá sách lúc thuê> * <số sách mất>", utf8Font));
+			tblInfo.addCell(new Paragraph("x" + bookLost.getCostLost(), utf8Font));
 			
 			document.add(tblInfo);
 			

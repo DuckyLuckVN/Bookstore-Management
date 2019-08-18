@@ -727,51 +727,16 @@ BEGIN
 		total_money_penalty MONEY,
 		total_money_income MONEY
 	)
-	--Tạo con trỏ duyệt từng sách có trong phần thuê sách
-	IF (@month != 0) -- Nếu @month khác 0 thì duyệt lấy mã sách thuê theo tháng @month
-		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
-		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL rdt,
-			dbo.BOOK_LOST bl, dbo.BOOK_LOST_DETAIL bldt,
-			dbo.STORAGE st, dbo.STORAGE_DETAIL stdt
-		WHERE (rdt.book_id = b.id AND rb.id = rdt.rentbook_id)
-		OR (bldt.book_id = b.id AND bl.rentbook_id = bldt.rentbook_id)
-		OR (stdt.book_id = b.id AND st.id = stdt.storage_id)
-			
-		AND YEAR(rb.created_date) = YEAR(GETDATE()) AND MONTH(rb.created_date) = @month
-	ELSE-- Nếu @month = 0 thì duyệt lấy mã sách thuê trong cả năm
-		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
-		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt 
-		WHERE b.id = dt.book_id AND rb.id = dt.rentbook_id
-		AND YEAR(rb.created_date) = YEAR(GETDATE())
 	
-	OPEN cs
-	FETCH NEXT FROM cs INTO @book_id
-
-	--Tiến hành lặp danh sách sách thuê và insert dữ liệu thống kê vào tblStats
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-
-
-		
-
-		-- Đi đến dòng tiếp theo
-		FETCH NEXT FROM cs INTO @book_id
-	END
-
-
-	--Đóng con trỏ
-	CLOSE cs
-	DEALLOCATE cs
+	SELECT DISTINCT b.id 
+	FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rbdt, dbo.STORAGE_DETAIL stdt, dbo.BOOK_LOST_DETAIL bldt, dbo.ORDER_DETAIL odt
+	WHERE rbdt.book_id = b.id OR stdt.book_id = b.id OR bldt.book_id = b.id OR odt.book_id = b.id
+	
 
 	--Trả về bảng danh sách đã thống kê
 	SELECT * FROM @tblStats
 END
 GO
-
-
-
-SELECT * FROM dbo.RENTBOOK
-SELECT * FROM dbo.RENTBOOK_DETAIL
 
 
 

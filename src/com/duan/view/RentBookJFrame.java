@@ -648,7 +648,6 @@ public class RentBookJFrame extends JFrame {
 	{
 		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
 		RentBook model = RentBookDAO.findById(rentbook_id);
-		
 		editorRentbookJDialog = new RentBookEditorJDialog();
 		editorRentbookJDialog.setLocationRelativeTo(this);
 		editorRentbookJDialog.setEditModel(model);

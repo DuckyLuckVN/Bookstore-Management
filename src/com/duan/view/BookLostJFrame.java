@@ -411,6 +411,7 @@ public class BookLostJFrame extends JFrame {
 	private void showEditBookLost()
 	{
 		editBookLostEditorJDialog = new BookLostEditorJDialog();
+		editBookLostEditorJDialog.setLocationRelativeTo(this);
 		editBookLostEditorJDialog.setEditMode(true);
 		editBookLostEditorJDialog.setEditModel(listBookLost.get(indexSelected));
 		editBookLostEditorJDialog.setBookLostJFrame(this);
