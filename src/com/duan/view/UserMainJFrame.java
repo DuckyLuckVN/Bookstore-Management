@@ -34,6 +34,7 @@ import com.duan.dao.UserDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
+import com.duan.model.Admin;
 import com.duan.model.Book;
 import com.duan.model.Order;
 import com.duan.model.RentBook;
@@ -135,12 +136,9 @@ public class UserMainJFrame extends JFrame {
 		
 		JPanel pnlBook = new JPanel();
 		tabbedPane.addTab("Tra cứu sách", new ImageIcon(UserMainJFrame.class.getResource("/com/duan/icon/icons8_books_32px_1.png")), pnlBook, null);
-		pnlBook.setLayout(null);
 		
 		JLabel lblSearchBook = new JLabel("Tra cứu sách:");
 		lblSearchBook.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSearchBook.setBounds(10, 11, 85, 29);
-		pnlBook.add(lblSearchBook);
 		
 		txtSearchBook = new JTextField();
 		txtSearchBook.addKeyListener(new KeyAdapter() {
@@ -156,13 +154,9 @@ public class UserMainJFrame extends JFrame {
 				}
 			}
 		});
-		txtSearchBook.setBounds(105, 11, 240, 27);
-		pnlBook.add(txtSearchBook);
 		txtSearchBook.setColumns(10);
 		
 		JScrollPane scrollPaneBook = new JScrollPane();
-		scrollPaneBook.setBounds(10, 51, 830, 497);
-		pnlBook.add(scrollPaneBook);
 		
 		tblBook = new JTableRed();
 		tblBook.addMouseListener(new MouseAdapter() {
@@ -189,15 +183,37 @@ public class UserMainJFrame extends JFrame {
 		});
 		tblBook.getColumnModel().getColumn(0).setPreferredWidth(0);
 		scrollPaneBook.setViewportView(tblBook);
+		GroupLayout gl_pnlBook = new GroupLayout(pnlBook);
+		gl_pnlBook.setHorizontalGroup(
+			gl_pnlBook.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlBook.createSequentialGroup()
+					.addGap(10)
+					.addGroup(gl_pnlBook.createParallelGroup(Alignment.LEADING)
+						.addComponent(scrollPaneBook, GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+						.addGroup(gl_pnlBook.createSequentialGroup()
+							.addComponent(lblSearchBook)
+							.addGap(10)
+							.addComponent(txtSearchBook, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap())
+		);
+		gl_pnlBook.setVerticalGroup(
+			gl_pnlBook.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlBook.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_pnlBook.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSearchBook, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtSearchBook, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addComponent(scrollPaneBook, GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		pnlBook.setLayout(gl_pnlBook);
 		
 		JPanel pnlRentBook = new JPanel();
 		tabbedPane.addTab("Tra cứu đơn thuê", new ImageIcon(UserMainJFrame.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")), pnlRentBook, null);
-		pnlRentBook.setLayout(null);
 		
 		JLabel lblSearchRentBook = new JLabel("Tra cứu đơn:");
 		lblSearchRentBook.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSearchRentBook.setBounds(10, 11, 81, 29);
-		pnlRentBook.add(lblSearchRentBook);
 		
 		txtSearchRentBook = new JTextField();
 		txtSearchRentBook.addKeyListener(new KeyAdapter() {
@@ -213,12 +229,8 @@ public class UserMainJFrame extends JFrame {
 			}
 		});
 		txtSearchRentBook.setColumns(10);
-		txtSearchRentBook.setBounds(101, 11, 240, 27);
-		pnlRentBook.add(txtSearchRentBook);
 		
 		JScrollPane scrollPaneRentBook = new JScrollPane();
-		scrollPaneRentBook.setBounds(10, 51, 830, 497);
-		pnlRentBook.add(scrollPaneRentBook);
 		
 		 tblRentBook = new JTableRed();
 		 tblRentBook.addMouseListener(new MouseAdapter() {
@@ -241,15 +253,37 @@ public class UserMainJFrame extends JFrame {
 		});
 		tblRentBook.getColumnModel().getColumn(0).setPreferredWidth(0);
 		scrollPaneRentBook.setViewportView(tblRentBook);
+		GroupLayout gl_pnlRentBook = new GroupLayout(pnlRentBook);
+		gl_pnlRentBook.setHorizontalGroup(
+			gl_pnlRentBook.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlRentBook.createSequentialGroup()
+					.addGap(10)
+					.addGroup(gl_pnlRentBook.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlRentBook.createSequentialGroup()
+							.addComponent(lblSearchRentBook)
+							.addGap(10)
+							.addComponent(txtSearchRentBook, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPaneRentBook, GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE))
+					.addGap(10))
+		);
+		gl_pnlRentBook.setVerticalGroup(
+			gl_pnlRentBook.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlRentBook.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_pnlRentBook.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSearchRentBook, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtSearchRentBook, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addComponent(scrollPaneRentBook, GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+					.addGap(4))
+		);
+		pnlRentBook.setLayout(gl_pnlRentBook);
 		
 		JPanel pnlOrder = new JPanel();
 		tabbedPane.addTab("Tra cứu đơn mua sách", new ImageIcon(UserMainJFrame.class.getResource("/com/duan/icon/icons8_buy_for_change_32px.png")), pnlOrder, null);
-		pnlOrder.setLayout(null);
 		
 		JLabel lblSearchOrder = new JLabel("Tra cứu đơn:");
 		lblSearchOrder.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblSearchOrder.setBounds(10, 11, 81, 29);
-		pnlOrder.add(lblSearchOrder);
 		
 		txtSearchOrder = new JTextField();
 		txtSearchOrder.addKeyListener(new KeyAdapter() {
@@ -267,12 +301,8 @@ public class UserMainJFrame extends JFrame {
 			}
 		});
 		txtSearchOrder.setColumns(10);
-		txtSearchOrder.setBounds(101, 11, 240, 27);
-		pnlOrder.add(txtSearchOrder);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 51, 830, 497);
-		pnlOrder.add(scrollPane);
 		
 		 tblOrder = new JTableRed();
 		 tblOrder.addMouseListener(new MouseAdapter() {
@@ -304,6 +334,31 @@ public class UserMainJFrame extends JFrame {
 		});
 		tblOrder.getColumnModel().getColumn(0).setPreferredWidth(0);
 		scrollPane.setViewportView(tblOrder);
+		GroupLayout gl_pnlOrder = new GroupLayout(pnlOrder);
+		gl_pnlOrder.setHorizontalGroup(
+			gl_pnlOrder.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlOrder.createSequentialGroup()
+					.addGap(10)
+					.addGroup(gl_pnlOrder.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlOrder.createSequentialGroup()
+							.addComponent(lblSearchOrder)
+							.addGap(10)
+							.addComponent(txtSearchOrder, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE))
+					.addGap(10))
+		);
+		gl_pnlOrder.setVerticalGroup(
+			gl_pnlOrder.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlOrder.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_pnlOrder.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSearchOrder, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtSearchOrder, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+					.addGap(4))
+		);
+		pnlOrder.setLayout(gl_pnlOrder);
 		
 		JPanel pnlProfile = new JPanel();
 		pnlProfile.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u00F4ng tin c\u1EE7a b\u1EA1n", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -431,12 +486,12 @@ public class UserMainJFrame extends JFrame {
 		Book b;
 		for (RentBook rb : listRentBook) 
 		{
-			String nameUser = UserDAO.findByID(rb.getUserId()).getFullname();
-			String nameAdmin = AdminDAO.findByID(rb.getAdminId()).getFullname();	
+			User user = UserDAO.findByID(rb.getUserId());
+			Admin admin = AdminDAO.findByID(rb.getAdminId());	
 			
-			int amount = RentBookDetailDAO.findById(rb.getId()).getAmount();
-			double price = RentBookDetailDAO.findById(rb.getId()).getPrice();
-			Object [] rows = {rb.getId(),nameUser,nameAdmin,rb.getCreatedDate(),rb.getReturnedDate(),amount,rb.getCostRent()*amount};
+			int totalBook = RentBookDetailDAO.getTotalBookRented(rb.getId());
+			String totalCostRentStr = DataHelper.getFormatForMoney(totalBook * rb.getCostRent()) + SettingSave.getSetting().getMoneySymbol();
+			Object [] rows = {rb.getId(), user.getFullname() + " (" + user.getUsername() + ") ", admin.getFullname() + " (" + admin.getUsername() + ") ",rb.getCreatedDate(),rb.getReturnedDate(), totalBook, totalCostRentStr};
 			model.addRow(rows);
 		}
 	}
@@ -450,12 +505,12 @@ public class UserMainJFrame extends JFrame {
 		{
 			if (DataHelper.search(rb.getSearchString(), search) == true) 
 			{
-				String nameUser = UserDAO.findByID(rb.getUserId()).getFullname();
-				String nameAdmin = AdminDAO.findByID(rb.getAdminId()).getFullname();	
+				User user = UserDAO.findByID(rb.getUserId());
+				Admin admin = AdminDAO.findByID(rb.getAdminId());	
 				
-				int amount = RentBookDetailDAO.findById(rb.getId()).getAmount();
-				double price = RentBookDetailDAO.findById(rb.getId()).getPrice();
-				Object [] rows = {rb.getId(),nameUser,nameAdmin,rb.getCreatedDate(),rb.getReturnedDate(),amount,price};
+				int totalBook = RentBookDetailDAO.getTotalBookRented(rb.getId());
+				String totalCostRentStr = DataHelper.getFormatForMoney(totalBook * rb.getCostRent()) + SettingSave.getSetting().getMoneySymbol();
+				Object [] rows = {rb.getId(), user.getFullname() + " (" + user.getUsername() + ") ", admin.getFullname() + " (" + admin.getUsername() + ") ",rb.getCreatedDate(),rb.getReturnedDate(), totalBook, totalCostRentStr};
 				model.addRow(rows);
 			}
 		}
@@ -486,9 +541,10 @@ public class UserMainJFrame extends JFrame {
 		{
 			String nameUser = UserDAO.findByID(od.getUserId()).getFullname();
 			String nameAdmin = AdminDAO.findByID(od.getAdminId()).getFullname();
-			int amount = OrderDetailDAO.findByID(od.getId()).getAmount();
-			double price = OrderDetailDAO.findByID(od.getId()).getPrice();
-			Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(),amount,price*amount};
+			int totalBook = OrderDetailDAO.getTotalAmountBook(od.getId());
+			String totalPriceStr = DataHelper.getFormatForMoney(OrderDetailDAO.getTotalPrice(od.getId())) + SettingSave.getSetting().getMoneySymbol();
+			
+			Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(), totalBook, OrderDetailDAO.getTotalPrice(od.getId())};
 			model.addRow(rows);
 		}
 		showDetail();
@@ -516,14 +572,15 @@ public class UserMainJFrame extends JFrame {
 		for (Order od : listOrder) 
 		{
 			if (DataHelper.search(od.getSearchString(), search) )
-				{
+			{
 				String nameUser = UserDAO.findByID(od.getUserId()).getFullname();
 				String nameAdmin = AdminDAO.findByID(od.getAdminId()).getFullname();
-				int amount = OrderDetailDAO.findByID(od.getId()).getAmount();
-				double price = OrderDetailDAO.findByID(od.getId()).getPrice();
-				Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(),amount,price};
+				int totalBook = OrderDetailDAO.getTotalAmountBook(od.getId());
+				String totalPriceStr = DataHelper.getFormatForMoney(OrderDetailDAO.getTotalPrice(od.getId())) + SettingSave.getSetting().getMoneySymbol();
+				
+				Object [] rows = {od.getId(),nameUser,nameAdmin,od.getDateCreated(), totalBook, OrderDetailDAO.getTotalPrice(od.getId())};
 				model.addRow(rows);
-				}
+			}
 			
 		}
 	}
