@@ -43,7 +43,7 @@ public class UserDAO
     
     public static boolean insert(User user ) throws SQLException
     {
-        String sql = "INSERT INTO [USER] Values(?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO [USER] Values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
 									        		user.getUsername(), 
@@ -53,6 +53,7 @@ public class UserDAO
 									        		user.getEmail(),
 									        		user.getPhoneNumber(),
 									        		user.isSex(),
+									        		user.isActive(),
 									        		user.getCreatedDate());
         
          int count = pre.executeUpdate();
@@ -63,7 +64,7 @@ public class UserDAO
     public static boolean update(User user , int id) throws SQLException
     {
         String sql = "UPDATE [USER] SET username=?, password=?, fullname=?,"
-                + "date_of_birth=?, email=?, phone_number=?, sex=?, created_date = ? Where id=?";
+                + "date_of_birth=?, email=?, phone_number=?, sex=?, isActive=?, created_date = ? Where id=?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
 								        		user.getUsername(), 
@@ -73,6 +74,7 @@ public class UserDAO
 								        		user.getEmail(), 
 								        		user.getPhoneNumber(),
 								        		user.isSex(),
+								        		user.isActive(),
 								        		user.getCreatedDate(),
 								        		id);
         int count = pre.executeUpdate();
@@ -124,8 +126,9 @@ public class UserDAO
     	String email = rs.getString(6);
     	String phoneNumber = rs.getString(7);
     	boolean sex = rs.getBoolean(8);
-    	Date createdDate = rs.getDate(9);
+    	boolean isActive = rs.getBoolean(9);
+    	Date createdDate = rs.getDate(10);
     	
-    	return new User(id, use, password, fullname, dateOfBirth, email, phoneNumber, sex, createdDate);
+    	return new User(id, use, password, fullname, dateOfBirth, email, phoneNumber, sex, isActive, createdDate);
     }
 }

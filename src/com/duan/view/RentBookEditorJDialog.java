@@ -75,7 +75,7 @@ public class RentBookEditorJDialog extends JDialog {
 	private boolean isEditMode = false;
 	
 	private RentBook rentBookEdit;
-	private User userSelect;
+	private User userSelected;
 	private List<BookProduct> listBookProduct = new ArrayList<BookProduct>();
 	private List<BookProduct> listBookProductEdit = new ArrayList<BookProduct>();
 	private JLabel lblTotalCostRent;
@@ -430,12 +430,20 @@ public class RentBookEditorJDialog extends JDialog {
 	{
 		selectUserJDialog.setLocationRelativeTo(this);
 		selectUserJDialog.openSelectDialog();
-		
+		User userTemp;
 		//Kiểm tra nếu như đã có user được chọn thì lấy user đó về lưu vào userSelect
 		if (selectUserJDialog.getStatus() == selectUserJDialog.STATUS_SELECTED)
 		{
-			userSelect = selectUserJDialog.getUserSelected();
-			showUserDetail(userSelect);
+			userTemp = selectUserJDialog.getUserSelected();
+			if (userTemp.isActive() == true)
+			{
+				userSelected = userTemp;
+				showUserDetail(userSelected);
+			}
+			else
+			{
+				MessageOptionPane.showAlertDialog(this, "Tài khoảng '" + userTemp.getUsername() + "' đang bị khóa, không thể giao dịch!");
+			}
 		}
 	}
 	
@@ -472,7 +480,7 @@ public class RentBookEditorJDialog extends JDialog {
 		double costExpiration = SettingSave.getSetting().getCostRentExpiration();
 		int expirationDay = SettingSave.getSetting().getDayExpiration();
 		
-		RentBook rb = new RentBook(0, userSelect.getId(), AccountSave.getAdmin().getId(), costRent, costExpiration, expirationDay, new Date(), null, 0);
+		RentBook rb = new RentBook(0, userSelected.getId(), AccountSave.getAdmin().getId(), costRent, costExpiration, expirationDay, new Date(), null, 0);
 		boolean isSuccess = RentBookDAO.insert(rb, getListBookProduct());
 		
 		if (isSuccess)
@@ -495,7 +503,7 @@ public class RentBookEditorJDialog extends JDialog {
 		{
 			rentBookEdit.setReturnedDate(new Date());
 		}
-		rentBookEdit.setUserId(userSelect.getId());
+		rentBookEdit.setUserId(userSelected.getId());
 		rentBookEdit.setStatus(status);
 		
 		boolean isSuccess = RentBookDAO.update(rentBookEdit, getListBookProduct());
@@ -583,7 +591,7 @@ public class RentBookEditorJDialog extends JDialog {
 		int rowCount = tblBook.getRowCount();
 		
 		//CHECK - USER
-		if (userSelect == null)
+		if (userSelected == null)
 		{
 			msg += "+ Bạn chưa chọn tài khoảng thuê\n";
 			isSuccess = false;
@@ -684,7 +692,7 @@ public class RentBookEditorJDialog extends JDialog {
 	//Hiển thị thông tin user truyền vào lên form
 	public void showUserDetail(User user)
 	{
-		userSelect = user;
+		userSelected = user;
 		String ngaySinh = DateHelper.dateToString(user.getDateOfBirth(), "dd/MM/yyyy");
 		txtMaTaiKhoang.setText(user.getId() + "");
 		txtTaiKhoang.setText(user.getUsername());
@@ -734,8 +742,8 @@ public class RentBookEditorJDialog extends JDialog {
 		try 
 		{
 			//Hiển thị thông tin người thuê
-			this.userSelect = UserDAO.findByID(rentBook.getUserId());
-			showUserDetail(userSelect);
+			this.userSelected = UserDAO.findByID(rentBook.getUserId());
+			showUserDetail(userSelected);
 			
 			//Hiển thị lại trạng thái cho cboStatus
 			cboStatus.setSelectedIndex(rentBook.getStatus());

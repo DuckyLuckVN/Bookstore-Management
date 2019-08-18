@@ -37,6 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.collections4.functors.TruePredicate;
+
 import com.duan.custom.common.JDateChooserCustom;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
@@ -44,6 +46,8 @@ import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.UserDAO;
 import com.duan.model.User;
 import com.toedter.calendar.JDateChooser;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class UserJFrame extends JFrame {
 
@@ -68,6 +72,8 @@ public class UserJFrame extends JFrame {
 	JButton btnCpNht;
 	JButton btnThem;
 	JButton btnXa;
+	private JLabel lblTrngThi;
+	private JComboBox cboActive;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -126,38 +132,6 @@ public class UserJFrame extends JFrame {
 			}
 		});
 		txtsearch.setColumns(10);
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
-					.addGap(1))
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(lblTmKim)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE)
-					.addGap(392))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGap(36)))
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
-		);
 		
 		JLabel lblTiKhong = new JLabel("Tài khoản");
 		lblTiKhong.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -207,78 +181,6 @@ public class UserJFrame extends JFrame {
 		
 		rdoNu = new JRadioButton("Nữ");
 		buttonGroup.add(rdoNu);
-		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
-		gl_pnlForm.setHorizontalGroup(
-			gl_pnlForm.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnlForm.createSequentialGroup()
-					.addGap(8)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtBirthDay, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE))
-						.addGroup(gl_pnlForm.createSequentialGroup()
-							.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
-							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
-							.addGap(2)
-							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)))
-					.addGap(8))
-		);
-		gl_pnlForm.setVerticalGroup(
-			gl_pnlForm.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnlForm.createSequentialGroup()
-					.addGap(9)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtBirthDay, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtPhoneNum, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
-						.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)))
-		);
-		pnlForm.setLayout(gl_pnlForm);
 		pnlController.setLayout(new GridLayout(0, 1, 0, 5));
 		
 		JButton btnTaoMoi = new JButton("Tạo mới");
@@ -377,11 +279,126 @@ public class UserJFrame extends JFrame {
 		});
 		tblUser.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblUser);
-		contentPane.setLayout(gl_contentPane);
 		loadListToUser();
 		btnCpNht.setEnabled(false);
 		btnThem.setEnabled(false);
 		btnXa.setEnabled(false);
+		
+		lblTrngThi = new JLabel("Trạng thái:");
+		lblTrngThi.setFont(new Font("Tahoma", Font.BOLD, 14));
+		
+		cboActive = new JComboBox();
+		cboActive.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		cboActive.setModel(new DefaultComboBoxModel(new String[] {"Kích hoạt", "Khóa tài khoản"}));
+		GroupLayout gl_pnlForm = new GroupLayout(pnlForm);
+		gl_pnlForm.setHorizontalGroup(
+			gl_pnlForm.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlForm.createSequentialGroup()
+					.addGap(8)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtUsername, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtPassword, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtFullname, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtBirthDay, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtEmail, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(txtPhoneNum, GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+							.addGap(4))
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+							.addGap(10)
+							.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addGap(2)
+							.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+							.addComponent(lblTrngThi, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(cboActive, GroupLayout.PREFERRED_SIZE, 133, GroupLayout.PREFERRED_SIZE)))
+					.addGap(4))
+		);
+		gl_pnlForm.setVerticalGroup(
+			gl_pnlForm.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnlForm.createSequentialGroup()
+					.addGap(9)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTiKhong, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtUsername, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblMtKhu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPassword, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblHTn, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtFullname, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblNgySinh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtBirthDay, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtEmail, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSinThoi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtPhoneNum, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+					.addGap(11)
+					.addGroup(gl_pnlForm.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblGiiTnh, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rdoNam, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rdoNu, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblTrngThi, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_pnlForm.createSequentialGroup()
+							.addGap(2)
+							.addComponent(cboActive, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))))
+		);
+		pnlForm.setLayout(gl_pnlForm);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addComponent(pnlForm, GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+					.addGap(6)
+					.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblTmKim)
+					.addGap(10)
+					.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 218, GroupLayout.PREFERRED_SIZE))
+				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(11)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(pnlForm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(pnlController, GroupLayout.PREFERRED_SIZE, 315, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addComponent(txtsearch, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
+		);
+		contentPane.setLayout(gl_contentPane);
 		btnTaoMoi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -452,6 +469,8 @@ public class UserJFrame extends JFrame {
 		{
 			rdoNu.setSelected(true);
 		}
+		
+		cboActive.setSelectedIndex((user.isActive()) ? 0 : 1);
 		
 	}
 
@@ -526,6 +545,7 @@ public class UserJFrame extends JFrame {
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
 		boolean gioitinh = true;
+		boolean isActive = (cboActive.getSelectedIndex()==0) ? true : false;
 		if (gioitinh == true) 
 		{
 			rdoNam.setSelected(true);
@@ -534,7 +554,7 @@ public class UserJFrame extends JFrame {
 		{
 			rdoNu.setSelected(true);
 		}
-		user = new User(0,taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, new Date());
+		user = new User(0,taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, isActive, new Date());
 		try 
 		{
 			if (dao.insert(user)) 
@@ -570,6 +590,8 @@ public class UserJFrame extends JFrame {
 		String email = txtEmail.getText();
 		String sodt = txtPhoneNum.getText();
 		boolean gioitinh = false;
+		boolean isActive = (cboActive.getSelectedIndex()==0) ? true : false;
+		
 		if (rdoNam.isSelected()) 
 		{
 			gioitinh = true;
@@ -579,7 +601,7 @@ public class UserJFrame extends JFrame {
 			gioitinh = false;
 		}
 		
-		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh,list.get(index).getCreatedDate() );
+		user = new User(list.get(index).getId(), taikhoan, matkhau, hoten,ngaysinh, email, sodt, gioitinh, isActive,list.get(index).getCreatedDate() );
 		try 
 		{
 			if (dao.update(user, list.get(index).getId())) 
@@ -622,25 +644,4 @@ public class UserJFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
-//	
-//	public void fillToTableSearch()
-//    {
-//		index = tblUser.getSelectedRow();
-//		
-//        
-//        model = (DefaultTableModel) tblUser.getModel();
-//        model.setRowCount(0);
-//        
-//        for (User user : list) 
-//        {
-//            boolean isFound = Pattern.compile("^(?i)[([\\w\\s][\\p{L}\\s])]*" + txtsearch.getText() + "[([\\w\\s][\\p{L}\\s])]*$", 
-//					Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(user.getFullname()).matches();
-//            
-//            if (isFound) 
-//            {
-//                Object []rows = new Object[]{user.getId(),user.getUsername(),user.getPassword(),user.getFullname(),user.getDateOfBirth(),user.getEmail(),user.getPhoneNumber()};                
-//                model.addRow(rows);
-//            }
-//        }  
-//    }
 }

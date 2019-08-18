@@ -395,7 +395,7 @@ public class StatisticalJFrame extends JFrame {
 		JScrollPane scrollPane_2 = new JScrollPane();
 		
 		tblSachThue = new JTable();
-		tblSachThue.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ LƯỢNG", "ĐÃ TRẢ", "CHƯA TRẢ", "QUÁ THỜI HẠN"}) 
+		tblSachThue.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "TỔNG ĐÃ THUÊ", "ĐÃ TRẢ", "CHƯA TRẢ", "QUÁ THỜI HẠN"}) 
 		{
 			boolean[] columnEditables = new boolean[] {
 				false
@@ -437,7 +437,7 @@ public class StatisticalJFrame extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
 		tblDoanhThu = new JTable();
-		tblDoanhThu.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ LƯỢNG", "TỔNG TIỀN"}) 
+		tblDoanhThu.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "TIỀN NHẬP", "TIỀN BÁN", "TIỀN THUÊ", "TIỀN PHẠT", "TỔNG TIỀN"}) 
 		{
 			boolean[] columnEditables = new boolean[] {
 				false

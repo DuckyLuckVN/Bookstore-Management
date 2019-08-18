@@ -61,8 +61,6 @@ CREATE TABLE BOOK
 	description NVARCHAR(256),
 	introduce NVARCHAR(256),
 	created_date date,
-	CONSTRAINT fk_cateID FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_book_location_id FOREIGN KEY (location_id) REFERENCES dbo.LOCATION(id) ON UPDATE CASCADE,
 )
 GO
 
@@ -76,6 +74,7 @@ CREATE TABLE [USER]
 	email VARCHAR(50),
 	phone_number VARCHAR(14),
 	sex BIT,
+	isActive BIT,
 	created_date DATE
 )
 GO
@@ -102,8 +101,6 @@ CREATE TABLE STORAGE
 	admin_id INT NOT NULL,
 	description NVARCHAR(256) NULL,
 	created_date DATE DEFAULT(GETDATE()),
-	CONSTRAINT fk_storage_admin_id FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON DELETE CASCADE
-	ON UPDATE CASCADE 
 )
 GO
 
@@ -115,8 +112,6 @@ CREATE TABLE STORAGE_DETAIL
 	price MONEY,
 
 	PRIMARY KEY (storage_id, book_id),
-	CONSTRAINT fk_storage_detail_storeage_id FOREIGN KEY (storage_id) REFERENCES dbo.STORAGE(id) ON UPDATE CASCADE ON DELETE CASCADE,
-	CONSTRAINT fk_storage_detail_book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON UPDATE CASCADE ON DELETE CASCADE
 )
 GO
 
@@ -131,8 +126,6 @@ CREATE TABLE RENTBOOK
 	created_date DATE,
 	returned_date DATE,
 	status INT,
-	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES [USER](id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_admin1 FOREIGN KEY (admin_id) REFERENCES Admin(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 GO 
 
@@ -143,8 +136,6 @@ CREATE TABLE RENTBOOK_DETAIL
 	amount INT NOT NULL,
 	price money,
 	PRIMARY KEY (rentBook_id,book_id),
-	CONSTRAINT fk_renbook FOREIGN KEY (rentbook_id) REFERENCES dbo.RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_bookID FOREIGN KEY (book_id) REFERENCES Book(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 GO
 
@@ -154,8 +145,6 @@ CREATE TABLE [ORDER]
 	user_id INT NULL,
 	admin_id int,
 	date_created DATE 
-	CONSTRAINT fk_Book FOREIGN KEY (user_id) REFERENCES [USER](id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_ADMIN_ORDER FOREIGN KEY (admin_id) REFERENCES dbo.ADMIN(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 GO
 
@@ -165,9 +154,7 @@ CREATE TABLE [ORDER_DETAIL]
 	book_id VARCHAR(50) NOT NULL,
 	amount INT NOT NULL,
 	price MONEY NOT NULL,
-	PRIMARY KEY(order_id,book_id),
-	CONSTRAINT fk_order1_book FOREIGN KEY (order_id) REFERENCES [dbo].[ORDER](id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_book_oder FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
+	PRIMARY KEY(order_id,book_id), 
 )
 GO
 
@@ -177,8 +164,6 @@ CREATE TABLE BOOK_LOST
 	admin_id INT,
 	cost_lost SMALLMONEY,
 	created_date DATE,
-	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES [dbo].[ADMIN](id)
 )
 GO
 
@@ -189,16 +174,14 @@ CREATE TABLE BOOK_LOST_DETAIL
 	amount INT NOT NULL CHECK (amount > 0),
 	cost MONEY,
 	PRIMARY KEY (rentbook_id, book_id),
-	CONSTRAINT fk_LostBook_Detail_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].BOOK_LOST(rentbook_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_LostBook__Detail_Book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 GO
 
 INSERT dbo.LOCATION ( id, location_name, max_storage, description)
 VALUES  ( 'A1', N'Kệ A1', 100, N''),
+		( 'A4', N'Kệ A4', 90, N''),
 		( 'A2', N'Kệ A2', 120, N''),
 		( 'A3', N'Kệ A3', 130, N''),
-		( 'A4', N'Kệ A4', 90, N''),
 		( 'A5', N'Kệ A5', 100, N''),
 		( 'A6', N'Kệ A6', 100, N''),
 		( 'A7', N'Kệ A7', 120, N''),
@@ -227,14 +210,14 @@ VALUES  ('GH12' ,N'TÔI THẤY MÌNH CÒN TRẺ','TT2' ,274 , 100 ,96 ,100 ,2017
 		('JH42' ,N'TÔI THẤY HOA VÀNG TRÊN CỎ XANH','AG1' ,274 ,102 ,96 , 101 ,2017 ,196333 , N'', 'A2' ,'' ,'11/06/2018' )
 GO
 	
-INSERT INTO dbo.[USER]( username ,password ,fullname ,date_of_birth ,email ,phone_number)
-VALUES  ( 'haond' , '123' , N'Nguyễn Văn Hao' , '1999-06-11', 'teonv@gmail.com' , '0623457413'),
-		( 'nopt12' , '123' , N'Nguyễn Thị Nở' , '1993-03-11', 'nopt@gmail.com' , '054632179')
+INSERT INTO dbo.[USER]( username ,password ,fullname ,date_of_birth ,email ,phone_number, isActive)
+VALUES  ( 'haond' , '123' , N'Nguyễn Văn Hao' , '1999-06-11', 'teonv@gmail.com' , '0623457413', 1),
+		( 'nopt12' , '123' , N'Nguyễn Thị Nở' , '1993-03-11', 'nopt@gmail.com' , '054632179', 0)
 GO
 
-INSERT INTO dbo.ADMIN( username ,password ,fullName , email ,phone_number ,role ,created_date)
-VALUES  ( 'quanly' , '123' , N'Lý Tiểu Long' , 'lytieulong@gmail.com' ,'01682439314' , 1 ,'07/05/2015'),
-		('truongphong' , '123' , N'Nguyễn Đại Trân' , 'ngueyndairan@gmail.com' ,'0123456789' , 1 ,'06/05/2012')
+INSERT INTO dbo.ADMIN( username ,password ,fullName , email ,phone_number ,role ,created_date, isActive)
+VALUES  ( 'quanly' , '123' , N'Lý Tiểu Long' , 'lytieulong@gmail.com' ,'01682439314' , 1 ,'07/05/2015', 0),
+		('truongphong' , '123' , N'Nguyễn Đại Trân' , 'ngueyndairan@gmail.com' ,'0123456789' , 1 ,'06/05/2012', 1)
 GO
 
 INSERT INTO dbo.[ORDER](user_id ,admin_id, date_created)
@@ -568,6 +551,196 @@ END
 GO
 
 EXEC sp_getStatisticOverviewInMonth
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticOrderInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getStatisticOrderInMonth EXEC sp_getStatisticOrderInMonth @month = 8
+CREATE PROC sp_getStatisticOrderInMonth (@month int)
+AS BEGIN
+	SELECT BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date,SUM(ORDER_DETAIL.amount) AS [Total Order]
+	FROM BOOK, AUTHOR, CATEGORY, ORDER_DETAIL, [ORDER]
+	WHERE BOOK.category_id = CATEGORY.id
+	AND BOOK.author_id = AUTHOR.id
+	AND  ORDER_DETAIL.order_id = [ORDER].id 
+	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
+	AND MONTH([ORDER].date_created) = @month
+	AND ORDER_DETAIL.book_id = BOOK.id
+	--them sum (price * amount) tong tien thu duoc
+	GROUP BY BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticRentbookInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách thuê theo tháng
+CREATE PROCEDURE sp_getStatisticRentbookInMonth (@month SMALLINT)
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @book_title NVARCHAR(256)
+	DECLARE	@amount_total INT = 0
+	DECLARE	@amount_returned INT = 0
+	DECLARE	@amount_renting INT = 0
+	DECLARE	@amount_expiration INT = 0
+
+	DECLARE @tblStats TABLE
+	(
+		book_id VARCHAR(50),
+		book_title NVARCHAR(256),
+		amount_total INT,
+		amount_returned INT,
+		amount_renting INT,
+		amount_expiration INT
+	)
+	--Tạo con trỏ duyệt từng sách có trong phần thuê sách
+	IF (@month != 0) -- Nếu @month khác 0 thì duyệt lấy mã sách thuê theo tháng @month
+		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
+		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt 
+		WHERE b.id = dt.book_id AND rb.id = dt.rentbook_id
+		AND YEAR(rb.created_date) = YEAR(GETDATE()) AND MONTH(rb.created_date) = @month
+	ELSE-- Nếu @month = 0 thì duyệt lấy mã sách thuê trong cả năm
+		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
+		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt 
+		WHERE b.id = dt.book_id AND rb.id = dt.rentbook_id
+		AND YEAR(rb.created_date) = YEAR(GETDATE())
+	
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id
+
+	--Tiến hành lặp danh sách sách thuê và insert dữ liệu thống kê vào tblStats
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		-- Set giá trị các biến trở về mặc định
+		SET	@amount_total = 0
+		SET	@amount_returned = 0
+		SET	@amount_renting = 0
+		SET	@amount_expiration = 0
+
+		--Tên sách
+		SELECT @book_title = title FROM dbo.BOOK WHERE id = @book_id
+
+		--Tổng số lượng đã thuê
+		SELECT @amount_total = SUM(rdt.amount)
+		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt 
+		WHERE b.id = rdt.book_id AND rdt.book_id = @book_id
+		GROUP BY b.id
+
+		--Tổng số sách đã trả
+		SELECT @amount_returned = SUM(rdt.amount)
+		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
+		WHERE b.id = rdt.book_id 
+		AND rdt.rentbook_id = rb.id 
+		AND rdt.book_id = @book_id
+		AND rb.status = 1
+		GROUP BY b.id
+
+		--Tổng số sách đang còn thuê
+		SELECT @amount_renting = SUM(rdt.amount)
+		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
+		WHERE b.id = rdt.book_id 
+		AND rdt.rentbook_id = rb.id 
+		AND rdt.book_id = @book_id
+		AND rb.status = 0
+		GROUP BY b.id
+
+		--Tổng số sách đang quá hạn
+		SELECT @amount_expiration = SUM(rdt.amount)
+		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
+		WHERE b.id = rdt.book_id 
+		AND rdt.rentbook_id = rb.id 
+		AND rdt.book_id = @book_id
+		AND rb.status = 0 
+		AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
+		GROUP BY b.id
+
+		--Thêm các dữ liệu đã thống kê vào bảng tblStats
+		INSERT @tblStats( book_id, book_title, amount_total, amount_returned, amount_renting, amount_expiration)
+		VALUES  (@book_id, @book_title, @amount_total, @amount_returned, @amount_renting, @amount_expiration)
+
+		-- Đi đến dòng tiếp theo
+		FETCH NEXT FROM cs INTO @book_id
+	END
+
+
+	--Đóng con trỏ
+	CLOSE cs
+	DEALLOCATE cs
+
+	--Trả về bảng danh sách đã thống kê
+	SELECT * FROM @tblStats
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticIncome]  Script Date: 8/13/2019 ******/
+--Trả về thông tin doanh thu
+CREATE PROCEDURE sp_getStatisticIncome (@month SMALLINT)
+AS
+BEGIN
+	DECLARE @book_id VARCHAR(50)
+	DECLARE @book_title NVARCHAR(256)
+	DECLARE	@total_cost_storage MONEY = 0
+	DECLARE	@total_money_order MONEY = 0
+	DECLARE	@total_money_rentbook MONEY = 0
+	DECLARE	@total_money_penalty MONEY = 0
+	DECLARE	@total_money_income MONEY = 0
+
+	DECLARE @tblStats TABLE
+	(
+		book_id VARCHAR(50),
+		book_title NVARCHAR(256),
+		total_cost_storage MONEY,
+		total_money_order MONEY,
+		total_money_rentbook MONEY,
+		total_money_penalty MONEY,
+		total_money_income MONEY
+	)
+	--Tạo con trỏ duyệt từng sách có trong phần thuê sách
+	IF (@month != 0) -- Nếu @month khác 0 thì duyệt lấy mã sách thuê theo tháng @month
+		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
+		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL rdt,
+			dbo.BOOK_LOST bl, dbo.BOOK_LOST_DETAIL bldt,
+			dbo.STORAGE st, dbo.STORAGE_DETAIL stdt
+		WHERE (rdt.book_id = b.id AND rb.id = rdt.rentbook_id)
+		OR (bldt.book_id = b.id AND bl.rentbook_id = bldt.rentbook_id)
+		OR (stdt.book_id = b.id AND st.id = stdt.storage_id)
+			
+		AND YEAR(rb.created_date) = YEAR(GETDATE()) AND MONTH(rb.created_date) = @month
+	ELSE-- Nếu @month = 0 thì duyệt lấy mã sách thuê trong cả năm
+		DECLARE cs  CURSOR FOR SELECT DISTINCT b.id 
+		FROM dbo.BOOK b, dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt 
+		WHERE b.id = dt.book_id AND rb.id = dt.rentbook_id
+		AND YEAR(rb.created_date) = YEAR(GETDATE())
+	
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id
+
+	--Tiến hành lặp danh sách sách thuê và insert dữ liệu thống kê vào tblStats
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+
+		
+
+		-- Đi đến dòng tiếp theo
+		FETCH NEXT FROM cs INTO @book_id
+	END
+
+
+	--Đóng con trỏ
+	CLOSE cs
+	DEALLOCATE cs
+
+	--Trả về bảng danh sách đã thống kê
+	SELECT * FROM @tblStats
+END
+GO
+
+
+
+SELECT * FROM dbo.RENTBOOK
+SELECT * FROM dbo.RENTBOOK_DETAIL
+
+
+
 
 INSERT dbo.ADMIN
         ( username ,
@@ -615,7 +788,8 @@ BEGIN
 		--Di chuyển tới dòng tiếp theo
 		FETCH NEXT FROM cs INTO @book_id, @amount_insertd
 	END
-
+	CLOSE cs
+	DEALLOCATE cs
 END
 GO
 
@@ -731,6 +905,9 @@ BEGIN
 			--Duyệt tiếp
 			FETCH NEXT FROM cs INTO @book_id, @amount
 		END
+
+		CLOSE cs
+		DEALLOCATE cs	
 	END
 END
 GO

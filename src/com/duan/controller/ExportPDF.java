@@ -359,7 +359,7 @@ public class ExportPDF
 				prTotalCostExpiration.add(chunkTotalCostExpiration);
 				document.add(prTotalCostExpiration);
 			}
-			else if (DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
+			else if (rentBook.getStatus() == 1 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
 			{
 				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) - rentBook.getExpirationDay();
 				double totalCostExpiration = totalDayExpiration * totalBook * rentBook.getCostExpiration();
