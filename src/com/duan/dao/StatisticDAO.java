@@ -98,11 +98,12 @@ public class StatisticDAO
 		while (rs.next())
 		{
 			Object[] data = {
-					rs.getString(1), 
+					rs.getInt(1), 
 					rs.getString(2), 
-					rs.getInt(3), 
-					rs.getInt(4),
-					DataHelper.getFormatForMoney(rs.getDouble(5)) + SettingSave.getSetting().getMoneySymbol()
+					rs.getString(3), 
+					rs.getString(4),
+					DateHelper.dateToString(rs.getDate(5), SettingSave.getSetting().getDateFormat()),
+					DateHelper.dateToString(rs.getDate(6), SettingSave.getSetting().getDateFormat())
 					};
 			list.add(data);
 		}

@@ -531,11 +531,11 @@ public class AdminJFrame extends JFrame {
 
 	public void setAvatar(String imgName)
 	{
-		URL urlImage = getClass().getResource("/com/duan/image/" + imgName);
-		if (urlImage != null)
+		File fileImage = new File("image/" + imgName);
+		if (fileImage != null)
 		{
 			lblAnh.setText("");
-			ImageIcon icon = new ImageIcon(urlImage);
+			ImageIcon icon = new ImageIcon(fileImage.getAbsolutePath());
 			lblAnh.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblAnh);
 		}
@@ -739,7 +739,7 @@ public class AdminJFrame extends JFrame {
 					byte[] byteArrFileImage = DataHelper.getArrayByteFromFile(fileImageSelected);
 					
 					//Ghi file tu mang byte cua anh
-					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
+					DataHelper.writeFileToSource(byteArrFileImage, "image/" + fileImageSelected.getName());
 					fileImageSelected = null;
 				}
 				
@@ -810,7 +810,7 @@ public class AdminJFrame extends JFrame {
 					byte[] byteArrFileImage = DataHelper.getArrayByteFromFile(fileImageSelected);
 					
 					//Ghi file tu mang byte cua anh
-					DataHelper.writeFileToSource(byteArrFileImage, "/com/duan/image/" + fileImageSelected.getName());
+					DataHelper.writeFileToSource(byteArrFileImage, "image/" + fileImageSelected.getName());
 					fileImageSelected = null;
 				}
 			}

@@ -55,7 +55,7 @@ import javax.swing.ButtonGroup;
  * Nguyễn Đại Hào
  * JDialog dùng để đăng nhập tài khoảng
  */
-public class LoginJFrame extends JDialog 
+public class LoginJFrame extends JFrame 
 {
 	private JPanel contentPane;
 	private JLabel lblLogo;
@@ -116,8 +116,8 @@ public class LoginJFrame extends JDialog
 	}
 
 	public LoginJFrame() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setModal(true);
 		setUndecorated(true);
 		try 
 		{

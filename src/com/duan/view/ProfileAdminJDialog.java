@@ -263,9 +263,9 @@ public class ProfileAdminJDialog extends JDialog {
 	{
 		if (nameImage != null && nameImage.length() > 0)
 		{
-			if (getClass().getResource("/com/duan/image/" + nameImage) != null)
+			if (new File("image/" + nameImage) != null)
 			{
-				lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/image/" + nameImage)));
+				lblAvatar.setIcon(new ImageIcon(new File("image/" + nameImage).getAbsolutePath()));
 				SwingHelper.setAutoResizeIcon(lblAvatar);
 			}
 		}
@@ -320,7 +320,7 @@ public class ProfileAdminJDialog extends JDialog {
 			{
 				admin.setImage(fileImage.getName());
 				//Tiến hành ghi file ảnh
-				DataHelper.writeFileToSource(DataHelper.getArrayByteFromFile(fileImage), "/com/duan/image/" + fileImage.getName());
+				DataHelper.writeFileToSource(DataHelper.getArrayByteFromFile(fileImage), "image/" + fileImage.getName());
 			}
 			else
 			{

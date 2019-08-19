@@ -484,12 +484,49 @@ public class SettingJDialog extends JDialog {
 		if (txtDayExpiration.getText().isEmpty())
 		{
 			isSuccess = false;
-			msg += "+ Ngày quá hạn không được để trống\n";
+			msg += "+ Hạn thuê sách không được để trống\n";
 		}
 		else if (DataHelper.isInteger(txtDayExpiration.getText()) == false || DataHelper.getInt(txtDayExpiration.getText()) <= 0)
 		{
 			isSuccess = false;
-			msg += "+ Ngày quá hạn phải là số và > 0\n";
+			msg += "+ Hạn thuê sách phải là số nguyên và lớn hơn 0\n";
+		}
+		
+		
+		//CHECK phí thuê sách
+		if (txtCostRent.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Phí thuê sách không được để trống\n";
+		}
+		else if (DataHelper.isDouble(txtCostRent.getText()) == false || DataHelper.getDouble(txtCostRent.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Phí thuê sách phải là số và lớn hơn 0\n";
+		}
+		
+		//CHECK phí phát quá hạn
+		if (txtCostRentExpiration.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Phí phạt quá hạn không được để trống\n";
+		}
+		else if (DataHelper.isDouble(txtCostRentExpiration.getText()) == false || DataHelper.getDouble(txtCostRentExpiration.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+  Phí phạt quá hạn phải là số và lớn hơn 0\n";
+		}
+		
+		//CHECK phí mất sách
+		if (txtCostBookLost.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Phí phạt mất sách không được để trống\n";
+		}
+		else if (DataHelper.isDouble(txtCostBookLost.getText()) == false || DataHelper.getDouble(txtCostBookLost.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+  Phí phạt mất sách phải là số và lớn hơn 0\n";
 		}
 		
 		if (isSuccess == false)

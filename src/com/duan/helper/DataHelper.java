@@ -1,9 +1,11 @@
 package com.duan.helper;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -100,11 +102,11 @@ public class DataHelper
 		}
 	
 	//Lấy ra đường dẫn URL đến source project
-	public static File getFileFromSource(String path)
-	{
-		return new File(DateHelper.class.getResource(path).getPath());
-	}
-	
+//	public static File getFileFromSource(String path)
+//	{
+//		return new File(DateHelper.class.getResource(path).getPath());
+//	}
+//	
 	//Tra ve duong dan file source goc cua ung dung
 		public static String getRootSource()
 		{
@@ -114,8 +116,8 @@ public class DataHelper
 	//Ghi file vào source theo đường dẫn của file
 	public static void writeFileToSource(byte[] arrayData, String path) throws IOException
 	{
-		File file = new File(getFileFromSource("/").getAbsolutePath() + path);
-		System.out.println("FileHelper:" + file);
+		File file = new File(path);
+		file.getParentFile().mkdir();
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.write(arrayData);
 		fos.close();
@@ -216,9 +218,9 @@ public class DataHelper
 		return hocLuc;
 	}
 	
-	public static void main(String[] args) 
+	public static void main(String[] args) throws IOException 
 	{
-//		System.out.println(contain("Test", "t"));;
+
 	}
 	
 	

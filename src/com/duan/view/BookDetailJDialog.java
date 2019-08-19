@@ -321,7 +321,7 @@ public class BookDetailJDialog extends JDialog {
 		txtDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		txtDescription.setBorder(null);
 		txtDescription.setEditable(false);
-		txtDescription.setBounds(76, 494, 577, 17);
+		txtDescription.setBounds(76, 544, 577, 17);
 		contentPane.add(txtDescription);
 		txtDescription.setColumns(10);
 	}
@@ -374,11 +374,14 @@ public class BookDetailJDialog extends JDialog {
 	{
 		if (imageName != null && imageName.length() > 0)
 		{
-			URL url = getClass().getResource("/com/duan/image/" + imageName);
-			ImageIcon icon = new ImageIcon(url);
-			lblImage.setIcon(icon);
-			lblImage.setText("");
-			SwingHelper.setAutoResizeIcon(lblImage);
+			File file = new File("image/" + imageName);
+			if (file != null)
+			{
+				ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+				lblImage.setIcon(icon);
+				lblImage.setText("");
+				SwingHelper.setAutoResizeIcon(lblImage);
+			}
 		}
 		else
 		{

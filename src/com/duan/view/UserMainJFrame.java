@@ -67,6 +67,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 
 public class UserMainJFrame extends JFrame {
 	
@@ -109,6 +110,7 @@ public class UserMainJFrame extends JFrame {
 	 */
 	public UserMainJFrame() 
 	{
+		setIconImage(Toolkit.getDefaultToolkit().getImage(UserMainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) 

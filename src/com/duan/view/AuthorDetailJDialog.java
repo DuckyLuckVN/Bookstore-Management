@@ -2,6 +2,7 @@ package com.duan.view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
@@ -22,6 +23,7 @@ import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Author;
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import javax.swing.border.LineBorder;
 
 public class AuthorDetailJDialog extends JDialog {
 	private JTextField txtFullname;
@@ -114,7 +116,7 @@ public class AuthorDetailJDialog extends JDialog {
 		}
 		{
 			JScrollPane scrollPane = new JScrollPane();
-			scrollPane.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			scrollPane.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 			scrollPane.setBounds(219, 119, 328, 123);
 			getContentPane().add(scrollPane);
 			{
@@ -167,15 +169,22 @@ public class AuthorDetailJDialog extends JDialog {
 	
 	public void setAvatar()
 	{
-		if (author.getImage() != null && author.getImage().length() > 0)
+		try 
 		{
-			//Kiểm tra xem ảnh này có tồn tại trong thư mục image không, nếu không thì clear avatar
-			if (DataHelper.getFileFromSource("/com/duan/image/" + author.getImage()) != null)
+			if (author.getImage() != null && author.getImage().length() > 0)
 			{
-				lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/image/" + author.getImage())));
-				SwingHelper.setAutoResizeIcon(lblAvatar);
-				return;
+				//Kiểm tra xem ảnh này có tồn tại trong thư mục image không, nếu không thì clear avatar
+				if (new File("image/" + author.getImage()) != null)
+				{
+					lblAvatar.setIcon(new ImageIcon(new File("image/" + author.getImage()).getAbsolutePath()));
+					SwingHelper.setAutoResizeIcon(lblAvatar);
+					return;
+				}
 			}
+		} 
+		catch (Exception e) 
+		{
+			clearAvatar();
 		}
 		clearAvatar();
 	}

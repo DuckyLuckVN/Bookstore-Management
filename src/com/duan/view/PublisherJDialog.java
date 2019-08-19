@@ -468,11 +468,6 @@ public class PublisherJDialog extends JDialog {
 			txtTenNXB.requestFocus();
 			return false;
 		}
-		else if (!txtTenNXB.getText().matches("^[0-9a-zA-Z\\p{L}]{1,}$")) {
-			MessageOptionPane.showAlertDialog(contentPane, "Tên nhà xuất bản chỉ được nhập chữ hoặc số", MessageOptionPane.ICON_NAME_WARNING);
-			txtTenNXB.requestFocus();
-			return false;
-		}
 		else if (txtSoDienThoai.getText().length() == 0) 
 		{
 			MessageOptionPane.showAlertDialog(contentPane, "Số điện thoại không đươc để trống", MessageOptionPane.ICON_NAME_WARNING);
