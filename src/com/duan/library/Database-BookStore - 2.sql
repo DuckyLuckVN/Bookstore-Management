@@ -497,7 +497,7 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
-ALTER PROC sp_getStatisticOverviewInMonth 
+CREATE PROC sp_getStatisticOverviewInMonth 
 AS BEGIN
 	DECLARE @totalOrder FLOAT = 0
 	DECLARE @totalRent FLOAT = 0
@@ -579,21 +579,19 @@ AS BEGIN
 END
 GO
 
-EXEC sp_getStatisticOverviewInMonth
-GO
-
-/****** Object:  StoredProcedure  [sp_getStatisticOrderInMonth]  Script Date: 8/13/2019 ******/
---Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getStatisticOrderInMonth EXEC sp_getStatisticOrderInMonth @month = 8
+/****** Object:  StoredProcedure  [sp_getStatisticOrderInMonth]  Script Date: 8/13/2019 ******/ 
+--Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getStatisticOrderInMonth EXEC sp_getStatisticOrderInMonth 0
 CREATE PROC sp_getStatisticOrderInMonth (@month int)
 AS BEGIN
+	SET NOCOUNT ON 
 	DECLARE @bookId VARCHAR(50)
-	DECLARE @bookTitle NVARCHAR(256),
-	DECLARE @bookCategory NVARCHAR(256),
-	DECLARE @bookAuthor NVARCHAR(256),
-	DECLARE @bookCreatedDate DATE,
-	DECLARE @totalOrder SMALLINT,
-	DECLARE @totalBookOrder SMALLINT,
-	DECLARE @totalPriceOrder MONEY
+	DECLARE @bookTitle NVARCHAR(256)
+	DECLARE @bookCategory NVARCHAR(256)
+	DECLARE @bookAuthor NVARCHAR(256)
+	DECLARE @bookCreatedDate DATE
+	DECLARE @totalOrder SMALLINT = 0
+	DECLARE @totalBookOrder SMALLINT = 0
+	DECLARE @totalPriceOrder MONEY = 0
 
 	DECLARE @tblStats TABLE
 	(
@@ -628,16 +626,114 @@ AS BEGIN
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		
+		--RESET số liệu
+		SET @totalOrder = 0
+		SET @totalBookOrder = 0
+		SET @totalPriceOrder = 0
+
+		IF (@month != 0)
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title 
+			FROM dbo.BOOK WHERE id = @bookId
+
+			--Thể loại
+			SELECT @bookCategory = category_title 
+			FROM dbo.BOOK, dbo.CATEGORY
+			WHERE category_id = CATEGORY.id
+			AND BOOK.id = @bookId
+
+			--Tác giả
+			SELECT @bookAuthor = fullname FROM dbo.BOOK, dbo.AUTHOR
+			WHERE author_id = AUTHOR.id
+			AND BOOK.id = @bookId
+
+			--Ngày nhập
+			SELECT @bookCreatedDate = created_date
+			FROM dbo.BOOK 
+			WHERE id = @bookId
+
+			--Tổng đơn
+			SELECT @totalOrder = COUNT(*)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE()) AND MONTH(date_created) = @month
+
+			--Tổng sách đã bán
+			SELECT @totalBookOrder = SUM (amount)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE()) AND MONTH(date_created) = @month
+			GROUP BY book_id
+
+			--Tiền thu được
+			SELECT @totalPriceOrder = SUM(amount * price)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE()) AND MONTH(date_created) = @month
+			GROUP BY book_id
+		END
+		ELSE
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title 
+			FROM dbo.BOOK WHERE id = @bookId
+
+			--Thể loại
+			SELECT @bookCategory = category_title 
+			FROM dbo.BOOK, dbo.CATEGORY
+			WHERE category_id = CATEGORY.id
+			AND BOOK.id = @bookId
+
+			--Tác giả
+			SELECT @bookAuthor = fullname FROM dbo.BOOK, dbo.AUTHOR
+			WHERE author_id = AUTHOR.id
+			AND BOOK.id = @bookId
+
+			--Ngày nhập
+			SELECT @bookCreatedDate = created_date
+			FROM dbo.BOOK 
+			WHERE id = @bookId
+
+			--Tổng đơn
+			SELECT @totalOrder = COUNT(*)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE())
+
+			--Tổng sách đã bán
+			SELECT @totalBookOrder = SUM (amount)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE())
+			GROUP BY book_id
+
+			--Tiền thu được
+			SELECT @totalPriceOrder = SUM(amount * price)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @bookId
+			AND YEAR(date_created) = YEAR(GETDATE())
+			GROUP BY book_id
+		END
+
+
+		--Thêm dữ liệu vào bảng thống kê
+		INSERT @tblStats( book_id , book_title , book_category , book_author , book_createdDate , totalOrder , totalBookOrder , totalPriceOrder)
+		VALUES (@bookId, @bookTitle, @bookCategory, @bookAuthor, @bookCreatedDate, @totalOrder, @totalBookOrder, @totalPriceOrder)
 
 		FETCH NEXT FROM cs INTO @bookId
 	END
 
-
-
 	CLOSE cs
 	DEALLOCATE cs
 	
+	SELECT * FROM @tblStats
 END
 GO
 
@@ -649,6 +745,7 @@ GO
 CREATE PROCEDURE sp_getStatisticRentbookInMonth (@month SMALLINT)
 AS
 BEGIN
+	SET NOCOUNT ON 
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @book_title NVARCHAR(256)
 	DECLARE	@amount_total INT = 0
@@ -708,11 +805,11 @@ BEGIN
 			ON RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
 			WHERE book_id = @book_id 
 			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
-			WHERE status = 1
+			AND status = 1
 			GROUP BY book_id
 
 			--Tổng số sách đang còn thuê
-			SELECT @amount_renting = SUM(rdt.amount)
+			SELECT @amount_renting = SUM(amount)
 			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
 			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
 			WHERE book_id = @book_id
@@ -721,13 +818,14 @@ BEGIN
 			GROUP BY book_id
 
 			--Tổng số sách đang quá hạn
-			SELECT @amount_expiration = SUM(rdt.amount)
-			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			SELECT @amount_expiration = SUM(amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL 
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
 			WHERE book_id = @book_id
-			AND rb.status = 0 
-			AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
+			AND status = 0 
+			AND DATEDIFF(DAY, created_date, GETDATE()) > expiration_day
 			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
-			GROUP BY b.id
+			GROUP BY book_id
 		END
 		ELSE
 		BEGIN
@@ -748,11 +846,11 @@ BEGIN
 			ON RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
 			WHERE book_id = @book_id 
 			AND YEAR(created_date) = YEAR(GETDATE())
-			WHERE status = 1
+			AND status = 1
 			GROUP BY book_id
 
 			--Tổng số sách đang còn thuê
-			SELECT @amount_renting = SUM(rdt.amount)
+			SELECT @amount_renting = SUM(amount)
 			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
 			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
 			WHERE book_id = @book_id
@@ -761,13 +859,14 @@ BEGIN
 			GROUP BY book_id
 
 			--Tổng số sách đang quá hạn
-			SELECT @amount_expiration = SUM(rdt.amount)
-			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			SELECT @amount_expiration = SUM(amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL 
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
 			WHERE book_id = @book_id
-			AND rb.status = 0 
-			AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
+			AND status = 0 
+			AND DATEDIFF(DAY, created_date, GETDATE()) > expiration_day
 			AND YEAR(created_date) = YEAR(GETDATE())
-			GROUP BY b.id
+			GROUP BY book_id
 		END
 
 		--Thêm các dữ liệu đã thống kê vào bảng tblStats
@@ -790,9 +889,10 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticBookLostInMonth]  Script Date: 8/13/2019 ******/
 --Trả về thông tin sách mất theo tháng
-ALTER PROCEDURE sp_getStatisticBookLostInMonth(@month SMALLINT)
+CREATE PROCEDURE sp_getStatisticBookLostInMonth(@month SMALLINT)
 AS
 BEGIN
+	SET NOCOUNT ON 
 	DECLARE @bookId VARCHAR(50)
 	DECLARE @bookTitle NVARCHAR(256)
 	DECLARE @totalBookLost SMALLINT = 0
@@ -906,6 +1006,7 @@ GO
 CREATE PROCEDURE sp_getStatisticUserInMonth(@month SMALLINT)
 AS
 BEGIN
+	SET NOCOUNT ON 
 	IF (@month != 0)
 	BEGIN
 		SELECT id, username, fullname, email, date_of_birth, created_date 
@@ -926,6 +1027,7 @@ GO
 CREATE PROCEDURE sp_getStatisticStorageInMonth(@month SMALLINT)
 AS
 BEGIN
+	SET NOCOUNT ON 
 	DECLARE @bookId VARCHAR(50)
 	DECLARE @bookTitle NVARCHAR(256)
 	DECLARE	@totalAmount SMALLINT = 0
@@ -1020,10 +1122,11 @@ END
 GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticIncome]  Script Date: 8/13/2019 ******/
---Trả về thông tin doanh thu
+--Trả về thông tin doanh thu EXEC sp_getStatisticIncome 6
 CREATE PROCEDURE sp_getStatisticIncome (@month SMALLINT)
 AS
 BEGIN
+	SET NOCOUNT ON 
 	DECLARE @book_id VARCHAR(50)
 	DECLARE @book_title NVARCHAR(256)
 	DECLARE	@total_cost_storage MONEY = 0

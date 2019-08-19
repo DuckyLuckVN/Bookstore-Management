@@ -33,6 +33,13 @@ public class DateHelper
 		return date;
 	}
 	
+	public static int getMonth(Date date)
+	{
+		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		int month = localDate.getMonthValue();
+		return month;
+	}
+	
 	//Kiểm tra xem chuỗi vừa truyền vào có hợp lệ theo kiểu Date format hay không, nếu không trả về FALSE, hợp lệ sẽ trả về TRUE
 	public static boolean checkFormatDate(String dateText, String format)
 	{
@@ -75,7 +82,7 @@ public class DateHelper
 	
 	public static void main(String[] args) throws ParseException 
 	{
-		System.out.println(getDayBetweenTwoDate(new Date(0), new Date()));
+		System.out.println(getMonth(new Date()));
 	}
 	
 	

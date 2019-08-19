@@ -21,9 +21,12 @@ import javax.swing.table.DefaultTableModel;
 
 import com.duan.custom.common.JTableBlue;
 import com.duan.custom.common.JTableRed;
-import com.duan.dao.StaticticsDAO;
+import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.StatisticDAO;
 import com.duan.helper.DataHelper;
+import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -33,15 +36,31 @@ import java.awt.SystemColor;
 import java.awt.GridLayout;
 import java.awt.Cursor;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import javax.swing.JButton;
 
 public class StatisticalJFrame extends JFrame {
 	
 	private static final int TAB_BOOK_ORDER = 1;
 	private static final int TAB_BOOK_RENT = 2;
-	private static final int TAB_INCOM_TOTAL = 3;
+	private static final int TAB_BOOK_LOST = 3;
+	private static final int TAB_USER = 4;
+	private static final int TAB_BOOK_STORAGE = 5;
+	private static final int TAB_INCOM_TOTAL = 6;
 
 	private JPanel contentPane;
 	private JTable tblOrder;
@@ -58,6 +77,11 @@ public class StatisticalJFrame extends JFrame {
 	private JTable tblUser;
 	private JTable tblStorage;
 	private JLabel lblStatisticOverViewTitle;
+	private JComboBox cboMonthRentbook;
+	private JComboBox cboMonthOrder;
+	private JComboBox cboMonthUser;
+	private JComboBox cboMonthStorage;
+	private JComboBox cboMonthImcome;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -94,9 +118,18 @@ public class StatisticalJFrame extends JFrame {
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel pnlChung = new JPanel();
+
 		tabbedPane.addTab("Thống Kê Chung", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_online_store_32px.png")), pnlChung, null);
 		
-		lblStatisticOverViewTitle = new JLabel("THỐNG KÊ TRONG THÁNG");
+		lblStatisticOverViewTitle = new JLabel("THỐNG KÊ TỔNG QUAN THÁNG " + DateHelper.getMonth(new Date()));
+		lblStatisticOverViewTitle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblStatisticOverViewTitle.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				showStatisticOverview();
+			}
+		});
 		lblStatisticOverViewTitle.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblStatisticOverViewTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		
@@ -111,6 +144,7 @@ public class StatisticalJFrame extends JFrame {
 			public void mouseClicked(MouseEvent arg0) 
 			{
 				tabbedPane.setSelectedIndex(TAB_BOOK_ORDER);
+				cboMonthOrder.setSelectedIndex(DateHelper.getMonth(new Date()));
 			}
 		});
 		lblXemThm.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -165,6 +199,7 @@ public class StatisticalJFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) 
 			{
 				tabbedPane.setSelectedIndex(TAB_BOOK_RENT);
+				cboMonthRentbook.setSelectedIndex(DateHelper.getMonth(new Date()));
 			}
 		});
 		label_4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -198,6 +233,14 @@ public class StatisticalJFrame extends JFrame {
 		pnlSachMat.add(label_6, BorderLayout.EAST);
 		
 		JLabel label_7 = new JLabel("Xem thêm");
+		label_7.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				tabbedPane.setSelectedIndex(TAB_BOOK_LOST);
+				cboMonthBookLost.setSelectedIndex(DateHelper.getMonth(new Date()));
+			}
+		});
 		label_7.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		label_7.setPreferredSize(new Dimension(0, 25));
 		label_7.setOpaque(true);
@@ -229,6 +272,14 @@ public class StatisticalJFrame extends JFrame {
 		pnlLuotDK.add(label_10, BorderLayout.EAST);
 		
 		JLabel label_11 = new JLabel("Xem thêm");
+		label_11.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				tabbedPane.setSelectedIndex(TAB_USER);
+				cboMonthUser.setSelectedIndex(DateHelper.getMonth(new Date()));
+			}
+		});
 		label_11.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		label_11.setPreferredSize(new Dimension(0, 25));
 		label_11.setOpaque(true);
@@ -255,6 +306,14 @@ public class StatisticalJFrame extends JFrame {
 		pnlNhapKho.add(lblnNhpKho, BorderLayout.WEST);
 		
 		JLabel label_14 = new JLabel("Xem thêm");
+		label_14.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) 
+			{
+				tabbedPane.setSelectedIndex(TAB_BOOK_STORAGE);
+				cboMonthStorage.setSelectedIndex(DateHelper.getMonth(new Date()));
+			}
+		});
 		label_14.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		label_14.setPreferredSize(new Dimension(0, 25));
 		label_14.setOpaque(true);
@@ -291,6 +350,7 @@ public class StatisticalJFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) 
 			{
 				tabbedPane.setSelectedIndex(TAB_INCOM_TOTAL);
+				cboMonthImcome.setSelectedIndex(DateHelper.getMonth(new Date()));
 			}
 		});
 		label_13.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -351,43 +411,77 @@ public class StatisticalJFrame extends JFrame {
 		JPanel pnlSachBan = new JPanel();
 		tabbedPane.addTab("Sách Bán", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_books_32px_1.png")), pnlSachBan, null);
 		
-		JComboBox cblMonthOrder = new JComboBox();
-		cblMonthOrder.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		cblMonthOrder.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
+		cboMonthOrder = new JComboBox();
+		cboMonthOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try 
+				{
+					fillToTableOrder();
+				} catch (SQLException e) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e.printStackTrace();
+				}
+			}
+		});
+		cboMonthOrder.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		cboMonthOrder.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane = new JScrollPane();
 		
 		tblOrder = new JTableBlue();
+		tblOrder.setRowHeight(30);
 		tblOrder.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "THỂ LOẠI", "TÁC GIẢ", "NGÀY NHẬP", "TỔNG ĐƠN" ,"SÁCH ĐÃ BÁN", "TIỀN THU ĐƯỢC"}) 
 		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+			public boolean isCellEditable(int row, int column) 
+			{
+				return false;
 			}
 		});
 		tblOrder.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane.setViewportView(tblOrder);
+		
+		JButton btlReloadOrder = new JButton("");
+		btlReloadOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableOrder();
+				} catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
+		btlReloadOrder.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btlReloadOrder.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		GroupLayout gl_pnlSachBan = new GroupLayout(pnlSachBan);
 		gl_pnlSachBan.setHorizontalGroup(
 			gl_pnlSachBan.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlSachBan.createSequentialGroup()
 					.addGap(10)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
+					.addGroup(gl_pnlSachBan.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, gl_pnlSachBan.createSequentialGroup()
+							.addComponent(cboMonthOrder, GroupLayout.PREFERRED_SIZE, 168, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 552, Short.MAX_VALUE)
+							.addComponent(btlReloadOrder, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
-				.addGroup(gl_pnlSachBan.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(cblMonthOrder, GroupLayout.PREFERRED_SIZE, 168, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(555, Short.MAX_VALUE))
 		);
 		gl_pnlSachBan.setVerticalGroup(
 			gl_pnlSachBan.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlSachBan.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(cblMonthOrder, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+					.addGap(5)
+					.addGroup(gl_pnlSachBan.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlSachBan.createSequentialGroup()
+							.addGap(6)
+							.addComponent(cboMonthOrder, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btlReloadOrder, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
 					.addGap(11))
 		);
 		pnlSachBan.setLayout(gl_pnlSachBan);
@@ -395,41 +489,79 @@ public class StatisticalJFrame extends JFrame {
 		JPanel pnlSachThue = new JPanel();
 		tabbedPane.addTab("Sách Thuê", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_bookmark_32px.png")), pnlSachThue, null);
 		
-		JComboBox cboMonthRentbook = new JComboBox();
+		cboMonthRentbook = new JComboBox();
+		cboMonthRentbook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try 
+				{
+					fillToTableRentbook();
+				} 
+				catch (SQLException e) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e.printStackTrace();
+				}
+			}
+		});
 		cboMonthRentbook.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		cboMonthRentbook.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
 		
 		tblRentBook = new JTableBlue();
+		tblRentBook.setRowHeight(30);
 		tblRentBook.setModel(new DefaultTableModel(null,new String[] {"MÃ SÁCH", "TÊN SÁCH", "TỔNG ĐÃ THUÊ", "ĐÃ TRẢ", "CHƯA TRẢ", "QUÁ THỜI HẠN"}) 
 		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+			public boolean isCellEditable(int row, int column) 
+			{
+				return false;
 			}
 		});
 		tblRentBook.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane_2.setViewportView(tblRentBook);
+		
+		JButton btnReloadRentbook = new JButton("");
+		btnReloadRentbook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableRentbook();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnReloadRentbook.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnReloadRentbook.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		GroupLayout gl_pnlSachThue = new GroupLayout(pnlSachThue);
 		gl_pnlSachThue.setHorizontalGroup(
 			gl_pnlSachThue.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlSachThue.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_pnlSachThue.createParallelGroup(Alignment.LEADING)
-						.addComponent(cboMonthRentbook, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE))
+						.addGroup(gl_pnlSachThue.createSequentialGroup()
+							.addComponent(cboMonthRentbook, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 558, Short.MAX_VALUE)
+							.addComponent(btnReloadRentbook, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
 		);
 		gl_pnlSachThue.setVerticalGroup(
 			gl_pnlSachThue.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlSachThue.createSequentialGroup()
-					.addGap(11)
-					.addComponent(cboMonthRentbook, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+					.addGap(6)
+					.addGroup(gl_pnlSachThue.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlSachThue.createSequentialGroup()
+							.addGap(5)
+							.addComponent(cboMonthRentbook, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnReloadRentbook, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(5)
+					.addComponent(scrollPane_2, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
 					.addGap(11))
 		);
 		pnlSachThue.setLayout(gl_pnlSachThue);
@@ -438,156 +570,306 @@ public class StatisticalJFrame extends JFrame {
 		tabbedPane.addTab("Sách mất", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_generic_book_file_type_32px_4.png")), panel, null);
 		
 		cboMonthBookLost = new JComboBox();
+		cboMonthBookLost.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableBookLost();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
 		cboMonthBookLost.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		cboMonthBookLost.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		JScrollPane scrollPane_4 = new JScrollPane();
+		
+		tblBookLost = new JTableBlue();
+		tblBookLost.setRowHeight(30);
+		tblBookLost.setModel(new DefaultTableModel(null, new Object[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ ĐƠN", "TỔNG SÁCH MẤT", "TỔNG PHẠT"}));
+		scrollPane_4.setViewportView(tblBookLost);
+		
+		JButton btnReloadBookLost = new JButton("");
+		btnReloadBookLost.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableBookLost();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnReloadBookLost.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
+		btnReloadBookLost.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 783, Short.MAX_VALUE)
 				.addGroup(gl_panel.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
-						.addComponent(cboMonthBookLost, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+						.addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+							.addComponent(cboMonthBookLost, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
+							.addComponent(btnReloadBookLost, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane_4, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 487, Short.MAX_VALUE)
 				.addGroup(gl_panel.createSequentialGroup()
-					.addGap(11)
-					.addComponent(cboMonthBookLost, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
+					.addGap(6)
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(5)
+							.addComponent(cboMonthBookLost, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnReloadBookLost, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
 					.addComponent(scrollPane_4, GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
 					.addGap(11))
 		);
-		
-		tblBookLost = new JTableBlue();
-		tblBookLost.setModel(new DefaultTableModel(null, new Object[] {"MÃ SÁCH", "TÊN SÁCH", "SỐ ĐƠN", "TỔNG SÁCH MẤT", "TỔNG PHẠT"}));
-		scrollPane_4.setViewportView(tblBookLost);
 		panel.setLayout(gl_panel);
 		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("Thành viên", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_user_32px.png")), panel_2, null);
 		
-		JComboBox cboMonthUser = new JComboBox();
+		cboMonthUser = new JComboBox();
+		cboMonthUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableUser();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
 		cboMonthUser.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		cboMonthUser.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		JScrollPane scrollPane_5 = new JScrollPane();
+		
+		tblUser = new JTableBlue();
+		tblUser.setRowHeight(30);
+		tblUser.setModel(new DefaultTableModel(null, new Object[] {"USER ID", "TÀI KHOẢN", "HỌ TÊN", "ĐỊA CHỈ EMAIL", "NGÀY SINH", "NGÀY ĐĂNG KÝ"}));
+		scrollPane_5.setViewportView(tblUser);
+		
+		JButton btnReloadUser = new JButton("");
+		btnReloadUser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnReloadUser.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
 		gl_panel_2.setHorizontalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 783, Short.MAX_VALUE)
 				.addGroup(gl_panel_2.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-						.addComponent(cboMonthUser, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addComponent(cboMonthUser, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
+							.addComponent(btnReloadUser, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane_5, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
 		);
 		gl_panel_2.setVerticalGroup(
 			gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 487, Short.MAX_VALUE)
 				.addGroup(gl_panel_2.createSequentialGroup()
-					.addGap(11)
-					.addComponent(cboMonthUser, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
+					.addGap(6)
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addGap(5)
+							.addComponent(cboMonthUser, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+						.addComponent(btnReloadUser, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
 					.addComponent(scrollPane_5, GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
 					.addGap(11))
 		);
-		
-		tblUser = new JTableBlue();
-		tblUser.setModel(new DefaultTableModel(null, new Object[] {"USER ID", "TÀI KHOẢN", "HỌ TÊN", "ĐỊA CHỈ EMAIL", "NGÀY SINH", "NGÀY ĐĂNG KÝ"}));
-		scrollPane_5.setViewportView(tblUser);
 		panel_2.setLayout(gl_panel_2);
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Sách Nhập", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_move_by_trolley_32px.png")), panel_1, null);
 		
-		JComboBox cboMonthStorage = new JComboBox();
+		cboMonthStorage = new JComboBox();
+		cboMonthStorage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableStorage();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
 		cboMonthStorage.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		cboMonthStorage.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		JScrollPane scrollPane_3 = new JScrollPane();
+		
+		tblStorage = new JTableBlue();
+		tblStorage.setRowHeight(30);
+		tblStorage.setModel(new DefaultTableModel(null, new Object[] {"MÃ SÁCH", "TÊN SÁCH", "TỔNG SÁCH NHẬP", "CHI PHÍ"}));
+		scrollPane_3.setViewportView(tblStorage);
+		
+		JButton button = new JButton("");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableStorage();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
+		button.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 783, Short.MAX_VALUE)
 				.addGroup(gl_panel_1.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(cboMonthStorage, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addComponent(cboMonthStorage, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
+							.addComponent(button, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane_3, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGap(0, 487, Short.MAX_VALUE)
 				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGap(11)
-					.addComponent(cboMonthStorage, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
+					.addGap(6)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addGap(5)
+							.addComponent(cboMonthStorage, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+						.addComponent(button, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
 					.addComponent(scrollPane_3, GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
 					.addGap(11))
 		);
-		
-		tblStorage = new JTableBlue();
-		tblStorage.setModel(new DefaultTableModel(null, new Object[] {"MÃ SÁCH", "TÊN SÁCH", "TỔNG SÁCH NHẬP", "CHI PHÍ"}));
-		scrollPane_3.setViewportView(tblStorage);
 		panel_1.setLayout(gl_panel_1);
 		
 		JPanel pnlDoanhThu = new JPanel();
 		tabbedPane.addTab("Doanh Thu", new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_stack_of_money_32px.png")), pnlDoanhThu, null);
 		
-		JComboBox cboMonthImcome = new JComboBox();
+		cboMonthImcome = new JComboBox();
+		cboMonthImcome.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableIncome();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
 		cboMonthImcome.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		cboMonthImcome.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"}));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
 		
 		tblIncome = new JTableBlue();
+		tblIncome.setRowHeight(30);
 		tblIncome.setModel(new DefaultTableModel(null, new String[] {"MÃ SÁCH", "TÊN SÁCH", "TIỀN NHẬP", "TIỀN BÁN", "TIỀN THUÊ", "TIỀN PHẠT", "TỔNG TIỀN"}) 
 		{
-			boolean[] columnEditables = new boolean[] {
-				false
-			};
 			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
+				return false;
 			}
 		});
 		tblIncome.getColumnModel().getColumn(0).setResizable(false);
 		scrollPane_1.setViewportView(tblIncome);
+		
+		JButton button_1 = new JButton("");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{
+					fillToTableIncome();
+				} 
+				catch (SQLException e1) 
+				{
+					MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra, mã lỗi: " + e1.getErrorCode(), MessageOptionPane.ICON_NAME_ERROR);
+					e1.printStackTrace();
+				}
+			}
+		});
+		button_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		button_1.setIcon(new ImageIcon(StatisticalJFrame.class.getResource("/com/duan/icon/icons8_synchronize_24px.png")));
 		GroupLayout gl_pnlDoanhThu = new GroupLayout(pnlDoanhThu);
 		gl_pnlDoanhThu.setHorizontalGroup(
 			gl_pnlDoanhThu.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlDoanhThu.createSequentialGroup()
 					.addGap(10)
 					.addGroup(gl_pnlDoanhThu.createParallelGroup(Alignment.LEADING)
-						.addComponent(cboMonthImcome, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
-						.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE))
+						.addGroup(gl_pnlDoanhThu.createSequentialGroup()
+							.addComponent(cboMonthImcome, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 559, Short.MAX_VALUE)
+							.addComponent(button_1, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
+						.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 763, Short.MAX_VALUE))
 					.addGap(10))
 		);
 		gl_pnlDoanhThu.setVerticalGroup(
 			gl_pnlDoanhThu.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_pnlDoanhThu.createSequentialGroup()
-					.addGap(11)
-					.addComponent(cboMonthImcome, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addGap(11)
-					.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
+					.addGap(6)
+					.addGroup(gl_pnlDoanhThu.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnlDoanhThu.createSequentialGroup()
+							.addGap(5)
+							.addComponent(cboMonthImcome, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+						.addComponent(button_1, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
+					.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
 					.addGap(11))
 		);
 		pnlDoanhThu.setLayout(gl_pnlDoanhThu);
 		showStatisticOverview();
+		try 
+		{
+			fillToTableBookLost();
+			fillToTableIncome();
+			fillToTableOrder();
+			fillToTableRentbook();
+			fillToTableStorage();
+			fillToTableUser();
+		} 
+		catch (SQLException e1) 
+		{
+			e1.printStackTrace();
+		}
 	}
 	
 	public void showStatisticOverview()
 	{
 		try 
 		{
-			Object[] data = StaticticsDAO.getStatisticOverviewInMonth();
+			lblStatisticOverViewTitle.setText("THỐNG KÊ TỔNG QUAN THÁNG " + DateHelper.getMonth(new Date()));
+			Object[] data = StatisticDAO.getOverviewInMonth();
 			lblTotalBookOrder.setText(data[0] + "");
 			lblTotalBookRented.setText(data[1] + "");
 			lblTotalBookLost.setText(data[2] + "");
@@ -601,6 +883,91 @@ public class StatisticalJFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	public void fillToTableOrder() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblOrder.getModel();
+		int month = cboMonthOrder.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getOrderInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
+	public void fillToTableRentbook() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblRentBook.getModel();
+		int month = cboMonthRentbook.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getRentBookInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
+	public void fillToTableBookLost() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblBookLost.getModel();
+		int month = cboMonthBookLost.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getBookLostInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
+	public void fillToTableUser() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
+		int month = cboMonthUser.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getUserInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
+	public void fillToTableStorage() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblStorage.getModel();
+		int month = cboMonthStorage.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getStorageInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
+	public void fillToTableIncome() throws SQLException
+	{
+		DefaultTableModel model = (DefaultTableModel) tblIncome.getModel();
+		int month = cboMonthImcome.getSelectedIndex();
+
+		List<Object[]> list = StatisticDAO.getIncomeInMonth(month);
+		
+		model.setRowCount(0);
+		for (Object[] data : list)
+		{
+			model.addRow(data);
+		}
+	}
+	
 	
 	public String getRoleTitle(int role) 
 	{
@@ -622,5 +989,4 @@ public class StatisticalJFrame extends JFrame {
 		}
 		return "Không xác định";
 	}
-	
 }
