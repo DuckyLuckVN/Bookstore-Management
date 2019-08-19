@@ -417,4 +417,8 @@ public class BookLostDetailJDialog extends JDialog {
 			e.printStackTrace();
 		}
 	}
+
+	public static void main(String[] args) {
+		Layout: BorderLayout
+	}
 }

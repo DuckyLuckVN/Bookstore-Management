@@ -184,11 +184,11 @@ public class PublisherJDialog extends JDialog {
 		lblMT.setBounds(10, 197, 87, 25);
 		panel.add(lblMT);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		textArea.setBorder(new LineBorder(SystemColor.controlShadow));
-		textArea.setBounds(107, 197, 264, 62);
-		panel.add(textArea);
+		txtMoTa = new JTextArea();
+		txtMoTa.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtMoTa.setBorder(new LineBorder(SystemColor.controlShadow));
+		txtMoTa.setBounds(107, 197, 264, 62);
+		panel.add(txtMoTa);
 		
 		JPanel pnlControll = new JPanel();
 		pnlControll.setBorder(new TitledBorder(null, "\u0110i\u1EC1u khi\u1EC3n", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -254,6 +254,7 @@ public class PublisherJDialog extends JDialog {
 	}
 	
 PublisherDAO publisherDao = new PublisherDAO();
+private JTextArea txtMoTa;
 	//ĐỔ DỮ LIỆU VÀO PUBLISHER VÀO JTABLE
 	private void loadTable() {
 		DefaultTableModel model = (DefaultTableModel) tblLocation.getModel();
@@ -288,6 +289,7 @@ PublisherDAO publisherDao = new PublisherDAO();
 			publisher.setPhoneNumber(txtSDT.getText());
 			publisher.setEmail(txtEmail.getText());
 			publisher.setAddress(txtDiaChi.getText());
+			publisher.setAddress(txtMoTa.getText());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -390,6 +392,7 @@ PublisherDAO publisherDao = new PublisherDAO();
 		txtTenNXB.setText("");
 		txtEmail.setText("");
 		txtSDT.setText("");
+		txtMoTa.setText("");
 	}
 	// KIỂM TRA CÁC ĐIỀU KIỆN CỦA FROM
 	public boolean checkForm() {
