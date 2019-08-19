@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import com.duan.dao.AuthorDAO;
+import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
 import com.duan.dao.PublisherDAO;
@@ -195,5 +196,10 @@ public class Book
 		}
     	return id + " " + title + " " + category + " " + pageNum + " " + author + " " + amount + " " + publisher + " " + publicationYear + " " + price + " " + location  + " " + description + " " + createdDateStr;
     }
+    
+    public static void main(String[] args) throws SQLException 
+    {
+		System.out.println(BookDAO.findByID("GH12").getSearchString());
+	}
     
 }

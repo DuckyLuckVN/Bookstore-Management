@@ -54,6 +54,17 @@ public class RentBookDetailDAO
     	
     	return null;
     }
+    public static RentBookDetail findById(int rentbook_id) throws SQLException
+    {
+    	String sql = "SELECT * FROM RENTBOOK_DETAIL WHERE rentbook_id=? ";
+    	ResultSet rs = JDBCHelper.executeQuery(sql, rentbook_id);
+    	if (rs.next())
+    	{
+    		return readFromResultSet(rs);
+    	}
+    	
+    	return null;
+    }
     
     //Trả về danh sách các sách và số lượng, giá dựa vào mã số thuê @rentbook_id
     public static List<BookProduct> getListProducts(int rentbook_id) throws SQLException

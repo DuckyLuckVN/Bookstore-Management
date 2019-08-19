@@ -14,10 +14,24 @@ import com.duan.model.OrderDetail;
 
 public class OrderDAO 
 {
-    public static ArrayList<Order> getAll() throws SQLException
+	public static ArrayList<Order> getAll() throws SQLException
     {
         ArrayList<Order> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [ORDER]");
+
+        while(rs.next())
+        {
+        	Order order = readFromResultSet(rs);
+        	list.add(order);
+        }
+        return list;
+    }
+	
+	//Tra ve danh sach model order co user_id la id truyen vao
+	public static ArrayList<Order> getAllOfUser(int id) throws SQLException
+    {
+        ArrayList<Order> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM [ORDER] WHERE user_id = ?", id);
 
         while(rs.next())
         {

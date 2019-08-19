@@ -139,6 +139,18 @@ public class OrderDetailDAO
         return null;
     }
     
+    public static OrderDetail findByID(int order_id) throws SQLException
+    {
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM dbo.ORDER_DETAIL Where order_id =?", order_id);
+        
+        if (rs.next())
+        {
+        	return readFromResultSet(rs);
+        }
+        
+        return null;
+    }
+    
     public static OrderDetail readFromResultSet(ResultSet rs) throws SQLException
     {
     	int orderId = rs.getInt(1);

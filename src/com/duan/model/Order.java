@@ -1,7 +1,13 @@
 
 package com.duan.model;
 
+import java.sql.SQLException;
 import java.util.Date;
+
+import com.duan.dao.AdminDAO;
+import com.duan.dao.UserDAO;
+import com.duan.helper.DateHelper;
+import com.duan.helper.SettingSave;
 
 
 public class Order 
@@ -54,6 +60,24 @@ public class Order
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-    
+    public String getSearchString()
+    {
+    	String usernameUser = "";
+    	String usernameAdmin = "";
+    	String createdDateStr = "";
+    	
+    	try 
+    	{
+			usernameUser = UserDAO.findByID(userId).getUsername();
+			usernameAdmin = AdminDAO.findByID(adminId).getUsername();
+			createdDateStr = DateHelper.dateToString(dateCreated, SettingSave.getSetting().getDateFormat());
+		} 
+    	catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+    	
+    	return id + " " + usernameUser + " " + usernameAdmin + " " + createdDateStr + " " ;
+    }
     
 }
