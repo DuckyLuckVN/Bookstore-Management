@@ -612,7 +612,8 @@ public class BookLostEditorJDialog extends JDialog {
 	public void setEditMode(boolean isEditMode)
 	{
 		this.isEditMode = isEditMode;
-		cboRentBookId.setEnabled(false);
+		
+		cboRentBookId.setEnabled( (isEditMode) ? false : true);
 	}
 	
 	//

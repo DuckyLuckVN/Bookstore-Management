@@ -118,7 +118,7 @@ CREATE TABLE STORAGE_DETAIL
 	amount INT CHECK (amount > 0),
 	price MONEY,
 	PRIMARY KEY (storage_id, book_id),
-	CONSTRAINT fk_storage_detail_storeage_id FOREIGN KEY (storage_id) REFERENCES dbo.STORAGE(id) ON UPDATE CASCADE,
+	CONSTRAINT fk_storage_detail_storeage_id FOREIGN KEY (storage_id) REFERENCES dbo.STORAGE(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT fk_storage_detail_book_id FOREIGN KEY (book_id) REFERENCES dbo.BOOK(id) ON UPDATE CASCADE
 )
 GO
@@ -497,14 +497,14 @@ GO
 
 /****** Object:  StoredProcedure  [sp_getStatisticOverviewInMonth]  Script Date: 8/10/2019 ******/
 --Trả về tổng tất cả các thứ cần thống ke :))
-CREATE PROC sp_getStatisticOverviewInMonth 
+ALTER PROC sp_getStatisticOverviewInMonth 
 AS BEGIN
 	DECLARE @totalOrder FLOAT = 0
 	DECLARE @totalRent FLOAT = 0
 	DECLARE @totalLost FLOAT = 0
 	DECLARE @totalUser FLOAT = 0
 	DECLARE @totalAddStorage FLOAT = 0
-	DECLARE @totalRevenue FLOAT = 0
+	DECLARE @totalIncome FLOAT = 0
 
 	SELECT @totalOrder = SUM(ORDER_DETAIL.amount) FROM ORDER_DETAIL, [ORDER] 
 	WHERE ORDER_DETAIL.order_id = [ORDER].id 
@@ -530,54 +530,52 @@ AS BEGIN
 	AND YEAR(STORAGE.created_date) = YEAR(GETDATE()) 
 	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
 	
+
+	
 	DECLARE @totalSumOrder FLOAT = 0
 	DECLARE @totalSumLost FLOAT = 0
-	DECLARE @totalSumRentLost FLOAT = 0
+	DECLARE @totalSumRentExpiration FLOAT = 0
+	DECLARE @totalSumRent FLOAT = 0;
 	DECLARE @totalSumMoneyStorage FLOAT = 0
 
+	-- Tổng doanh thu bán sách
 	SELECT @totalSumOrder = SUM(ORDER_DETAIL.amount*ORDER_DETAIL.price)
 	FROM ORDER_DETAIL, [ORDER]
 	WHERE ORDER_DETAIL.order_id = [ORDER].id
 	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
 	AND MONTH([ORDER].date_created) = MONTH(GETDATE())
 
+	-- Tổng phí phạt mất sách
 	SELECT @totalSumLost = SUM(BOOK_LOST_DETAIL.cost)
 	FROM BOOK_LOST, BOOK_LOST_DETAIL
 	WHERE BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
 	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
 	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+	
+	--Lấy ra số tổng phí thuê sách
+	SELECT @totalSumRent += cost_rent * SUM(amount)
+	FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+	ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+	WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = MONTH(GETDATE())
+	GROUP BY rentbook_id, cost_rent
 
-	SELECT @totalSumRentLost = SUM(BOOK_LOST_DETAIL.amount*RENTBOOK_DETAIL.price)
-	FROM BOOK_LOST, BOOK_LOST_DETAIL, RENTBOOK_DETAIL,RENTBOOK
-	WHERE BOOK_LOST.rentbook_id = RENTBOOK.id
-	AND RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
-	AND RENTBOOK_DETAIL.book_id = BOOK_LOST_DETAIL.book_id
-	AND RENTBOOK_DETAIL.rentbook_id = BOOK_LOST_DETAIL.rentbook_id
-	AND YEAR(RENTBOOK.created_date) = YEAR(GETDATE()) 
-	AND MONTH(RENTBOOK.created_date) = MONTH(GETDATE())
-	AND YEAR(BOOK_LOST.created_date) = YEAR(GETDATE()) 
-	AND MONTH(BOOK_LOST.created_date) = MONTH(GETDATE())
+	--Lấy ra số tổng phí phạt khi thuê
+	SELECT @totalSumRentExpiration += cost_expiration * SUM(amount) * (DATEDIFF(DAY, created_date, returned_date) - expiration_day)
+	FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+	ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+	WHERE status = 1 AND DATEDIFF(DAY, created_date, returned_date) > expiration_day
+	AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = MONTH(GETDATE())
+	GROUP BY rentbook_id, cost_expiration, created_date, returned_date, expiration_day
 
-	SELECT @totalSumMoneyStorage = SUM(STORAGE_DETAIL.amount*STORAGE_DETAIL.price)
-	FROM STORAGE, STORAGE_DETAIL
-	WHERE STORAGE.id = STORAGE_DETAIL.storage_id
-	AND YEAR(STORAGE.created_date) = YEAR(GETDATE())
-	AND MONTH(STORAGE.created_date) = MONTH(GETDATE())
+	--Lấy ra tổng chi phí khi nhập sách
+	SELECT @totalSumMoneyStorage = SUM (price * amount)
+	FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL 
+	ON STORAGE_DETAIL.storage_id = STORAGE.id
+	WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = MONTH(GETDATE())
 
-	IF (@totalLost IS NULL)
-		SET @totalLost = 0
-	IF (@totalSumOrder IS NULL)
-		SET @totalSumOrder = 0
-	IF (@totalSumRentLost IS NULL)
-		SET @totalSumRentLost = 0
-	IF (@totalSumLost IS NULL)
-		SET @totalSumLost = 0
-	IF (@totalSumMoneyStorage IS NULL)
-		SET @totalSumMoneyStorage = 0
+	SET @totalIncome = ISNULL(@totalSumOrder, 0) + ISNULL(@totalSumLost, 0) + ISNULL(@totalSumRentExpiration, 0) + ISNULL(@totalSumRent, 0) - ISNULL(@totalSumMoneyStorage, 0)
 
-	SET @totalrevenue = @totalSumLost + @totalSumOrder - @totalSumRentLost - @totalSumMoneyStorage
-
-	SELECT @totalOrder AS [Total Order], @totalRent AS [Total Rent], @totalLost AS [Total Lost], @totalUser AS [Total User], @totalAddStorage AS [Total Book Storage], @totalRevenue AS [Total imcome]
+	SELECT @totalOrder AS [Total Order], @totalRent AS [Total Rent], @totalLost AS [Total Lost], @totalUser AS [Total User], @totalAddStorage AS [Total Book Storage], @totalIncome AS [Total imcome]
 END
 GO
 
@@ -588,16 +586,58 @@ GO
 --Trả về thông tin sách đã bán theo tháng // DROP PROC sp_getStatisticOrderInMonth EXEC sp_getStatisticOrderInMonth @month = 8
 CREATE PROC sp_getStatisticOrderInMonth (@month int)
 AS BEGIN
-	SELECT BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date,SUM(ORDER_DETAIL.amount) AS [Total Order]
-	FROM BOOK, AUTHOR, CATEGORY, ORDER_DETAIL, [ORDER]
-	WHERE BOOK.category_id = CATEGORY.id
-	AND BOOK.author_id = AUTHOR.id
-	AND  ORDER_DETAIL.order_id = [ORDER].id 
-	AND YEAR([ORDER].date_created) = YEAR(GETDATE()) 
-	AND MONTH([ORDER].date_created) = @month
-	AND ORDER_DETAIL.book_id = BOOK.id
-	--them sum (price * amount) tong tien thu duoc
-	GROUP BY BOOK.id, BOOK.title, CATEGORY.category_title, AUTHOR.fullname, BOOK.created_date
+	DECLARE @bookId VARCHAR(50)
+	DECLARE @bookTitle NVARCHAR(256),
+	DECLARE @bookCategory NVARCHAR(256),
+	DECLARE @bookAuthor NVARCHAR(256),
+	DECLARE @bookCreatedDate DATE,
+	DECLARE @totalOrder SMALLINT,
+	DECLARE @totalBookOrder SMALLINT,
+	DECLARE @totalPriceOrder MONEY
+
+	DECLARE @tblStats TABLE
+	(
+		book_id VARCHAR(50),
+		book_title NVARCHAR(256),
+		book_category NVARCHAR(256),
+		book_author NVARCHAR(256),
+		book_createdDate DATE,
+		totalOrder SMALLINT,
+		totalBookOrder SMALLINT,
+		totalPriceOrder MONEY
+	)
+
+	IF (@month != 0)
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+		ON ORDER_DETAIL.order_id = [ORDER].id
+		WHERE YEAR(date_created) = YEAR(GETDATE()) AND MONTH(date_created) = @month
+		GROUP BY book_id
+	END
+	ELSE
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL
+		ON ORDER_DETAIL.order_id = [ORDER].id
+		WHERE YEAR(date_created) = YEAR(GETDATE())
+		GROUP BY book_id
+	END
+
+	--duyệt list book vừa lấy ra được
+	OPEN cs
+	FETCH NEXT FROM cs INTO @bookId
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		
+
+		FETCH NEXT FROM cs INTO @bookId
+	END
+
+
+
+	CLOSE cs
+	DEALLOCATE cs
+	
 END
 GO
 
@@ -649,42 +689,86 @@ BEGIN
 		SET	@amount_renting = 0
 		SET	@amount_expiration = 0
 
-		--Tên sách
-		SELECT @book_title = title FROM dbo.BOOK WHERE id = @book_id
+		IF (@month != 0)
+		BEGIN
+			--Tên sách
+			SELECT @book_title = title FROM dbo.BOOK WHERE id = @book_id
 
-		--Tổng số lượng đã thuê
-		SELECT @amount_total = SUM(rdt.amount)
-		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt 
-		WHERE b.id = rdt.book_id AND rdt.book_id = @book_id
-		GROUP BY b.id
+			--Tổng số lượng đã thuê
+			SELECT @amount_total = SUM(rdt.amount)
+			FROM dbo.RENTBOOK_DETAIL rdt JOIN dbo.RENTBOOK
+			ON RENTBOOK.id = rdt.rentbook_id
+			WHERE rdt.book_id = @book_id
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+			GROUP BY rdt.book_id
 
-		--Tổng số sách đã trả
-		SELECT @amount_returned = SUM(rdt.amount)
-		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
-		WHERE b.id = rdt.book_id 
-		AND rdt.rentbook_id = rb.id 
-		AND rdt.book_id = @book_id
-		AND rb.status = 1
-		GROUP BY b.id
+			--Tổng số sách đã trả
+			SELECT @amount_returned = SUM(amount)
+			FROM dbo.RENTBOOK_DETAIL JOIN dbo.RENTBOOK
+			ON RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+			WHERE book_id = @book_id 
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+			WHERE status = 1
+			GROUP BY book_id
 
-		--Tổng số sách đang còn thuê
-		SELECT @amount_renting = SUM(rdt.amount)
-		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
-		WHERE b.id = rdt.book_id 
-		AND rdt.rentbook_id = rb.id 
-		AND rdt.book_id = @book_id
-		AND rb.status = 0
-		GROUP BY b.id
+			--Tổng số sách đang còn thuê
+			SELECT @amount_renting = SUM(rdt.amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE book_id = @book_id
+			AND status = 0
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+			GROUP BY book_id
 
-		--Tổng số sách đang quá hạn
-		SELECT @amount_expiration = SUM(rdt.amount)
-		FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rdt, dbo.RENTBOOK rb
-		WHERE b.id = rdt.book_id 
-		AND rdt.rentbook_id = rb.id 
-		AND rdt.book_id = @book_id
-		AND rb.status = 0 
-		AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
-		GROUP BY b.id
+			--Tổng số sách đang quá hạn
+			SELECT @amount_expiration = SUM(rdt.amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			WHERE book_id = @book_id
+			AND rb.status = 0 
+			AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+			GROUP BY b.id
+		END
+		ELSE
+		BEGIN
+			--Tên sách
+			SELECT @book_title = title FROM dbo.BOOK WHERE id = @book_id
+
+			--Tổng số lượng đã thuê
+			SELECT @amount_total = SUM(rdt.amount)
+			FROM dbo.RENTBOOK_DETAIL rdt JOIN dbo.RENTBOOK
+			ON RENTBOOK.id = rdt.rentbook_id
+			WHERE rdt.book_id = @book_id
+			AND YEAR(created_date) = YEAR(GETDATE())
+			GROUP BY rdt.book_id
+
+			--Tổng số sách đã trả
+			SELECT @amount_returned = SUM(amount)
+			FROM dbo.RENTBOOK_DETAIL JOIN dbo.RENTBOOK
+			ON RENTBOOK.id = RENTBOOK_DETAIL.rentbook_id
+			WHERE book_id = @book_id 
+			AND YEAR(created_date) = YEAR(GETDATE())
+			WHERE status = 1
+			GROUP BY book_id
+
+			--Tổng số sách đang còn thuê
+			SELECT @amount_renting = SUM(rdt.amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE book_id = @book_id
+			AND status = 0
+			AND YEAR(created_date) = YEAR(GETDATE())
+			GROUP BY book_id
+
+			--Tổng số sách đang quá hạn
+			SELECT @amount_expiration = SUM(rdt.amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			WHERE book_id = @book_id
+			AND rb.status = 0 
+			AND DATEDIFF(DAY, rb.created_date, GETDATE()) > rb.expiration_day
+			AND YEAR(created_date) = YEAR(GETDATE())
+			GROUP BY b.id
+		END
 
 		--Thêm các dữ liệu đã thống kê vào bảng tblStats
 		INSERT @tblStats( book_id, book_title, amount_total, amount_returned, amount_renting, amount_expiration)
@@ -700,6 +784,237 @@ BEGIN
 	DEALLOCATE cs
 
 	--Trả về bảng danh sách đã thống kê
+	SELECT * FROM @tblStats
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticBookLostInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách mất theo tháng
+ALTER PROCEDURE sp_getStatisticBookLostInMonth(@month SMALLINT)
+AS
+BEGIN
+	DECLARE @bookId VARCHAR(50)
+	DECLARE @bookTitle NVARCHAR(256)
+	DECLARE @totalBookLost SMALLINT = 0
+	DECLARE @totalAmountBookLost SMALLINT = 0
+	DECLARE @totalCost MONEY = 0
+
+	DECLARE @tblStats TABLE
+	(
+		bookId VARCHAR(50),
+		bookTitle NVARCHAR(256),
+		totalBookLost SMALLINT,
+		totalAmountBookLost SMALLINT,
+		totalCost MONEY
+	)
+
+	--Tạo con trỏ duyệt qua các sách có trong khi báo mất
+	IF (@month != 0)
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id
+		FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+		ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+		WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		GROUP BY book_id
+	END
+	ELSE
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id
+		FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+		ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+		WHERE YEAR(created_date) = YEAR(GETDATE())
+		GROUP BY book_id
+	END
+
+	--Tiến hành duyệt danh sách và lấy các con số thống kê
+	OPEN cs
+	FETCH NEXT FROM cs INTO @bookId
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--Reset dữ liệu lại
+		SET @totalBookLost = 0
+		SET @totalAmountBookLost = 0
+		SET @totalCost = 0
+
+		IF (@month != 0)
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title FROM dbo.BOOK WHERE id = @bookId
+
+			--Số đơn báo mất
+			SELECT @totalBookLost = COUNT(*) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+
+			--Tổng sách mất
+			SELECT @totalAmountBookLost = SUM(amount) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+
+			--Tổng tiền phạt thu được
+			SELECT @totalCost = SUM(cost) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		END
+		ELSE
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title FROM dbo.BOOK WHERE id = @bookId
+
+			--Số đơn báo mất
+			SELECT @totalBookLost = COUNT(*) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE())
+
+			--Tổng sách mất
+			SELECT @totalAmountBookLost = SUM(amount) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE())
+
+			--Tổng tiền phạt thu được
+			SELECT @totalCost = SUM(cost) FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE())
+		END
+		
+		--Thêm dữ liệu vừa thống kê được vào bảng tblStats
+		INSERT @tblStats( bookId, bookTitle, totalBookLost, totalAmountBookLost, totalCost)
+		VALUES  (@bookId, @bookTitle, @totalBookLost, @totalAmountBookLost, @totalCost)
+
+		--Đi tới dòng tiếp theo
+		FETCH NEXT FROM cs INTO @bookId
+	END
+
+
+	CLOSE cs
+	DEALLOCATE cs
+
+	SELECT * FROM @tblStats
+END
+GO
+
+
+/****** Object:  StoredProcedure  [sp_getStatisticUserInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin thành viên người dùng theo tháng
+CREATE PROCEDURE sp_getStatisticUserInMonth(@month SMALLINT)
+AS
+BEGIN
+	IF (@month != 0)
+	BEGIN
+		SELECT id, username, fullname, email, date_of_birth, created_date 
+		FROM dbo.[USER] 
+		WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+	END
+	ELSE
+	BEGIN
+		SELECT id, username, fullname, email, date_of_birth, created_date 
+		FROM dbo.[USER] 
+		WHERE YEAR(created_date) = YEAR(GETDATE())
+	END
+END
+GO
+
+/****** Object:  StoredProcedure  [sp_getStatisticStorageInMonth]  Script Date: 8/13/2019 ******/
+--Trả về thông tin sách nhập của tháng EXEC sp_getStatisticStorageInMonth 8
+CREATE PROCEDURE sp_getStatisticStorageInMonth(@month SMALLINT)
+AS
+BEGIN
+	DECLARE @bookId VARCHAR(50)
+	DECLARE @bookTitle NVARCHAR(256)
+	DECLARE	@totalAmount SMALLINT = 0
+	DECLARE @totalPrice MONEY = 0
+
+	DECLARE @tblStats TABLE
+	(
+		bookId VARCHAR(50),
+		bookTitle NVARCHAR(256),
+		totalAmount SMALLINT,
+		totalPrice MONEY
+	)
+
+	--Tạo con trỏ, lấy về danh sách book_id cần thống kê
+	IF (@month != 0)
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id
+		FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+		ON STORAGE_DETAIL.storage_id = STORAGE.id
+		WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		GROUP BY book_id
+	END
+	ELSE 
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT book_id
+		FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+		ON STORAGE_DETAIL.storage_id = STORAGE.id
+		WHERE YEAR(created_date) = YEAR(GETDATE())
+		GROUP BY book_id
+	END
+	
+	--Duyệt danh sách book_id
+	OPEN cs
+	FETCH NEXT FROM cs INTO @bookId
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		-- Reset dữ liệu các biến tạm
+		SET	@totalAmount = 0
+		SET @totalPrice = 0
+
+		IF (@month != 0)
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title FROM dbo.BOOK
+			WHERE id = @bookId
+
+			--Tổng sách đã nhập
+			SELECT @totalAmount = SUM (amount) FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+
+			--Tổng chi phí
+			SELECT @totalPrice = SUM (amount * price) FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		END
+		ELSE
+		BEGIN
+			--Tên sách
+			SELECT @bookTitle = title FROM dbo.BOOK
+			WHERE id = @bookId
+
+			--Tổng sách đã nhập
+			SELECT @totalAmount = SUM (amount) FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE())
+
+			--Tổng chi phí
+			SELECT @totalPrice = SUM (amount * price) FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE book_id = @bookId
+			AND YEAR(created_date) = YEAR(GETDATE())
+		END
+
+		--Insert dữ liệu tìm được vào bảng stats
+		INSERT @tblStats( bookId, bookTitle, totalAmount, totalPrice)
+		VALUES  (@bookId, @bookTitle, @totalAmount, @totalPrice)
+
+		-- Nhảy tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @bookId
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
+
 	SELECT * FROM @tblStats
 END
 GO
@@ -727,19 +1042,219 @@ BEGIN
 		total_money_penalty MONEY,
 		total_money_income MONEY
 	)
+
+	-- Lấy ra danh sách bảng chứa book_id tồn tại trong 1 trong số các bảng cần thống kê
+	IF (@month != 0)
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT id FROM dbo.BOOK
+		WHERE id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL 
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+		)
+	END
+	ELSE
+	BEGIN
+		DECLARE cs CURSOR FOR SELECT id FROM dbo.BOOK
+		WHERE id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL 
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE YEAR(created_date) = YEAR(GETDATE())
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE YEAR(created_date) = YEAR(GETDATE())
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.STORAGE JOIN dbo.STORAGE_DETAIL
+			ON STORAGE_DETAIL.storage_id = STORAGE.id
+			WHERE YEAR(created_date) = YEAR(GETDATE())
+		) OR id IN
+		(
+			SELECT DISTINCT book_id
+			FROM dbo.BOOK_LOST JOIN dbo.BOOK_LOST_DETAIL
+			ON BOOK_LOST_DETAIL.rentbook_id = BOOK_LOST.rentbook_id
+			WHERE YEAR(created_date) = YEAR(GETDATE())
+		)
+	END
 	
-	SELECT DISTINCT b.id 
-	FROM dbo.BOOK b, dbo.RENTBOOK_DETAIL rbdt, dbo.STORAGE_DETAIL stdt, dbo.BOOK_LOST_DETAIL bldt, dbo.ORDER_DETAIL odt
-	WHERE rbdt.book_id = b.id OR stdt.book_id = b.id OR bldt.book_id = b.id OR odt.book_id = b.id
-	
+	--Duyệt con trỏ và tiến hành lấy các giá trị cần thống kê
+	OPEN cs
+	FETCH NEXT FROM cs INTO @book_id
+
+	-- Lặp qua hết danh sách book_id vừa lấy được
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET	@total_cost_storage = 0
+		SET	@total_money_order = 0
+		SET	@total_money_rentbook = 0
+		SET	@total_money_penalty = 0
+		SET	@total_money_income = 0
+					DECLARE @totalPriceRent MONEY = 0
+			DECLARE @costRentExpiration MONEY = 0
+			DECLARE @costBookLost MONEY = 0;
+
+		IF (@month != 0)
+		BEGIN
+			-- /////////// TÊN SÁCH ///////////////
+			SELECT @book_title = title FROM dbo.BOOK
+
+			-- /////////// TIỀN NHẬP /////////////
+			SELECT @total_cost_storage = SUM (SDT.amount * SDT.price)
+			FROM dbo.STORAGE S JOIN dbo.STORAGE_DETAIL SDT 
+			ON SDT.storage_id = S.id
+			WHERE SDT.book_id = @book_id 
+			AND YEAR(S.created_date) = YEAR(GETDATE()) AND MONTH(S.created_date) = @month
+		
+			-- /////////// TIỀN BÁN /////////////
+			SELECT @total_money_order = SUM (amount * price)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @book_id 
+			AND YEAR(date_created) = YEAR(GETDATE()) AND MONTH(date_created) = @month
+
+			--/////////// TIỀN THUÊ /////////////
+
+			SELECT @totalPriceRent += cost_rent * SUM(amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE book_id = @book_id
+			AND YEAR(created_date) = YEAR(GETDATE()) AND MONTH(created_date) = @month
+			GROUP BY id, cost_rent 
+		
+			SET @total_money_rentbook = @totalPriceRent
+
+			-- /////////////  TỔNG TIỀN PHẠT //////////////////
+
+			--Lấy ra tổng phí thu khi phạt mất sách
+			SELECT @costBookLost += bl.cost_lost * bldt.amount * rbdt.price
+			FROM dbo.BOOK_LOST bl, dbo.BOOK_LOST_DETAIL bldt, dbo.RENTBOOK_DETAIL rbdt
+			WHERE bl.rentbook_id = bldt.rentbook_id 
+			AND bldt.rentbook_id = rbdt.rentbook_id 
+			AND bldt.book_id = rbdt.book_id
+			AND bldt.book_id = @book_id
+			AND YEAR(bl.created_date) = YEAR(GETDATE()) AND MONTH(bl.created_date) = @month
+			GROUP BY bl.rentbook_id,  bldt.amount, rbdt.price, bl.cost_lost
+
+			--Lấy ra tổng phí thu khi phạt quá hạn - ĐÃ TRẢ
+			SELECT @costRentExpiration += rb.cost_expiration * SUM(dt.amount) * (DATEDIFF(DAY, rb.created_date, rb.returned_date) - rb.expiration_day)
+			FROM dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt
+			WHERE rb.id = dt.rentbook_id 
+			AND rb.status = 1 
+			AND DATEDIFF(DAY, rb.created_date, rb.returned_date) > rb.expiration_day
+			AND dt.book_id = @book_id
+			AND YEAR(rb.created_date) = YEAR(GETDATE()) AND MONTH(rb.created_date) = @month
+			GROUP BY rb.id, rb.cost_expiration, rb.created_date, rb.returned_date, rb.expiration_day
+
+			-- Tổng phí nhận được từ phí phạt
+			SET @total_money_penalty = ISNULL(@costBookLost, 0) + ISNULL(@costRentExpiration, 0)
+
+			-- /////////////  TỔNG TIỀN  //////////////////
+			SET @total_money_income = ISNULL(@total_money_order, 0) + ISNULL(@total_money_penalty, 0) + ISNULL(@total_money_rentbook, 0) - ISNULL(@total_cost_storage, 0)
+		END 
+		ELSE
+		BEGIN
+			-- /////////// TÊN SÁCH ///////////////
+			SELECT @book_title = title FROM dbo.BOOK
+
+			-- /////////// TIỀN NHẬP /////////////
+			SELECT @total_cost_storage = SUM (SDT.amount * SDT.price)
+			FROM dbo.STORAGE S JOIN dbo.STORAGE_DETAIL SDT 
+			ON SDT.storage_id = S.id
+			WHERE SDT.book_id = @book_id 
+			AND YEAR(S.created_date) = YEAR(GETDATE())
+		
+			-- /////////// TIỀN BÁN /////////////
+			SELECT @total_money_order = SUM (amount * price)
+			FROM dbo.[ORDER] JOIN dbo.ORDER_DETAIL 
+			ON ORDER_DETAIL.order_id = [ORDER].id
+			WHERE book_id = @book_id 
+			AND YEAR(date_created) = YEAR(GETDATE())
+
+			--/////////// TIỀN THUÊ /////////////
+
+			SELECT @totalPriceRent += cost_rent * SUM(amount)
+			FROM dbo.RENTBOOK JOIN dbo.RENTBOOK_DETAIL
+			ON RENTBOOK_DETAIL.rentbook_id = RENTBOOK.id
+			WHERE book_id = @book_id
+			AND YEAR(created_date) = YEAR(GETDATE())
+			GROUP BY id, cost_rent 
+		
+			SET @total_money_rentbook = @totalPriceRent
+
+			-- /////////////  TỔNG TIỀN PHẠT //////////////////
+
+			--Lấy ra tổng phí thu khi phạt mất sách
+			SELECT @costBookLost += bl.cost_lost * bldt.amount * rbdt.price
+			FROM dbo.BOOK_LOST bl, dbo.BOOK_LOST_DETAIL bldt, dbo.RENTBOOK_DETAIL rbdt
+			WHERE bl.rentbook_id = bldt.rentbook_id 
+			AND bldt.rentbook_id = rbdt.rentbook_id 
+			AND bldt.book_id = rbdt.book_id
+			AND bldt.book_id = @book_id
+			AND YEAR(bl.created_date) = YEAR(GETDATE())
+			GROUP BY bl.rentbook_id,  bldt.amount, rbdt.price, bl.cost_lost
+
+			--Lấy ra tổng phí thu khi phạt quá hạn - ĐÃ TRẢ
+			SELECT @costRentExpiration += rb.cost_expiration * SUM(dt.amount) * (DATEDIFF(DAY, rb.created_date, rb.returned_date) - rb.expiration_day)
+			FROM dbo.RENTBOOK rb, dbo.RENTBOOK_DETAIL dt
+			WHERE rb.id = dt.rentbook_id 
+			AND rb.status = 1 
+			AND DATEDIFF(DAY, rb.created_date, rb.returned_date) > rb.expiration_day
+			AND dt.book_id = @book_id
+			AND YEAR(rb.created_date) = YEAR(GETDATE())
+			GROUP BY rb.id, rb.cost_expiration, rb.created_date, rb.returned_date, rb.expiration_day
+
+			-- Tổng phí nhận được từ phí phạt
+			SET @total_money_penalty = ISNULL(@costBookLost, 0) + ISNULL(@costRentExpiration, 0)
+
+			-- /////////////  TỔNG TIỀN  //////////////////
+			SET @total_money_income = ISNULL(@total_money_order, 0) + ISNULL(@total_money_penalty, 0) + ISNULL(@total_money_rentbook, 0) - ISNULL(@total_cost_storage, 0)
+		END
+		
+
+		--Thêm dữ liệu thống kê từ book_id đó vào bảng thống kê stats
+		INSERT @tblStats( book_id, book_title, total_cost_storage, total_money_order, total_money_rentbook, total_money_penalty ,total_money_income)
+		VALUES  (@book_id, @book_title, @total_cost_storage, @total_money_order, @total_money_rentbook, @total_money_penalty, @total_money_income)
+
+		--Nhảy tới dòng kế tiếp
+		FETCH NEXT FROM cs INTO @book_id
+	END
+
+	CLOSE cs
+	DEALLOCATE cs
 
 	--Trả về bảng danh sách đã thống kê
-	SELECT * FROM @tblStats
+	DECLARE @SUM_TOTAL_INCOMEA MONEY
+
+	SELECT @SUM_TOTAL_INCOMEA = SUM(total_money_income) FROM @tblStats
+	SELECT *, @SUM_TOTAL_INCOMEA FROM @tblStats
 END
 GO
-
-
-
 
 INSERT dbo.ADMIN
         ( username ,
