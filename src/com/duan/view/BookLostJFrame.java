@@ -161,7 +161,7 @@ public class BookLostJFrame extends JFrame {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				if(MessageOptionPane.showConfirmDialog(contentPane, "Bạn có muốn xóa đơn hàng này?"))
+				if(MessageOptionPane.showConfirmDialog(contentPane, "Bạn có muốn xóa đơn báo mất này?"))
 				{
 					try 
 					{
@@ -411,6 +411,7 @@ public class BookLostJFrame extends JFrame {
 	private void showEditBookLost()
 	{
 		editBookLostEditorJDialog = new BookLostEditorJDialog();
+		editBookLostEditorJDialog.setLocationRelativeTo(this);
 		editBookLostEditorJDialog.setEditMode(true);
 		editBookLostEditorJDialog.setEditModel(listBookLost.get(indexSelected));
 		editBookLostEditorJDialog.setBookLostJFrame(this);

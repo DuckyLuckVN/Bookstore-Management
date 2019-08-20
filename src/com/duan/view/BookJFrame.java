@@ -23,8 +23,10 @@ import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.AccountSave;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
@@ -75,6 +77,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.Desktop;
+import javax.swing.border.LineBorder;
 
 public class BookJFrame extends JFrame{
 
@@ -282,7 +285,7 @@ public class BookJFrame extends JFrame{
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		scrollPane.setBorder(new TitledBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)), "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		pnlSelect = new JPanel();
 		
@@ -548,12 +551,13 @@ public class BookJFrame extends JFrame{
 		{
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 
@@ -586,6 +590,7 @@ public class BookJFrame extends JFrame{
 		}
 	}
 	
+	//Xóa hết các dòng cũ trên bảng, sau đó duyệt lại list kiểm tra dữ liệu search có tồn tại trong sách nào thì insert sách đó vô bảng
 	public void search() throws SQLException
 	{
 		String search = txtSearch.getText();
@@ -595,17 +600,22 @@ public class BookJFrame extends JFrame{
 		
 		for (Book e : listBook)
 		{
+			//Kiem tra dieu kien, neu chuoi search khong nam trong getSearchString thi bo qua tiep tuc lap bang lenh countinue
 			if (DataHelper.search(e.getSearchString(), search) == false)
+			{
 				continue;
+			}
+			
 			String price = DataHelper.getFormatForMoney(e.getPrice()) + SettingSave.getSetting().getMoneySymbol();
 			String categoryTitle = CategoryDAO.getTitleById(e.getCategoryId());
+			String authorFullname = AuthorDAO.findById(e.getAuthorId()).getFullName();
 			
 			String[] rowData = 
 				{
 					e.getId(), 
 					e.getTitle(), 
 					categoryTitle, 
-					e.getAuthor(), 
+					authorFullname, 
 					e.getAmount() + "", 
 					price, 
 					e.getDescription(), 
@@ -641,10 +651,12 @@ public class BookJFrame extends JFrame{
 	{
 		try 
 		{
+			//Lay ra id sach dang duoc chon
 			String id = (String) tblBook.getValueAt(indexSelect, 0);
-			Book bookDetail;
-			bookDetail = BookDAO.findByID(id);
+			//Lay ve doi tuong cua id do tren DB
+			Book bookDetail = BookDAO.findByID(id);
 			
+			//Tao 1 jdialog BookDetailJDialog de hien thi
 			bookDetailJDialog = new BookDetailJDialog();
 			bookDetailJDialog.setLocationRelativeTo(this);
 			bookDetailJDialog.setDetail(bookDetail);
@@ -659,6 +671,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để insertBook
 	public void showInsertBook()
 	{
+		inserBookJFrame = new BookEditorJDialog();
+		inserBookJFrame.setLocationRelativeTo(this);
 		inserBookJFrame.setBookJFrame(this);
 		inserBookJFrame.setVisible(true);
 	}
@@ -666,6 +680,8 @@ public class BookJFrame extends JFrame{
 	//Hiện lên JFrame để edit book
 	public void showEditorBook(Book book) throws SQLException
 	{
+		editorBookJDialog = new BookEditorJDialog();
+		editorBookJDialog.setLocationRelativeTo(this);
 		editorBookJDialog.setBookEditor(book);
 		editorBookJDialog.setBookJFrame(this);
 		editorBookJDialog.showDataToForm(book);

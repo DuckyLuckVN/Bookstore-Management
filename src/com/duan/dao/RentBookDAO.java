@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.duan.helper.JDBCHelper;
+import com.duan.helper.SettingSave;
 import com.duan.model.Book;
 import com.duan.model.BookProduct;
 import com.duan.model.RentBook;
@@ -21,6 +22,20 @@ public class RentBookDAO
     {
         ArrayList<RentBook> list = new ArrayList<>();
         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK");
+
+        while (rs.next())
+        {
+        	RentBook e = readFromResultSet(rs);
+        	list.add(e);
+        }
+        return list;
+    }
+    
+    //Tra ve danh sach model RentBook co user_id = id truyen vao
+    public static ArrayList<RentBook> getAllOfUser(int id) throws SQLException
+    {
+        ArrayList<RentBook> list = new ArrayList<>();
+        ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK WHERE user_id = ?", id);
 
         while (rs.next())
         {
@@ -43,13 +58,28 @@ public class RentBookDAO
         return list;
     }
     
+    public static ArrayList<RentBook> getAllExpiration() throws SQLException
+    {
+    	 ArrayList<RentBook> list = new ArrayList<>();
+         ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM RENTBOOK WHERE status=0 AND DATEDIFF(DAY, created_date, GETDATE()) > expiration_day");
+
+         while (rs.next())
+         {
+         	RentBook e = readFromResultSet(rs);
+         	list.add(e);
+         }
+         return list;
+    }
+    
     public static boolean insert(RentBook rb) throws SQLException
     {
-        String sql = "INSERT INTO RENTBOOK Values(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO RENTBOOK Values (?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement st = JDBCHelper.createPreparedStatement(sql, 
         											rb.getUserId(), 
         											rb.getAdminId(),
+        											rb.getCostRent(),
+        											rb.getCostExpiration(),
         											rb.getCreatedDate(), 
         											rb.getReturnedDate(),
         											rb.getStatus());
@@ -60,11 +90,14 @@ public class RentBookDAO
     
     public static boolean insert(RentBook rb, List<BookProduct> bookProducts) throws SQLException
     {
-        String sql = "INSERT INTO RENTBOOK Values(?, ?, ?, ?, ?)";
+    	String sql = "INSERT INTO RENTBOOK Values (?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement st = JDBCHelper.createPreparedStatement(sql, 
         											rb.getUserId(), 
         											rb.getAdminId(),
+        											rb.getCostRent(),
+        											rb.getCostExpiration(),
+        											rb.getExpirationDay(),
         											rb.getCreatedDate(), 
         											rb.getReturnedDate(),
         											rb.getStatus());
@@ -108,6 +141,9 @@ public class RentBookDAO
     {
         String sql = "UPDATE RENTBOOK Set user_id = ?, "
         								+ "admin_id = ?, "
+        								+ "cost_rent = ?, "
+        								+ "cost_expiration = ?, "
+        								+ "expiration_day = ?, "
         								+ "created_date = ?, "
         								+ "returned_date=?, "
         								+ "status = ? "
@@ -116,6 +152,9 @@ public class RentBookDAO
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, 
         										rb.getUserId(), 
         										rb.getAdminId(), 
+        										rb.getCostRent(),
+        										rb.getCostExpiration(),
+        										rb.getExpirationDay(),
         										rb.getCreatedDate(), 
         										rb.getReturnedDate(),
         										rb.getStatus(),
@@ -152,15 +191,18 @@ public class RentBookDAO
     	int id = rs.getInt(1);
     	int userId = rs.getInt(2);
     	int adminId = rs.getInt(3);
-    	Date createdDate = rs.getDate(4);
-    	Date returnedDate = rs.getDate(5);
-    	int status = rs.getInt(6);
+    	double costRent = rs.getDouble(4);
+    	double costExpiration = rs.getDouble(5);
+    	int dayExpiration = rs.getInt(6);
+    	Date createdDate = rs.getDate(7);
+    	Date returnedDate = rs.getDate(8);
+    	int status = rs.getInt(9);
     	
-    	return new RentBook(id, userId, adminId, createdDate, returnedDate, status);
+    	return new RentBook(id, userId, adminId, costRent, costExpiration, dayExpiration, createdDate, returnedDate, status);
     }
     
     public static void main(String[] args) throws SQLException {
-    	RentBook rentBook = new RentBook(30, 100, 101, new Date(), null, 0);
+    	RentBook rentBook = new RentBook(30, 100, 101, SettingSave.getSetting().getCostRentBook(), SettingSave.getSetting().getCostRentExpiration(), SettingSave.getSetting().getDayExpiration(), new Date(), null, 0);
     	List<BookProduct> list = new ArrayList<>();
     	
     	Book book1 = new Book();

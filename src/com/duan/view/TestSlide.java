@@ -31,16 +31,12 @@ public class TestSlide extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					TestSlide frame = new TestSlide();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		test();
+	}
+	
+	public static void test()
+	{
+		System.out.println(TestSlide.class.getResourceAsStream("/com").toString());;
 	}
 
 	/**

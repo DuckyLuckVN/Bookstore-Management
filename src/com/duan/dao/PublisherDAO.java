@@ -9,7 +9,11 @@ import java.util.Date;
 import javax.naming.spi.DirStateFactory.Result;
 
 import com.duan.helper.JDBCHelper;
+<<<<<<< HEAD
 import com.duan.model.Admin;
+=======
+import com.duan.model.Author;
+>>>>>>> master
 import com.duan.model.Publisher;
 
 public class PublisherDAO 
@@ -28,13 +32,13 @@ public class PublisherDAO
 	
 	public static boolean insert(Publisher pub) throws SQLException
 	{
-		String sql = "INSERT INTO VALUES(?,?,?,?,?,?)";
+		String sql = "INSERT INTO PUBLISHER VALUES(?,?,?,?,?,?)";
 		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, pub.getName(), 
 																		pub.getPhoneNumber(),
 																		pub.getEmail(), 
 																		pub.getAddress(),
 																		pub.getIntroduct(),
-																		pub.getCreatedDate());
+																		new java.sql.Date(new Date().getTime()));
 		int count = pre.executeUpdate();
 		return count > 0;
 		
@@ -48,17 +52,42 @@ public class PublisherDAO
 																		pub.getEmail(),
 																		pub.getAddress(),
 																		pub.getIntroduct(),
-																		pub.getCreatedDate(),id);
+																		new java.sql.Date(new Date().getTime())
+																		,id);
 		int count = pre.executeUpdate();
 		return count > 0;
 	}
 	
-	public static boolean delete(Publisher pub,int id) throws SQLException
+	public static boolean delete(int id) throws SQLException
 	{
 		String sql = "DELETE FROM PUBLISHER WHERE ID = ?";
 		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, id);
 		int count = pre.executeUpdate();
 		return count > 0;
+	}
+	
+	public static Publisher findById(int id) throws SQLException
+	{
+		String sql = "SELECT * FROM dbo.PUBLISHER WHERE ID = ?";
+		ResultSet rs = JDBCHelper.executeQuery(sql, id);
+		
+		if(rs.next()) 
+		{
+			return readFromResultSet(rs);
+		}
+		return null;
+	}
+	
+	public static Publisher findByName(String name) throws SQLException
+	{
+		String sql = "SELECT * FROM dbo.PUBLISHER WHERE name = ?";
+		ResultSet rs = JDBCHelper.executeQuery(sql, name);
+		
+		if(rs.next()) 
+		{
+			return readFromResultSet(rs);
+		}
+		return null;
 	}
 	
 	public static Publisher readFromResultSet(ResultSet rs) throws SQLException

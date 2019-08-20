@@ -54,6 +54,17 @@ public class RentBookDetailDAO
     	
     	return null;
     }
+    public static RentBookDetail findById(int rentbook_id) throws SQLException
+    {
+    	String sql = "SELECT * FROM RENTBOOK_DETAIL WHERE rentbook_id=? ";
+    	ResultSet rs = JDBCHelper.executeQuery(sql, rentbook_id);
+    	if (rs.next())
+    	{
+    		return readFromResultSet(rs);
+    	}
+    	
+    	return null;
+    }
     
     //Trả về danh sách các sách và số lượng, giá dựa vào mã số thuê @rentbook_id
     public static List<BookProduct> getListProducts(int rentbook_id) throws SQLException
@@ -106,6 +117,12 @@ public class RentBookDetailDAO
     public static boolean delete(int rentbook_id) throws SQLException
     {
     	return JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=?", rentbook_id) > 0;
+    }
+    
+    //Xóa hết RentBookDetail có mã rentbook là rentbook_id và book_id = book_id
+    public static boolean delete(int rentbook_id, String book_id) throws SQLException
+    {
+    	return JDBCHelper.excuteUpdate("DELETE FROM RENTBOOK_DETAIL WHERE rentbook_id=? AND book_id=?", rentbook_id, book_id) > 0;
     }
     
     public static void main(String[] args) throws SQLException {

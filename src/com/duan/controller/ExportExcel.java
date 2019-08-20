@@ -21,17 +21,21 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 import com.duan.dao.AdminDAO;
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.dao.UserDAO;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
 import com.duan.model.Admin;
+import com.duan.model.Author;
 import com.duan.model.Book;
 import com.duan.model.Category;
 import com.duan.model.User;
 import com.duan.model.Location;
+import com.duan.model.Publisher;
 
 public class ExportExcel 
 {
@@ -156,6 +160,8 @@ public class ExportExcel
 				
 				Category category = CategoryDAO.findById(b.getCategoryId());
 				Location location = LocationDAO.findByID(b.getLocationId());
+				Author author = AuthorDAO.findById(b.getAuthorId());
+				Publisher publisher = PublisherDAO.findById(b.getPublisherId());
 				
 				//Mã sách
 				cell = row.createCell(0);
@@ -179,7 +185,7 @@ public class ExportExcel
 				
 				//Tác giả
 				cell = row.createCell(4);
-				cell.setCellValue(b.getAuthor());
+				cell.setCellValue(author.getFullName());
 				cell.setCellStyle(styleBody);
 				
 				//Số lượng
@@ -189,7 +195,7 @@ public class ExportExcel
 				
 				//Nhà xuất bản
 				cell = row.createCell(6);
-				cell.setCellValue(b.getPublisher());
+				cell.setCellValue(publisher.getName());
 				cell.setCellStyle(styleBody);
 				
 				//Năm xuất bản
@@ -688,6 +694,7 @@ public class ExportExcel
 			FileOutputStream fos = new FileOutputStream(file);
 			workbook.write(fos);
 			workbook.close();
+			fos.close();
 			return true;
 		} 
 		catch (IOException e) 
@@ -806,6 +813,7 @@ public class ExportExcel
 			FileOutputStream fos = new FileOutputStream(file);
 			workbook.write(fos);
 			workbook.close();
+			fos.close();
 			return true;
 			
 			} 

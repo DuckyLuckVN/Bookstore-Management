@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.util.Date;
 
 import com.duan.dao.AdminDAO;
 import com.duan.dao.BookLostDetailDAO;
@@ -249,11 +250,11 @@ public class ExportPDF
 			tblInfo.addCell(new Paragraph("Ngày thuê:", utf8Font));
 			tblInfo.addCell(new Paragraph(DateHelper.dateToString(rentBook.getCreatedDate(), SettingSave.getSetting().getDateFormat()), utf8Font));
 			tblInfo.addCell(new Paragraph("Ngày trả dự kiến:", utf8Font));
-			tblInfo.addCell(new Paragraph("0-00-0000", utf8Font));
+			tblInfo.addCell(new Paragraph(DateHelper.dateToString(DateHelper.addDay(rentBook.getCreatedDate(), rentBook.getExpirationDay()), SettingSave.getSetting().getDateFormat()), utf8Font));
 			tblInfo.addCell(new Paragraph("Ngày trả thực tế:", utf8Font));
 			tblInfo.addCell(new Paragraph((rentBook.getReturnedDate() == null) ? "" : DateHelper.dateToString(rentBook.getReturnedDate(), SettingSave.getSetting().getDateFormat()), utf8Font));
 			tblInfo.addCell(new Paragraph("Tình trạng:", utf8Font));
-			tblInfo.addCell(new Paragraph((rentBook.getStatus() == 0) ? "Chưa trả" : "Đã trả", utf8Font));
+			tblInfo.addCell(new Paragraph(rentBook.getTitleStatus(), utf8Font));
 			document.add(tblInfo);
 			
 			Paragraph listTitle = new Paragraph("Danh sách sách thuê: " , utf8Font);
@@ -325,17 +326,51 @@ public class ExportPDF
 			
 			//Thông tin tổng kết
 			int totalBook = RentBookDetailDAO.getTotalBookRented(rentBook.getId());
+			double totalCostRent = rentBook.getCostRent() * totalBook;
+			String totalCostRentStr = DataHelper.getFormatForMoney(totalCostRent) + SettingSave.getSetting().getMoneySymbol();
 			Font fontTotal = new Font(baseFont, 12, Font.BOLD, BaseColor.RED);
 			
 			//Tổng số lượng
-			Paragraph prTotalBook = new Paragraph();
-			prTotalBook.setSpacingBefore(15);
-			prTotalBook.setFont(utf8Font);
-			prTotalBook.add(new Chunk("Tổng sách thuê: "));
-			Chunk chunkTotalLost = new Chunk(totalBook + " quyển");
-			chunkTotalLost.setFont(fontTotal);
-			prTotalBook.add(chunkTotalLost);
-			document.add(prTotalBook);
+			Paragraph prTotalCostRent = new Paragraph();
+			prTotalCostRent.setSpacingBefore(15);
+			prTotalCostRent.setFont(utf8Font);
+			
+			prTotalCostRent.add(new Chunk("Tổng phí thuê: "));
+			Chunk chunkTotalCost = new Chunk(totalCostRentStr + " (" + totalBook + " quyển)");
+			chunkTotalCost.setFont(fontTotal);
+			prTotalCostRent.add(chunkTotalCost);
+
+			document.add(prTotalCostRent);
+			
+			Paragraph prTotalCostExpiration = new Paragraph();
+			prTotalCostExpiration.setSpacingBefore(5);
+			prTotalCostExpiration.setFont(utf8Font);
+			prTotalCostExpiration.add(new Chunk("Phí phạt quá hạn: "));
+			
+			//Xử lý hiện thông tin phí quá hạn
+			if (rentBook.getStatus() == 0 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), new Date()) > rentBook.getExpirationDay())
+			{
+				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), new Date()) - rentBook.getExpirationDay();
+				double totalCostExpiration = totalDayExpiration * totalBook * rentBook.getCostExpiration();
+				String totalCostExpirationStr = DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol();
+				
+				Chunk chunkTotalCostExpiration = new Chunk(totalCostExpirationStr + " (" + (totalDayExpiration) + " ngày)");
+				chunkTotalCostExpiration.setFont(fontTotal);
+				prTotalCostExpiration.add(chunkTotalCostExpiration);
+				document.add(prTotalCostExpiration);
+			}
+			else if (rentBook.getStatus() == 1 && DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) > rentBook.getExpirationDay())
+			{
+				int totalDayExpiration = DateHelper.getDayBetweenTwoDate(rentBook.getCreatedDate(), rentBook.getReturnedDate()) - rentBook.getExpirationDay();
+				double totalCostExpiration = totalDayExpiration * totalBook * rentBook.getCostExpiration();
+				String totalCostExpirationStr = DataHelper.getFormatForMoney(totalCostExpiration) + SettingSave.getSetting().getMoneySymbol();
+				
+				Chunk chunkTotalCostExpiration = new Chunk(totalCostExpirationStr + " (" + totalDayExpiration + " ngày)");
+				chunkTotalCostExpiration.setFont(fontTotal);
+				prTotalCostExpiration.add(chunkTotalCostExpiration);
+				document.add(prTotalCostExpiration);
+				
+			}
 			
 			
 			return true;
@@ -415,6 +450,8 @@ public class ExportPDF
 			tblInfo.addCell(new Paragraph(adminBookLost.getFullname() + " (" + adminBookLost.getUsername() + ")", utf8Font));
 			tblInfo.addCell(new Paragraph("Tình trạng:", utf8Font));
 			tblInfo.addCell(new Paragraph((rentBook.getStatus() == 0) ? "Đang thuê" : "Đã trả", utf8Font));
+			tblInfo.addCell(new Paragraph("Phí phạt gia tăng:", utf8Font));
+			tblInfo.addCell(new Paragraph("x" + bookLost.getCostLost(), utf8Font));
 			
 			document.add(tblInfo);
 			
@@ -456,7 +493,7 @@ public class ExportPDF
 			tblList.addCell(header2);
 			
 			//-Header 3 - Giá
-			PdfPCell header3 = new PdfPCell(new Paragraph("Giá", fHeaderList));
+			PdfPCell header3 = new PdfPCell(new Paragraph("Giá bán lúc thuê", fHeaderList));
 			header3.setHorizontalAlignment(Element.ALIGN_CENTER);
 			header3.setBackgroundColor(BaseColor.DARK_GRAY);
 			header3.setPadding(8);

@@ -51,11 +51,12 @@ public class BookLostDAO
     
     public static boolean insert(BookLost e) throws SQLException
     {
-        String sql = "INSERT INTO BOOK_LOST Values(?, ?, ?)";
+        String sql = "INSERT INTO BOOK_LOST Values(?, ?, ?, ?)";
         
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
         										e.getRentbookId(), 
         										e.getAdminId(), 
+        										e.getCostLost(),
         										e.getCreatedDate());
         int count = pre.executeUpdate();
         
@@ -64,11 +65,12 @@ public class BookLostDAO
     
     public static boolean insert(BookLost bookLost, List<BookProduct> products) throws SQLException
     {
-        String sql = "INSERT INTO BOOK_LOST Values(?, ?, ?)";
+        String sql = "INSERT INTO BOOK_LOST Values(?, ?, ?, ?)";
         
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
         										bookLost.getRentbookId(), 
         										bookLost.getAdminId(), 
+        										bookLost.getCostLost(),
         										bookLost.getCreatedDate());
         int count = pre.executeUpdate();
         if (count > 0)
@@ -88,12 +90,14 @@ public class BookLostDAO
     {
         String sql = "UPDATE BOOK_LOST SET rentbook_id = ?, "
         							+ "admin_id = ?, "
+        							+ "cost_lost = ?, "
         							+ "created_date = ? "
         							+ "WHERE rentbook_id = ?";
 
         PreparedStatement pre = JDBCHelper.createPreparedStatement(sql,
         											bookLost.getRentbookId(),
         											bookLost.getAdminId(),
+        											bookLost.getCostLost(),
         											bookLost.getCreatedDate(),
         											rentbook_id);
         int count = pre.executeUpdate();
@@ -143,9 +147,10 @@ public class BookLostDAO
     {
     	int rentbookId = rs.getInt(1);
         int adminId = rs.getInt(2);
-        Date dateCreated = rs.getDate(3);
+        double costLost = rs.getDouble(3);
+        Date dateCreated = rs.getDate(4);
         
-        return new BookLost(rentbookId, adminId, dateCreated);
+        return new BookLost(rentbookId, adminId, costLost, dateCreated);
     }
     
 //    public static Date convertStringTimeToDate(String stringTime) throws ParseException

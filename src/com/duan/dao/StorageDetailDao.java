@@ -11,6 +11,7 @@ import com.duan.helper.JDBCHelper;
 import com.duan.model.BookProduct;
 import com.duan.model.Storage;
 import com.duan.model.StorageDetail;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 public class StorageDetailDao
 {
@@ -92,6 +93,17 @@ public class StorageDetailDao
 		
 	}
 	
+	//Xóa row có id = id truyền vào, trả về TRUE nếu thành công, FALSE nếu thất bại
+	public static boolean delete(int StorageId, String book_id) throws SQLException
+	{
+		String sql = "DELETE FROM STORAGE_DETAIL WHERE storage_id=? AND book_id=?";
+		PreparedStatement pre = JDBCHelper.createPreparedStatement(sql, StorageId, book_id);
+		
+		int count = pre.executeUpdate();
+		return count > 0;
+		
+	}
+	
 	//Tìm và trả về model StorageDetail có id = id truyền vào.
 	public static StorageDetail findById(int storageId) throws SQLException
 	{
@@ -103,6 +115,18 @@ public class StorageDetailDao
 			return readFromResultSet(rs);
 		}
 		return null;
+	}
+	
+	//Trả về giá tiền nhập sách của sách có id truyền vào tại thời điểm gần nhất
+	public static double getClosestPriceStorageWithBook(String book_id) throws SQLException
+	{
+		String sql = "{call sp_getClosestPriceStorageWithBook(?)}";
+		ResultSet rs = JDBCHelper.executeQuery(sql, book_id);
+		if (rs.next())
+		{
+			return rs.getDouble(1);
+		}
+		return 0;
 	}
 	
 	 public static StorageDetail readFromResultSet(ResultSet rs) throws SQLException

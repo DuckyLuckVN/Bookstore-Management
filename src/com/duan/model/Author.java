@@ -25,7 +25,10 @@ public class Author
 		this.introduce = introduce;
 		this.createdDate = createdDate;
 	}
-	
+	public Author()
+	{
+		
+	}
 	public int getId() {
 		return id;
 	}

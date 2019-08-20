@@ -12,7 +12,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JTableBlue;
+import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.model.Category;
 import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
@@ -33,9 +35,12 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.Color;
+import java.awt.Desktop;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
@@ -43,7 +48,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+<<<<<<< HEAD
 import java.beans.Statement;
+=======
+import java.io.File;
+import java.io.IOException;
+>>>>>>> master
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -96,7 +106,7 @@ public class CategoryJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 486, 391);
+		setBounds(100, 100, 486, 413);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -266,6 +276,36 @@ public class CategoryJDialog extends JDialog {
 		btnNew.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/Create.png")));
 		btnNew.setBounds(364, 8, 105, 38);
 		contentPane.add(btnNew);
+		
+		JButton btnXutExcel = new JButton("Xuất Excel");
+		btnXutExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try {
+					JFileChooser chooser = new JFileChooser();
+					int status = chooser.showOpenDialog(contentPane);
+					
+					if (status == chooser.APPROVE_OPTION)
+					{
+						String path = chooser.getSelectedFile().getAbsoluteFile().toString();
+						File file = new File(path + ".xls");
+						if (ExportExcel.writeCategory(file, CategoryDAO.getAll()))
+						{
+							Desktop.getDesktop().open(file);
+						}
+					}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		});
+		btnXutExcel.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
+		btnXutExcel.setBounds(364, 356, 105, 23);
+		contentPane.add(btnXutExcel);
 		setLocationRelativeTo(getOwner());
 		loadCategoryToList();
 	}

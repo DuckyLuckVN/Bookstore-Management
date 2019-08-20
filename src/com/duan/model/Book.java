@@ -4,8 +4,11 @@ package com.duan.model;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.duan.dao.AuthorDAO;
+import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
@@ -17,14 +20,15 @@ public class Book
     private String title;
     private String categoryId ;
     private int  pageNum;
-    private String author;
+    private int authorId;
     private int amount;
-    private String publisher;
+    private int publisherId;
     private int publicationYear ;
     private double price;
     private String image;
     private String locationId;
     private String description;
+    private String introduce;
     private Date createdDate;
 
     public Book()
@@ -32,23 +36,46 @@ public class Book
     	
     }
 
-    public Book(String id, String title, String categoryId, int pageNum, String author, int amount, String publisher,
-			int publicationYear, double price, String image, String locationId, String description, Date createdDate) {
+	public Book(String id, String title, String categoryId, int pageNum, int authorId, int amount, int publisherId,
+			int publicationYear, double price, String image, String locationId, String description, String introduce,
+			Date createdDate) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.categoryId = categoryId;
 		this.pageNum = pageNum;
-		this.author = author;
+		this.authorId = authorId;
 		this.amount = amount;
-		this.publisher = publisher;
+		this.publisherId = publisherId;
 		this.publicationYear = publicationYear;
 		this.price = price;
 		this.image = image;
 		this.locationId = locationId;
 		this.description = description;
+		this.introduce = introduce;
 		this.createdDate = createdDate;
 	}
+
+
+	public int getAuthorId() {
+		return authorId;
+	}
+
+
+	public void setAuthorId(int authorId) {
+		this.authorId = authorId;
+	}
+
+
+	public int getPublisherId() {
+		return publisherId;
+	}
+
+
+	public void setPublisherId(int publisherId) {
+		this.publisherId = publisherId;
+	}
+
 
 	public String getLocationId() {
 		return locationId;
@@ -90,13 +117,6 @@ public class Book
         this.pageNum = pageNum;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
 
     public int getAmount() {
         return amount;
@@ -104,14 +124,6 @@ public class Book
 
     public void setAmount(int amount) {
         this.amount = amount;
-    }
-
-    public String getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
     }
 
     public int getPublicationYear() {
@@ -145,8 +157,17 @@ public class Book
     public void setDescription(String description) {
         this.description = description;
     }
+    
 
-    public Date getCreatedDate() {
+    public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public Date getCreatedDate() {
         return createdDate;
     }
 
@@ -158,11 +179,15 @@ public class Book
     {
     	String category = "";
     	String location = "";
+    	String author = "";
+    	String publisher = "";
     	String createdDateStr = DateHelper.dateToString(createdDate, SettingSave.getSetting().getDateFormat());
     	try 
     	{
 			category = CategoryDAO.findById(categoryId).getCategoryTitle();
 			location = LocationDAO.findByID(locationId).getLocationName();
+			author = AuthorDAO.findById(authorId).getFullName();
+			publisher = PublisherDAO.findById(publisherId).getName();
 			
     	} 
     	catch (SQLException e) 
@@ -171,5 +196,10 @@ public class Book
 		}
     	return id + " " + title + " " + category + " " + pageNum + " " + author + " " + amount + " " + publisher + " " + publicationYear + " " + price + " " + location  + " " + description + " " + createdDateStr;
     }
+    
+    public static void main(String[] args) throws SQLException 
+    {
+		System.out.println(BookDAO.findByID("GH12").getSearchString());
+	}
     
 }

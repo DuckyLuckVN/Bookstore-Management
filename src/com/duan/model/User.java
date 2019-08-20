@@ -18,15 +18,16 @@ public class User
     private String email;
     private String phoneNumber;
     private boolean sex;
+    private boolean isActive;
     private Date createdDate;
 
     public User()
     {
     	
     }
-
-    public User(int id, String username, String password, String fullname, Date dateOfBirth, String email,
-			String phoneNumber, boolean sex, Date createdDate) {
+    
+	public User(int id, String username, String password, String fullname, Date dateOfBirth, String email,
+			String phoneNumber, boolean sex, boolean isActive, Date createdDate) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -36,7 +37,16 @@ public class User
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.sex = sex;
+		this.isActive = isActive;
 		this.createdDate = createdDate;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public boolean isSex() {

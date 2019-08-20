@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.sql.SQLException;
 
+import javax.management.loading.PrivateClassLoader;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,13 +45,17 @@ import com.duan.model.User;
 
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import java.awt.GridLayout;
+import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
 
 /*
  * 15/05/2019
  * Nguyễn Đại Hào
  * JDialog dùng để đăng nhập tài khoảng
  */
-public class LoginJFrame extends JDialog 
+public class LoginJFrame extends JFrame 
 {
 	private JPanel contentPane;
 	private JLabel lblLogo;
@@ -63,9 +68,13 @@ public class LoginJFrame extends JDialog
 	
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogin;
+	private JRadioButton rdbtnKhch;
+	private JRadioButton rdoLoginAdmin;
 	private JProgressBar proLoading;
 	private Admin admin;
+	private User user;
 	private JLabel lblWelcomeName;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 
 	public static void main(String[] args) 
@@ -107,8 +116,8 @@ public class LoginJFrame extends JDialog
 	}
 
 	public LoginJFrame() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setModal(true);
 		setUndecorated(true);
 		try 
 		{
@@ -122,7 +131,7 @@ public class LoginJFrame extends JDialog
 		}
 		setResizable(false);
 		setTitle("Đăng Nhập");
-		setBounds(100, 100, 755, 500);
+		setBounds(100, 100, 755, 527);
 		contentPane = new JPanel();
 		
 		contentPane.addMouseMotionListener(new MouseMotionAdapter() 
@@ -179,9 +188,35 @@ public class LoginJFrame extends JDialog
 		lblExit.setBounds(726, 0, 29, 29);
 		contentPane.add(lblExit);
 		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(396, 426, 341, 29);
+		contentPane.add(panel_1);
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setLayout(null);
+		
+		JLabel lblngNhpVi = new JLabel("Đăng nhập với tư cách:");
+		lblngNhpVi.setBounds(10, 0, 151, 29);
+		lblngNhpVi.setFont(new Font("Tahoma", Font.BOLD, 12));
+		panel_1.add(lblngNhpVi);
+		
+		rdoLoginAdmin = new JRadioButton("Nhân viên");
+		buttonGroup.add(rdoLoginAdmin);
+		rdoLoginAdmin.setSelected(true);
+		rdoLoginAdmin.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdoLoginAdmin.setBounds(165, 0, 88, 29);
+		rdoLoginAdmin.setBackground(Color.WHITE);
+		panel_1.add(rdoLoginAdmin);
+		
+		rdbtnKhch = new JRadioButton("Khách");
+		buttonGroup.add(rdbtnKhch);
+		rdbtnKhch.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		rdbtnKhch.setBounds(260, 0, 74, 29);
+		rdbtnKhch.setBackground(Color.WHITE);
+		panel_1.add(rdbtnKhch);
+		
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBackground(new Color(255, 255, 255));
-		pnlForm.setBounds(396, 246, 341, 181);
+		pnlForm.setBounds(396, 240, 341, 187);
 		contentPane.add(pnlForm);
 		pnlForm.setLayout(null);
 		
@@ -229,8 +264,9 @@ public class LoginJFrame extends JDialog
 		pnlForm.add(txtPassword);
 		
 		btnLogin = new JButton("Đăng Nhập");
-		AdminDAO dao = new AdminDAO();
-		
+		AdminDAO adminDao = new AdminDAO();
+		UserDAO userDao = new UserDAO();
+				
 		btnLogin = new JButton("Đăng Nhập");
 		btnLogin.addActionListener(new ActionListener() 
 		{
@@ -242,26 +278,67 @@ public class LoginJFrame extends JDialog
 					String username = txtUsername.getText();
 					String password = txtPassword.getText();
 					try {	
-						admin = dao.findByUsername(username); 
-						if (admin != null) 
+						if (rdoLoginAdmin.isSelected() == true) 
 						{
-							if (password.equals(admin.getPassword())) 
+							admin = adminDao.findByUsername(username); 
+							if (admin != null) 
 							{
-								AccountSave.setAdmin(admin);
-								MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-								active();
+								if (password.equals(admin.getPassword())) 
+								{
+									if (admin.isActive())
+									{
+										AccountSave.setAdmin(admin);
+										MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+										active();
+									}
+									else
+									{
+										MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng '" + admin.getUsername() + "' này đang bị khóa!" , MessageOptionPane.ICON_NAME_BLOCK);
+									}
+								}
+								else 
+								{
+									MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
+									txtPassword.requestFocus();
+								}
 							}
 							else 
 							{
-								MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
-								txtPassword.requestFocus();
+								MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
+								txtUsername.requestFocus();
+							}
+						} 
+						else
+						{
+							user = userDao.findByUser(username);
+							if (user != null) 
+							{
+								if (password.equals(user.getPassword())) 
+								{
+									if (user.isActive())
+									{
+										AccountSave.setUser(user);
+										MessageOptionPane.showAlertDialog(contentPane, "Đăng nhập thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
+										active();
+									}
+									else
+									{
+										MessageOptionPane.showAlertDialog(contentPane, "Tài khoảng '" + user.getUsername() + "' này đang bị khóa!", MessageOptionPane.ICON_NAME_BLOCK);
+									}
+								}
+								else 
+								{
+									MessageOptionPane.showAlertDialog(contentPane, "Mật khẩu không chính xác", MessageOptionPane.ICON_NAME_WARNING);
+									txtPassword.requestFocus();
+								}
+							}
+							else 
+							{
+								MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
+								txtUsername.requestFocus();
 							}
 						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(contentPane, "Tài khoản này không tồn tại!", MessageOptionPane.ICON_NAME_WARNING);
-							txtUsername.requestFocus();
-						}
+						
 					} catch (Exception e2) 
 					{
 						e2.printStackTrace();
@@ -286,7 +363,7 @@ public class LoginJFrame extends JDialog
 		btnLogin.setForeground(new Color(255, 255, 255));
 		btnLogin.setBackground(new Color(62, 144, 255));
 		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 18));
-		btnLogin.setBounds(399, 438, 335, 51);
+		btnLogin.setBounds(396, 459, 341, 51);
 		contentPane.add(btnLogin);
 		
 		lblLogo = new JLabel("");
@@ -298,7 +375,7 @@ public class LoginJFrame extends JDialog
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(65, 71, 86));
-		panel.setBounds(0, 0, 386, 500);
+		panel.setBounds(0, 0, 386, 527);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -323,7 +400,7 @@ public class LoginJFrame extends JDialog
 		proLoading = new JProgressBar();
 		proLoading.setBorder(null);
 		proLoading.setForeground(new Color(255, 69, 0));
-		proLoading.setBounds(0, 492, 386, 8);
+		proLoading.setBounds(0, 519, 386, 8);
 		panel.add(proLoading);
 		
 		pnlWelcome = new JPanel();
@@ -409,7 +486,10 @@ public class LoginJFrame extends JDialog
 						else
 						{
 							dispose();
-							showMainJFrame();
+							if (rdoLoginAdmin.isSelected())
+								showMainJFrame();
+							else
+								showUserJFrame();
 							break;
 						}
 					}
@@ -429,12 +509,29 @@ public class LoginJFrame extends JDialog
 		mainJFrame.setVisible(true);
 	}
 	
+	public void showUserJFrame()
+	{
+		UserMainJFrame userMainJFrame = new UserMainJFrame();
+		userMainJFrame.setLocationRelativeTo(null);
+		userMainJFrame.setVisible(true);
+	}
+	
 	//Goi ham nay khi login thanh cong
 	public void active()
 	{
-		lblWelcomeName.setText(admin.getFullname());
-		AccountSave.setAdmin(admin);
-		animationWelcome();
-		runProcessBar();
+		if (rdoLoginAdmin.isSelected() == true) {
+			lblWelcomeName.setText(admin.getFullname());
+			AccountSave.setAdmin(admin);
+			animationWelcome();
+			runProcessBar();
+		} 
+		else
+		{
+			lblWelcomeName.setText(user.getFullname());
+			AccountSave.setUser(user);
+			animationWelcome();
+			runProcessBar();
+		}
+		
 	}
 }

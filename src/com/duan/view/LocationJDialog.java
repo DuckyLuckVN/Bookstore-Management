@@ -12,7 +12,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JTableBlue;
+import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
 import com.duan.model.Location;
 
@@ -34,9 +36,12 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.Color;
+import java.awt.Desktop;
+
 import javax.swing.border.EtchedBorder;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
@@ -51,6 +56,8 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
 public class LocationJDialog extends JDialog {
 	private JPanel contentPane;
@@ -67,6 +74,7 @@ public class LocationJDialog extends JDialog {
 	JButton btnCpNht;
 	JButton btnXa;
 	JButton btnMi;
+	private JButton btnXutExcel;
 	public static void main(String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -97,7 +105,7 @@ public class LocationJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 495, 456);
+		setBounds(100, 100, 495, 475);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -258,6 +266,36 @@ public class LocationJDialog extends JDialog {
 		pnlControll.add(btnMi);
 		btnMi.setHorizontalAlignment(SwingConstants.LEFT);
 		btnMi.setIcon(new ImageIcon(CategoryJDialog.class.getResource("/com/duan/icon/Create.png")));
+		
+		btnXutExcel = new JButton("Xuất Excel");
+		btnXutExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				try {
+					JFileChooser chooser = new JFileChooser();
+					int status = chooser.showOpenDialog(contentPane);
+					
+					if (status == chooser.APPROVE_OPTION)
+					{
+						String path = chooser.getSelectedFile().getAbsoluteFile().toString();
+						File file = new File(path + ".xls");
+						if (ExportExcel.writeLocation(file, LocationDAO.getAll()))
+						{
+							Desktop.getDesktop().open(file);
+						}
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		btnXutExcel.setIcon(new ImageIcon(LocationJDialog.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
+		btnXutExcel.setBounds(364, 420, 117, 23);
+		contentPane.add(btnXutExcel);
 		setLocationRelativeTo(getOwner());
 		loadLocationToList();
 		lockForm();

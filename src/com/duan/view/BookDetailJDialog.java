@@ -11,9 +11,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.border.SoftBevelBorder;
 
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
@@ -34,6 +36,16 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.SystemColor;
 
 public class BookDetailJDialog extends JDialog {
 
@@ -50,6 +62,10 @@ public class BookDetailJDialog extends JDialog {
 	private JLabel lblChoThue;
 	private JLabel lblImage;
 	private JLabel lblViTri;
+	private JTextField txtDescription;
+	private JTextArea txtIntroduce;
+	
+	private Book book;
 
 	public static void main(String[] args) 
 	{
@@ -85,7 +101,7 @@ public class BookDetailJDialog extends JDialog {
 		}
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 608, 354);
+		setBounds(100, 100, 669, 601);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -93,12 +109,13 @@ public class BookDetailJDialog extends JDialog {
 		
 		lblImage = new JLabel("Không có ảnh");
 		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
-		lblImage.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		lblImage.setBounds(10, 11, 232, 305);
+		lblImage.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		lblImage.setBounds(10, 11, 278, 365);
 		contentPane.add(lblImage);
 		
 		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(252, 0, 340, 316);
+		panel_3.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Th\u00F4ng tin v\u1EC1 s\u00E1ch", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_3.setBounds(298, 11, 355, 365);
 		contentPane.add(panel_3);
 		panel_3.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -144,7 +161,19 @@ public class BookDetailJDialog extends JDialog {
 		lblTcGi.setFont(new Font("Tahoma", Font.BOLD, 14));
 		
 		lblTacGia = new JLabel("Phạm Hoàng Huy");
-		lblTacGia.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblTacGia.setForeground(new Color(255, 69, 0));
+		lblTacGia.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				AuthorDetailJDialog authorDetailJDialog = new AuthorDetailJDialog();
+				authorDetailJDialog.setDetailModel(book.getAuthorId());
+				authorDetailJDialog.setLocationRelativeTo(contentPane);
+				authorDetailJDialog.setVisible(true);
+			}
+		});
+		lblTacGia.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		lblTacGia.setFont(new Font("Tahoma", Font.BOLD, 14));
 		item2.add(lblTacGia);
 		
 		JPanel item3 = new JPanel();
@@ -266,18 +295,50 @@ public class BookDetailJDialog extends JDialog {
 		lblChoThue = new JLabel("10 quyển");
 		lblChoThue.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		item9.add(lblChoThue);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new TitledBorder(new LineBorder(new Color(64, 64, 64), 2, true), "Gi\u1EDBi thi\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		scrollPane.setBounds(10, 384, 643, 149);
+		contentPane.add(scrollPane);
+		
+		txtIntroduce = new JTextArea();
+		txtIntroduce.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtIntroduce.setWrapStyleWord(true);
+		txtIntroduce.setLineWrap(true);
+		txtIntroduce.setBorder(new EmptyBorder(0, 0, 0, 0));
+		txtIntroduce.setOpaque(false);
+		txtIntroduce.setEditable(false);
+		scrollPane.setViewportView(txtIntroduce);
+		
+		JLabel lblGhiCh = new JLabel("Ghi chú:");
+		lblGhiCh.setHorizontalAlignment(SwingConstants.LEFT);
+		lblGhiCh.setForeground(Color.DARK_GRAY);
+		lblGhiCh.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblGhiCh.setBounds(10, 544, 56, 17);
+		contentPane.add(lblGhiCh);
+		
+		txtDescription = new JTextField();
+		txtDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtDescription.setBorder(null);
+		txtDescription.setEditable(false);
+		txtDescription.setBounds(76, 544, 577, 17);
+		contentPane.add(txtDescription);
+		txtDescription.setColumns(10);
 	}
 	
 	public void setDetail(Book book) throws SQLException
 	{
+		this.book = book;
+		
 		String price = DataHelper.getFormatForMoney(book.getPrice()) + SettingSave.getSetting().getMoneySymbol();
-		String publisher = book.getPublisher() + " (" + book.getPublicationYear() + ")";
+		String publisher = PublisherDAO.findById(book.getPublisherId()).getName() + " (" + book.getPublicationYear() + ")";
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
 		String locationTitle = LocationDAO.findByID(book.getLocationId()).getLocationName();
+		String authorName = AuthorDAO.findById(book.getAuthorId()).getFullName();
 		
 		lblMaSach.setText(book.getId());
 		lblTenSach.setText(book.getTitle());
-		lblTacGia.setText(book.getAuthor());
+		lblTacGia.setText(authorName);
 		lblTheLoai.setText(categoryTitle);
 		lblTrang.setText(book.getPageNum() + " trang");
 		lblXuatBan.setText(publisher);
@@ -286,6 +347,8 @@ public class BookDetailJDialog extends JDialog {
 		lblGia.setText(price);
 		lblDaBan.setText(BookDAO.getCountSold(book.getId()) + " quyển");
 		lblChoThue.setText(BookDAO.getCountBeingRented(book.getId()) + " quyển");
+		txtIntroduce.setText(book.getIntroduce());
+		txtDescription.setText(book.getDescription());
 		setTitle("Thông tin sách | " + book.getTitle());
 		
 		//Set image
@@ -304,7 +367,6 @@ public class BookDetailJDialog extends JDialog {
 		{
 			setImage(null);
 		}
-		
 	}
 	
 	//Cập nhật lại ảnh của sách
@@ -312,11 +374,14 @@ public class BookDetailJDialog extends JDialog {
 	{
 		if (imageName != null && imageName.length() > 0)
 		{
-			URL url = getClass().getResource("/com/duan/image/" + imageName);
-			ImageIcon icon = new ImageIcon(url);
-			lblImage.setIcon(icon);
-			lblImage.setText("");
-			SwingHelper.setAutoResizeIcon(lblImage);
+			File file = new File("image/" + imageName);
+			if (file != null)
+			{
+				ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+				lblImage.setIcon(icon);
+				lblImage.setText("");
+				SwingHelper.setAutoResizeIcon(lblImage);
+			}
 		}
 		else
 		{

@@ -6,6 +6,7 @@ public class BookLost
 {
 	private int rentbookId;
 	private int adminId;
+	private double costLost;
 	private Date createdDate;
 	
 	public BookLost()
@@ -13,13 +14,14 @@ public class BookLost
 		
 	}
 	
-	public BookLost(int rentbookId, int adminId, Date createdDate) {
+	public BookLost(int rentbookId, int adminId, double costLost, Date createdDate) {
 		super();
 		this.rentbookId = rentbookId;
 		this.adminId = adminId;
+		this.costLost = costLost;
 		this.createdDate = createdDate;
 	}
-	
+
 	public int getRentbookId() {
 		return rentbookId;
 	}
@@ -32,6 +34,15 @@ public class BookLost
 	public void setAdminId(int adminId) {
 		this.adminId = adminId;
 	}
+	
+	public double getCostLost() {
+		return costLost;
+	}
+
+	public void setCostLost(double costLost) {
+		this.costLost = costLost;
+	}
+
 	public Date getCreatedDate() {
 		return createdDate;
 	}

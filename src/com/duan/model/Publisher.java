@@ -26,10 +26,19 @@ public class Publisher
 		createdDate = createdDate;
 	}
 	
+<<<<<<< HEAD
 	public Publisher() {
 		// TODO Auto-generated constructor stub
 	}
 
+=======
+	public Publisher() 
+	{
+
+	}
+
+	
+>>>>>>> master
 	public int getId() {
 		return id;
 	}

@@ -51,6 +51,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
+
+import org.apache.commons.collections4.functors.IfClosure;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Frame;
@@ -83,7 +86,6 @@ public class MainJFrame extends JFrame {
 	
 	private int posX;
 	private int posY;
-	
 	
 	
 	private BorderLayout borderLayout = new BorderLayout(0, 0);
@@ -170,7 +172,7 @@ public class MainJFrame extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MainJFrame.class.getResource("/com/duan/icon/icons8_book_64px_3.png")));
 		setTitle("Bookstore Managerment");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 1159, 764);
+		setBounds(100, 100, 1218, 764);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		setContentPane(contentPane);
@@ -596,8 +598,6 @@ public class MainJFrame extends JFrame {
 		lblAvatar = new JLabel("");
 		lblAvatar.setBounds(10, 11, 73, 75);
 		pnlAvatar.add(lblAvatar);
-		lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/43087105_2147322358815729_8587652113234919424_n.jpg")));
-		SwingHelper.setAutoResizeIcon(lblAvatar);
 		
 		lblChucVu = new JLabel("Nhân viên");
 		lblChucVu.setForeground(Color.RED);
@@ -716,7 +716,7 @@ public class MainJFrame extends JFrame {
 		pnlContent.setLayout(cardLayout);
 		
 		lblBackgroundMain = new JLabel("");
-		lblBackgroundMain.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/Wingman-simple-wallpaper-backgrounds.jpg")));
+		lblBackgroundMain.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/background.png")));
 		lblBackgroundMain.setHorizontalAlignment(SwingConstants.CENTER);
 		pnlContent.add(lblBackgroundMain, "name_99788257003228");
 		setLocationRelativeTo(getOwner());
@@ -732,14 +732,14 @@ public class MainJFrame extends JFrame {
 		lblHoTen.setText(admin.getFullname());
 		
 		//Set Avatar
-		if (admin.getImage() != null && admin.getImage().length() > 0 && MainJFrame.class.getResource("/com/duan/image/" + admin.getImage()) != null)
+		if (admin.getImage() != null && admin.getImage().length() > 0 && new File("image/" + admin.getImage()) != null)
 		{
-			lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/image/" + admin.getImage())));
+			lblAvatar.setIcon(new ImageIcon(new File("image/" + admin.getImage()).getAbsolutePath()));
 			SwingHelper.setAutoResizeIcon(lblAvatar);
 		}
 		else
 		{ //set avatar mặc định nếu admin không có image
-			lblAvatar.setIcon(new ImageIcon(MainJFrame.class.getResource("/com/duan/icon/avatar-default.png")));
+			lblAvatar.setIcon(new ImageIcon(getClass().getResource("/com/duan/icon/avatar-default.png")));
 			SwingHelper.setAutoResizeIcon(lblAvatar);
 		}
 	}

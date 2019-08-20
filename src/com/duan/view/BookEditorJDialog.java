@@ -25,16 +25,22 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import com.duan.custom.message.MessageOptionPane;
+import com.duan.dao.AuthorDAO;
 import com.duan.dao.BookDAO;
 import com.duan.dao.CategoryDAO;
 import com.duan.dao.LocationDAO;
+import com.duan.dao.PublisherDAO;
+import com.duan.dao.StorageDetailDao;
 import com.duan.helper.DataHelper;
 import com.duan.helper.DateHelper;
 import com.duan.helper.SettingSave;
 import com.duan.helper.SwingHelper;
+import com.duan.model.Author;
 import com.duan.model.Book;
 import com.duan.model.Category;
 import com.duan.model.Location;
+import com.duan.model.Publisher;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -50,6 +56,7 @@ import java.util.Date;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.CardLayout;
+import javax.swing.JScrollPane;
 
 public class BookEditorJDialog extends JDialog {
 
@@ -58,7 +65,6 @@ public class BookEditorJDialog extends JDialog {
 	private JTextField txtTenSach;
 	private JTextField txtSoTrang;
 	private JTextField txtGia;
-	private JTextField txtNhaXuatBan;
 	private JComboBox cboTheLoai;
 	private JTextArea txtGhiChu;
 	private JComboBox cboNamXuatBan;
@@ -67,17 +73,24 @@ public class BookEditorJDialog extends JDialog {
 	
 	CategoryJDialog categoryJDialog = new CategoryJDialog();
 	LocationJDialog locationJDialog = new LocationJDialog();
+	AuthorJDialog authorJDialog = new AuthorJDialog();
+	PublisherJDialog publisherJDialog = new PublisherJDialog();
 	
 	
 	List<Category> listCategory;
 	List<Location> listLocation;
+	List<Publisher> listPublisher;
+	List<Author> listAuthor;
+	
 	BookJFrame bookJFrame;
 	private File fileImage;
 	
 	private boolean isEditMode;
-	private JTextField txtTacGia;
 	
 	private Book bookEdit;
+	private JComboBox cboPublisher;
+	private JComboBox cboAuthor;
+	private JTextArea txtIntroduct;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -127,7 +140,7 @@ public class BookEditorJDialog extends JDialog {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 648, 403);
+		setBounds(100, 100, 648, 478);
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.menu);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -137,7 +150,7 @@ public class BookEditorJDialog extends JDialog {
 		JPanel pnlForm = new JPanel();
 		pnlForm.setBackground(SystemColor.menu);
 		pnlForm.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
-		pnlForm.setBounds(10, 11, 398, 351);
+		pnlForm.setBounds(10, 11, 398, 425);
 		contentPane.add(pnlForm);
 		pnlForm.setLayout(null);
 		
@@ -177,7 +190,7 @@ public class BookEditorJDialog extends JDialog {
 		btnEditTheLoai.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) 
 			{
-				showCategoryJFrame();
+				showCategoryJDialog();
 			}
 		});
 		btnEditTheLoai.setBounds(352, 81, 36, 24);
@@ -211,12 +224,6 @@ public class BookEditorJDialog extends JDialog {
 		lblNhXutBn.setBounds(10, 186, 75, 24);
 		pnlForm.add(lblNhXutBn);
 		
-		txtNhaXuatBan = new JTextField();
-		txtNhaXuatBan.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtNhaXuatBan.setColumns(10);
-		txtNhaXuatBan.setBounds(95, 186, 293, 24);
-		pnlForm.add(txtNhaXuatBan);
-		
 		JLabel lblNmXutBn = new JLabel("Năm xuất bản");
 		lblNmXutBn.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblNmXutBn.setBounds(10, 221, 81, 24);
@@ -237,14 +244,8 @@ public class BookEditorJDialog extends JDialog {
 		
 		JLabel lblGhiCh = new JLabel("Ghi chú");
 		lblGhiCh.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblGhiCh.setBounds(10, 256, 75, 24);
+		lblGhiCh.setBounds(10, 351, 75, 24);
 		pnlForm.add(lblGhiCh);
-		
-		txtGhiChu = new JTextArea();
-		txtGhiChu.setBorder(new LineBorder(SystemColor.inactiveCaption));
-		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtGhiChu.setBounds(95, 256, 293, 84);
-		pnlForm.add(txtGhiChu);
 		
 		JLabel lblVn = new JLabel(SettingSave.getSetting().getMoneySymbol());
 		lblVn.setHorizontalAlignment(SwingConstants.CENTER);
@@ -257,15 +258,9 @@ public class BookEditorJDialog extends JDialog {
 		lblTcGi.setBounds(10, 151, 75, 24);
 		pnlForm.add(lblTcGi);
 		
-		txtTacGia = new JTextField();
-		txtTacGia.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		txtTacGia.setColumns(10);
-		txtTacGia.setBounds(95, 151, 293, 24);
-		pnlForm.add(txtTacGia);
-		
 		JLabel lblVTr = new JLabel("Vị trí đặt");
 		lblVTr.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblVTr.setBounds(194, 221, 46, 24);
+		lblVTr.setBounds(194, 221, 52, 24);
 		pnlForm.add(lblVTr);
 		
 		cboViTri = new JComboBox();
@@ -274,9 +269,72 @@ public class BookEditorJDialog extends JDialog {
 		cboViTri.setBounds(250, 221, 92, 24);
 		pnlForm.add(cboViTri);
 		
-		JButton button = new JButton("Tùy chỉnh");
-		button.setBounds(352, 221, 36, 24);
-		pnlForm.add(button);
+		JButton btnEditLocation = new JButton("Tùy chỉnh");
+		btnEditLocation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				showLocationJDialog();
+			}
+		});
+		btnEditLocation.setBounds(352, 221, 36, 24);
+		pnlForm.add(btnEditLocation);
+		
+		cboAuthor = new JComboBox();
+		cboAuthor.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		cboAuthor.setBounds(95, 151, 247, 24);
+		pnlForm.add(cboAuthor);
+		
+		JButton btnEditAuthor = new JButton("...");
+		btnEditAuthor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				showAuthorJDialog();
+			}
+		});
+		btnEditAuthor.setBounds(352, 151, 36, 24);
+		pnlForm.add(btnEditAuthor);
+		
+		cboPublisher = new JComboBox();
+		cboPublisher.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		cboPublisher.setBounds(95, 186, 247, 24);
+		pnlForm.add(cboPublisher);
+		
+		JButton btnEditPublisher = new JButton("...");
+		btnEditPublisher.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				showPublisherJDialog();
+			}
+		});
+		btnEditPublisher.setBounds(352, 186, 36, 24);
+		pnlForm.add(btnEditPublisher);
+		
+		JLabel lblMT = new JLabel("Mô tả");
+		lblMT.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblMT.setBounds(10, 256, 75, 24);
+		pnlForm.add(lblMT);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(95, 256, 293, 84);
+		pnlForm.add(scrollPane);
+		
+		txtIntroduct = new JTextArea();
+		scrollPane.setViewportView(txtIntroduct);
+		txtIntroduct.setWrapStyleWord(true);
+		txtIntroduct.setLineWrap(true);
+		txtIntroduct.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtIntroduct.setBorder(new LineBorder(SystemColor.inactiveCaption));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(95, 351, 293, 63);
+		pnlForm.add(scrollPane_1);
+		
+		txtGhiChu = new JTextArea();
+		scrollPane_1.setViewportView(txtGhiChu);
+		txtGhiChu.setWrapStyleWord(true);
+		txtGhiChu.setLineWrap(true);
+		txtGhiChu.setBorder(new LineBorder(SystemColor.inactiveCaption));
+		txtGhiChu.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
 		JPanel pnlControllImage = new JPanel();
 		pnlControllImage.setBounds(418, 244, 214, 61);
@@ -326,7 +384,7 @@ public class BookEditorJDialog extends JDialog {
 				{
 					if(isEditMode == true)
 					{
-						if (updateBook())
+						if (validateAll() && updateBook())
 						{
 							//Tiến hành ghi file ảnh vào folder image sau khi insert Book thành công
 							if (fileImage != null)
@@ -343,16 +401,12 @@ public class BookEditorJDialog extends JDialog {
 							
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thất bại", MessageOptionPane.ICON_NAME_WARNING);
+							MessageOptionPane.showAlertDialog(getContentPane(), "Cập nhật thông tin sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					}
 					else if (isEditMode == false)
 					{
-						if (insertBook())
+						if (validateAll() && insertBook())
 						{
 							//Tiến hành ghi file ảnh vào folder image sau khi insert Book thành công
 							if (fileImage != null)
@@ -370,28 +424,25 @@ public class BookEditorJDialog extends JDialog {
 							//Sau đó đổ lại dữ liệu vào JFrame Book và fill ngược vào table
 							bookJFrame.getDataToList();
 							bookJFrame.fillToTable();
-							MessageOptionPane.showAlertDialog(getContentPane(), "Thêm sách thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
-						}
-						else 
-						{
-							MessageOptionPane.showAlertDialog(getContentPane(), "INSERT thất bại", MessageOptionPane.ICON_NAME_WARNING);
+							MessageOptionPane.showAlertDialog(getContentPane(), "Thêm sách mới thành công!", MessageOptionPane.ICON_NAME_SUCCESS);
 						}
 					}
 				} 
 				catch (SQLException e1) 
 				{
+					MessageOptionPane.showAlertDialog(getContentPane(), "Tiến trình xử lý thất bại [ERROR CODE: " + e1.getErrorCode() + "]", MessageOptionPane.ICON_NAME_WARNING);
 					e1.printStackTrace();
 				}
 			}
 		});
 		btnConfirm.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnConfirm.setIcon(new ImageIcon(BookEditorJDialog.class.getResource("/com/duan/icon/icons8_checked_50px.png")));
-		btnConfirm.setBounds(418, 316, 214, 47);
+		btnConfirm.setBounds(418, 316, 214, 120);
 		contentPane.add(btnConfirm);
 		
 		setLocationRelativeTo(getOwner());
 		getDataToList();
-		fillToCboCategory();
+		fillToCbo();
 	}
 	
 	//Lấy dữ liệu từ DB về listCategory
@@ -401,6 +452,9 @@ public class BookEditorJDialog extends JDialog {
 		{
 			listCategory = CategoryDAO.getAll();
 			listLocation = LocationDAO.getAll();
+			listAuthor = AuthorDAO.getAll();
+			listPublisher = PublisherDAO.getAll();
+			
 		} 
 		catch (SQLException e) 
 		{
@@ -409,17 +463,46 @@ public class BookEditorJDialog extends JDialog {
 	}
 	
 	//Đổ dữ liệu từ cboCategory vào cboTheLoai
-	public void fillToCboCategory()
+	public void fillToCbo()
 	{
-		for (Category e : listCategory)
-		{
+		int indexCategory = cboTheLoai.getSelectedIndex();
+		int indexLocation = cboViTri.getSelectedIndex();
+		int indexAuthor = cboAuthor.getSelectedIndex();
+		int indexPublisher = cboPublisher.getSelectedIndex();
+		
+		cboTheLoai.removeAll();
+		cboTheLoai.removeAllItems();
+		
+		cboViTri.removeAll();
+		cboViTri.removeAllItems();
+		
+		cboAuthor.removeAll();
+		cboAuthor.removeAllItems();
+		
+		cboPublisher.removeAll();
+		cboPublisher.removeAllItems();
+		
+		for (Category e : listCategory) {
 			cboTheLoai.addItem(e.getCategoryTitle());
 		}
 		
-		for (Location e : listLocation)
-		{
+		for (Location e : listLocation) {
 			cboViTri.addItem(e.getLocationName());
 		}
+		
+		for (Author e : listAuthor) {
+			cboAuthor.addItem(e.getFullName());
+		}
+		
+		for (Publisher e : listPublisher) {
+			cboPublisher.addItem(e.getName());
+		}
+		
+		cboAuthor.setSelectedIndex((indexAuthor != -1) ? indexAuthor : 0);
+		cboPublisher.setSelectedIndex((indexPublisher != -1) ? indexPublisher : 0);
+		cboTheLoai.setSelectedIndex((indexCategory != -1) ? indexCategory : 0);
+		cboViTri.setSelectedIndex((indexLocation != -1) ? indexLocation : 0);
+		
 	}
 
 	
@@ -427,8 +510,11 @@ public class BookEditorJDialog extends JDialog {
 	public Book getBookFromForm()
 	{
 		String categoryId = listCategory.get(cboTheLoai.getSelectedIndex()).getId();
-		int publicationYear = DataHelper.getInt(cboNamXuatBan.getItemAt(cboNamXuatBan.getSelectedIndex()).toString());
 		String locationId = listLocation.get(cboViTri.getSelectedIndex()).getId();
+		int publicationYear = DataHelper.getInt(cboNamXuatBan.getItemAt(cboNamXuatBan.getSelectedIndex()).toString());
+		int authorId = listAuthor.get(cboAuthor.getSelectedIndex()).getId();
+		int publisherId = listPublisher.get(cboPublisher.getSelectedIndex()).getId();
+		
 		String imageName = null;
 		Date createdDate = new Date();
 		
@@ -448,13 +534,14 @@ public class BookEditorJDialog extends JDialog {
 		this.bookEdit.setCategoryId(categoryId);
 		this.bookEdit.setPageNum(DataHelper.getInt(txtSoTrang.getText()));
 		this.bookEdit.setPrice(DataHelper.getDouble(txtGia.getText()));
-		this.bookEdit.setAuthor(txtTacGia.getText());
-		this.bookEdit.setPublisher(txtNhaXuatBan.getText());
+		this.bookEdit.setAuthorId(authorId);
+		this.bookEdit.setPublisherId(publisherId);
 		this.bookEdit.setPublicationYear(publicationYear);
 		this.bookEdit.setLocationId(locationId);
 		this.bookEdit.setDescription(txtGhiChu.getText());
 		this.bookEdit.setCreatedDate(createdDate);
 		this.bookEdit.setImage(imageName);
+		this.bookEdit.setIntroduce(txtIntroduct.getText());
 		
 		return this.bookEdit;
 		
@@ -468,7 +555,7 @@ public class BookEditorJDialog extends JDialog {
 		byte[] imageArray = DataHelper.getArrayByteFromFile(fileImage);
 		
 		//sau đó tiến hành ghi byte array này ra file theo dường dẫn tới folder image
-		DataHelper.writeFileToSource(imageArray, "/com/duan/image/" + fileImage.getName());
+		DataHelper.writeFileToSource(imageArray, "image/" + fileImage.getName());
 	}
 	
 	//Cập nhật lại book editor thành book, chuyển chế độ editMode = true
@@ -491,6 +578,80 @@ public class BookEditorJDialog extends JDialog {
 				removeImage();
 			}
 		}
+	}
+	
+	//Kiểm tra bắt lỗi dữ liệu trên form, trả về TRUE nếu hợp lệ
+	public boolean validateAll() throws SQLException
+	{
+		boolean isSuccess = true;
+		String msg = "";
+		
+		//CHECK - Mã Sách
+		if (txtMaSach.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Mã sách đang để trống\n";
+		}
+		else if (isEditMode == false && BookDAO.findByID(txtMaSach.getText()) != null)
+		{
+			isSuccess = false;
+			msg += "+ Mã sách '" + txtMaSach.getText() + "' này đã tồn tại\n";
+		}
+		
+		//CHECK - Tiêu Đề
+		if (txtTenSach.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Tiêu đề sách đang để trống\n";
+		}
+		
+		//CHECK - Số Trang
+		if (txtSoTrang.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Số trang đang để trống\n";
+		} 
+		else if (DataHelper.isInteger(txtSoTrang.getText()) == false)
+		{
+			isSuccess = false;
+			msg += "+ Số trang nhập vào phải là số nguyên\n";
+		}
+		else if (DataHelper.getInt(txtSoTrang.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Số trang nhập vào phải lớn hơn 0\n";
+		}
+		
+		
+		//CHECK - Giá bán
+		if (txtGia.getText().isEmpty())
+		{
+			isSuccess = false;
+			msg += "+ Giá bán đang để trống\n";
+		} 
+		else if (DataHelper.isDouble(txtGia.getText()) == false)
+		{
+			isSuccess = false;
+			msg += "+ Giá bán nhập vào phải là số\n";
+		}
+		else if (DataHelper.getDouble(txtGia.getText()) <= 0)
+		{
+			isSuccess = false;
+			msg += "+ Giá bán nhập vào phải lớn hơn 0\n";
+		}
+		else if (isEditMode && DataHelper.getDouble(txtGia.getText()) <= StorageDetailDao.getClosestPriceStorageWithBook(bookEdit.getId()))
+		{
+			String priceStorageStr = DataHelper.getFormatForMoney(StorageDetailDao.getClosestPriceStorageWithBook(bookEdit.getId())) + SettingSave.getSetting().getMoneySymbol();
+			isSuccess = false;
+			msg += "+ Giá bán ra phải lớn hơn giá tiền nhập sách vào ("+ priceStorageStr + ")\n";
+		}
+		
+		if (isSuccess == false)
+		{
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra:\n" + msg, MessageOptionPane.ICON_NAME_WARNING);
+		}
+		
+		return isSuccess;
 	}
 	
 	//Set BookJFrame để sau khi update xong thì có thể gọi hàm fillToTable bên bookJframe bênt kia
@@ -518,10 +679,13 @@ public class BookEditorJDialog extends JDialog {
 	{
 		String categoryTitle = CategoryDAO.getTitleById(book.getCategoryId());
 		String locationName = LocationDAO.findByID(book.getLocationId()).getLocationName();
+		String authorFullName = AuthorDAO.findById(book.getAuthorId()).getFullName();
+		String publisherName = PublisherDAO.findById(book.getPublisherId()).getName();
+		
 		txtMaSach.setText(book.getId());
 		txtTenSach.setText(book.getTitle());
-		txtTacGia.setText(book.getAuthor());
-		txtNhaXuatBan.setText(book.getPublisher());
+		cboAuthor.setSelectedItem(authorFullName);
+		cboPublisher.setSelectedItem(publisherName);
 		//txtSoLuong.setText(book.getAmount() + "");
 		txtSoTrang.setText(book.getPageNum() + "");
 		txtGia.setText(book.getPrice() + "");
@@ -529,6 +693,7 @@ public class BookEditorJDialog extends JDialog {
 		cboNamXuatBan.setSelectedItem(book.getPublicationYear());
 		cboTheLoai.setSelectedItem(categoryTitle);
 		cboViTri.setSelectedItem(locationName);
+		txtIntroduct.setText(book.getIntroduce());
 		
 		//Xử lý ảnh
 		if (book.getImage() != null)
@@ -564,9 +729,13 @@ public class BookEditorJDialog extends JDialog {
 	//Cập nhật lại icon cho lblImage = file vừa truyền vào
 	public void setImage(File file)
 	{
-		ImageIcon icon = new ImageIcon(file.getAbsolutePath());
-		lblImage.setIcon(icon);
-		SwingHelper.setAutoResizeIcon(lblImage);
+		if (file.exists())
+		{
+			lblImage.setText("");
+			ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+			lblImage.setIcon(icon);
+			SwingHelper.setAutoResizeIcon(lblImage);
+		}
 	}
 	
 	//Cập nhật lại icon cho lblImage lấy ảnh từ folder image có nameFile.
@@ -574,7 +743,8 @@ public class BookEditorJDialog extends JDialog {
 	{
 		if (imageName != null && imageName.length() > 0)
 		{
-			ImageIcon icon = new ImageIcon(DataHelper.getFileFromSource("/com/duan/image/" + imageName).getAbsolutePath());
+			lblImage.setText("");
+			ImageIcon icon = new ImageIcon(new File("image/" + imageName).getAbsolutePath());
 			lblImage.setIcon(icon);
 			SwingHelper.setAutoResizeIcon(lblImage);
 		}
@@ -594,13 +764,35 @@ public class BookEditorJDialog extends JDialog {
 	}
 	
 	
-	public void showCategoryJFrame()
+	public void showCategoryJDialog()
 	{
+		categoryJDialog.setLocationRelativeTo(contentPane);
 		categoryJDialog.setVisible(true);
+		getDataToList();
+		fillToCbo();
 	}
 	
-	public void showLocationJFrame()
+	public void showAuthorJDialog()
 	{
+		authorJDialog.setLocationRelativeTo(contentPane);
+		authorJDialog.setVisible(true);
+		getDataToList();
+		fillToCbo();
+	}
+	
+	public void showPublisherJDialog()
+	{
+		publisherJDialog.setLocationRelativeTo(contentPane);
+		publisherJDialog.setVisible(true);
+		getDataToList();
+		fillToCbo();
+	}
+	
+	public void showLocationJDialog()
+	{
+		locationJDialog.setLocationRelativeTo(contentPane);
 		locationJDialog.setVisible(true);
+		getDataToList();
+		fillToCbo();
 	}
 }
