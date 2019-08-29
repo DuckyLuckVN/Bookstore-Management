@@ -694,6 +694,7 @@ public class ExportExcel
 			FileOutputStream fos = new FileOutputStream(file);
 			workbook.write(fos);
 			workbook.close();
+			fos.close();
 			return true;
 		} 
 		catch (IOException e) 
@@ -812,6 +813,7 @@ public class ExportExcel
 			FileOutputStream fos = new FileOutputStream(file);
 			workbook.write(fos);
 			workbook.close();
+			fos.close();
 			return true;
 			
 			} 

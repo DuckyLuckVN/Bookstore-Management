@@ -20,12 +20,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.duan.controller.ExportExcel;
 import com.duan.custom.common.JPanelFlat;
 import com.duan.custom.common.JScrollPaneFlat;
 import com.duan.custom.common.JTableRed;
 import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
+import com.duan.dao.CategoryDAO;
 import com.duan.helper.DataHelper;
 import com.duan.helper.SwingHelper;
 import com.duan.model.Admin;
@@ -63,6 +65,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.SystemColor;
 
 public class AdminJFrame extends JFrame {
@@ -289,6 +292,34 @@ public class AdminJFrame extends JFrame {
 			}
 		});
 		scrollPane.setViewportView(tblUser);
+		
+		btnXutExcel = new JButton("Xuất Excel");
+		btnXutExcel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				try {
+					JFileChooser chooser = new JFileChooser();
+					int status = chooser.showOpenDialog(contentPane);
+					
+					if (status == chooser.APPROVE_OPTION)
+					{
+						String path = chooser.getSelectedFile().getAbsoluteFile().toString();
+						File file = new File(path + ".xls");
+						if (ExportExcel.writeAdmin(file, AdminDAO.getAll()))
+						{
+							Desktop.getDesktop().open(file);
+						}
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnXutExcel.setIcon(new ImageIcon(AdminJFrame.class.getResource("/com/duan/icon/icons8_microsoft_excel_2019_16px.png")));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -299,7 +330,8 @@ public class AdminJFrame extends JFrame {
 					.addGap(1))
 				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(386, Short.MAX_VALUE)
+					.addComponent(btnXutExcel)
+					.addPreferredGap(ComponentPlacement.RELATED, 283, Short.MAX_VALUE)
 					.addComponent(lblTmKim)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE))
@@ -313,7 +345,8 @@ public class AdminJFrame extends JFrame {
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+						.addComponent(txtFind, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnXutExcel))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
 		);
@@ -565,6 +598,7 @@ public class AdminJFrame extends JFrame {
 		btnXoa.setEnabled(true);
 	}
 	AdminDAO admimDao = new AdminDAO();
+	private JButton btnXutExcel;
 	private void loadTable() 
 	{
 		DefaultTableModel model = (DefaultTableModel) tblUser.getModel();

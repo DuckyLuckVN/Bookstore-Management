@@ -125,6 +125,9 @@ CREATE TABLE RENTBOOK
 	id INT PRIMARY KEY IDENTITY(100, 1),
 	user_id INT,
 	admin_id int, 
+	cost_rent MONEY,
+	cost_expiration MONEY,
+	expiration_day SMALLINT,
 	created_date DATE,
 	returned_date DATE,
 	status INT,
@@ -172,6 +175,7 @@ CREATE TABLE BOOK_LOST
 (
 	rentbook_id INT PRIMARY KEY,
 	admin_id INT,
+	cost_lost SMALLMONEY,
 	created_date DATE,
 	CONSTRAINT fk_LostBook_RentBook_id FOREIGN KEY (rentbook_id) REFERENCES [dbo].RENTBOOK(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_LostBook_Admin_id FOREIGN KEY (admin_id) REFERENCES [dbo].[ADMIN](id)
@@ -233,10 +237,9 @@ VALUES  ( 'quanly' , '123' , N'Lý Tiểu Long' , 'lytieulong@gmail.com' ,'01682
 		('truongphong' , '123' , N'Nguyễn Đại Trân' , 'ngueyndairan@gmail.com' ,'0123456789' , 1 ,'06/05/2012')
 GO
 
-
-INSERT INTO dbo.[ORDER](user_id ,admin_id ,date_created)
-VALUES  ( 100 , 101 , GETDATE() ),
-		( 101 , 103 , GETDATE())
+INSERT INTO dbo.[ORDER](user_id ,admin_id, date_created)
+VALUES  ( 100 , 101, GETDATE()),
+		( 101 , 103, GETDATE())
 GO
 
 INSERT INTO ORDER_DETAIL(order_id ,	book_id, amount, price)
@@ -244,9 +247,9 @@ VALUES	(100,'GH12',3,200000),
 		(101,'JH42', 2, 300000)
 GO
 
-INSERT INTO dbo.RENTBOOK(user_id , admin_id ,created_date ,status)
-VALUES  (100, 101, GETDATE() , 0),
-		(101, 103, GETDATE() , 1)
+INSERT INTO dbo.RENTBOOK(user_id , admin_id, cost_rent, cost_expiration, expiration_day, created_date ,status)
+VALUES  (100, 101, 5000, 1000, 7, GETDATE() , 0),
+		(101, 103, 5000, 1000, 7, GETDATE() , 1)
 GO
 
 INSERT INTO RENTBOOK_DETAIL (rentbook_id , book_id , amount, price)
@@ -735,7 +738,9 @@ SELECT * FROM dbo.ORDER_DETAIL
 SELECT * FROM dbo.RENTBOOK
 SELECT * FROM dbo.RENTBOOK_DETAIL
 SELECT * FROM dbo.STORAGE_DETAIL
-
+SELECT * FROM BOOK_LOST
 DELETE FROM dbo.RENTBOOK
+261
 
+PRINT DATEDIFF(DAY, '3/1/2011', '3/1/2011')
 */

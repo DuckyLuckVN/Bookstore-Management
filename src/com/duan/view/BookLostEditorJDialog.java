@@ -155,7 +155,18 @@ public class BookLostEditorJDialog extends JDialog {
 			@Override
 			public void tableChanged(TableModelEvent e) 
 			{
-				updateTotalCost();
+				try 
+				{
+					updateTotalCost();
+					if (e.getColumn() == 4)
+					{
+						updateCost(e.getFirstRow());
+					}
+				} 
+				catch (SQLException e1) 
+				{
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -337,16 +348,20 @@ public class BookLostEditorJDialog extends JDialog {
 			{
 				Book book = bp.getBook();
 				int amountRented = RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getAmount();
+				double costLost = (bookLostEdit != null) ? bookLostEdit.getCostLost() : SettingSave.getSetting().getCostBookLost();
+				double costBookLost = costLost * bp.getAmount() * RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getPrice();
+				String costBookLostStr = DataHelper.getFormatForMoney(costBookLost) + SettingSave.getSetting().getMoneySymbol();
+
 				//Giá lúc thuê
 				String price_str = ""; 
 				if (bookLostEdit != null)
 					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(bookLostEdit.getRentbookId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
 				else if (rentBookSelected != null)
 					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
-				else if (rentbookEdit != null)
-					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(rentbookEdit.getId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
+//				else if (rentbookEdit != null)
+//					price_str = DataHelper.getFormatForMoney(RentBookDetailDAO.findById(rentbookEdit.getId(), book.getId()).getPrice()) + SettingSave.getSetting().getMoneySymbol();
 					
-				Object[] rowData = {book.getId(), book.getTitle(), price_str, amountRented, bp.getAmount(), bp.getPrice()};
+				Object[] rowData = {book.getId(), book.getTitle(), price_str, amountRented, bp.getAmount(), costBookLostStr};
 				model.addRow(rowData);
 			}
 		} 
@@ -381,23 +396,38 @@ public class BookLostEditorJDialog extends JDialog {
 	}
 	
 	//Cập nhật lại tổng tiền phạt dựa vào thông tin trong bảng
-	public void updateTotalCost()
+	public void updateTotalCost() throws SQLException
 	{
 		//Lặp toàn bộ các hàng trong bảng
 		int rowCount = tblBook.getRowCount();
+		double costLost = (bookLostEdit != null) ? bookLostEdit.getCostLost() : SettingSave.getSetting().getCostBookLost();
 		double totalCost = 0;
-		
 		for (int i=0; i < rowCount; i++)
 		{
-			String cost_str = tblBook.getValueAt(i, 5).toString();
-			if (DataHelper.isDouble(cost_str))
-			{
-				double cost = DataHelper.getDouble(cost_str);
-				totalCost += cost;
-			}
+			int amount = 0;
+			double price = RentBookDetailDAO.findById(rentBookSelected.getId(), listBookProduct.get(i).getBook().getId()).getPrice();
+			
+			if (DataHelper.isInteger(tblBook.getValueAt(i, 4).toString()))
+				amount = DataHelper.getInt(tblBook.getValueAt(i, 4).toString());
+			
+			totalCost += costLost * price * amount;
 		}
 		lblTotalCost.setText(DataHelper.getFormatForMoney(totalCost) + "đ");
 		
+	}
+	
+	//Cập nhật lại phí dựa vào các giá trị thay đổi về số lượng
+	public void updateCost(int row) throws SQLException
+	{
+		double costLost = (bookLostEdit != null) ? bookLostEdit.getCostLost() : SettingSave.getSetting().getCostBookLost();
+		int amount = 0;
+		double price = RentBookDetailDAO.findById(rentBookSelected.getId(), listBookProduct.get(row).getBook().getId()).getPrice();
+		
+		if (DataHelper.isInteger(tblBook.getValueAt(row, 4).toString()))
+			amount = DataHelper.getInt(tblBook.getValueAt(row, 4).toString());
+		
+		String costLostStr = DataHelper.getFormatForMoney(costLost * price * amount) + SettingSave.getSetting().getMoneySymbol();
+		tblBook.setValueAt(costLostStr, row, 5);
 	}
 	
 	//Kiểm tra các lỗi trên toàn bộ form trả về TRUE nếu hợp lệ
@@ -504,16 +534,18 @@ public class BookLostEditorJDialog extends JDialog {
 	}
 	
 	//Trả về danh sách List BOokProduct dựa trên các dữ liệu có trong bảng
-	public List<BookProduct> getListBookProduct()
+	public List<BookProduct> getListBookProduct() throws SQLException
 	{
 		List<BookProduct> list = new ArrayList<BookProduct>();
 		for (int i = 0; i < tblBook.getRowCount(); i++)
 		{
-			int amount = DataHelper.getInt(tblBook.getValueAt(i, 4).toString());
-			double cost = DataHelper.getDouble(tblBook.getValueAt(i, 5).toString());
 			Book book = listBookProduct.get(i).getBook();
+			int amount = DataHelper.getInt(tblBook.getValueAt(i, 4).toString());
+			double costLost = (bookLostEdit != null) ? bookLostEdit.getCostLost() : SettingSave.getSetting().getCostBookLost();
+			double costBookLost = costLost * amount * RentBookDetailDAO.findById(rentBookSelected.getId(), book.getId()).getPrice();
+
 			
-			list.add(new BookProduct(book, amount, cost));
+			list.add(new BookProduct(book, amount, costBookLost));
 		}
 		
 		return list;
@@ -522,7 +554,7 @@ public class BookLostEditorJDialog extends JDialog {
 	//Thêm BookLost vào database
 	public boolean insertBookLost() throws SQLException
 	{
-		BookLost bookLost = new BookLost(rentBookSelected.getId(), AccountSave.getAdmin().getId(), new Date());
+		BookLost bookLost = new BookLost(rentBookSelected.getId(), AccountSave.getAdmin().getId(), SettingSave.getSetting().getCostBookLost(), new Date());
 		return BookLostDAO.insert(bookLost, getListBookProduct());
 	}
 	

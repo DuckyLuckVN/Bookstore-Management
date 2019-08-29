@@ -13,6 +13,9 @@ public class RentBook
     private int id;
     private int userId;
     private int adminId;
+    private double costRent;
+    private double costExpiration;
+    private int expirationDay;
     private Date createdDate;
     private Date returnedDate;
     private int status;
@@ -21,12 +24,17 @@ public class RentBook
     {
     	
     }
+    
 
-    public RentBook(int id, int userId, int adminId, Date createdDate, Date returnedDate, int status) {
+	public RentBook(int id, int userId, int adminId, double costRent, double costExpiration, int expirationDay,
+			Date createdDate, Date returnedDate, int status) {
 		super();
 		this.id = id;
 		this.userId = userId;
 		this.adminId = adminId;
+		this.costRent = costRent;
+		this.costExpiration = costExpiration;
+		this.expirationDay = expirationDay;
 		this.createdDate = createdDate;
 		this.returnedDate = returnedDate;
 		this.status = status;
@@ -63,8 +71,36 @@ public class RentBook
     public void setAdminId(int adminId) {
         this.adminId = adminId;
     }
+    
 
-    public Date getCreatedDate() {
+	public double getCostRent() {
+		return costRent;
+	}
+
+
+	public void setCostRent(double costRent) {
+		this.costRent = costRent;
+	}
+
+
+	public double getCostExpiration() {
+		return costExpiration;
+	}
+
+
+	public void setCostExpiration(double costExpiration) {
+		this.costExpiration = costExpiration;
+	}
+	
+	public int getExpirationDay() {
+		return expirationDay;
+	}
+
+	public void setExpirationDay(int expirationDay) {
+		this.expirationDay = expirationDay;
+	}
+
+	public Date getCreatedDate() {
         return createdDate;
     }
 
@@ -82,10 +118,9 @@ public class RentBook
     
     public String getTitleStatus()
     {
-    	int DayExpiration = SettingSave.getSetting().getDayExpiration();
 	    switch (status) {
 		case 0:
-			if (returnedDate == null && DateHelper.getDayBetweenTwoDate(createdDate, new Date()) > DayExpiration)
+			if (returnedDate == null && DateHelper.getDayBetweenTwoDate(createdDate, new Date()) > expirationDay)
 				return "Quá hạn";
 			else
 				return "Đang Thuê";

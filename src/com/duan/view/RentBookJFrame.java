@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.mail.MessagingException;
 import javax.print.attribute.standard.SheetCollate;
 import javax.security.auth.Refreshable;
 import javax.swing.GroupLayout;
@@ -19,7 +20,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.collections4.sequence.EditScript;
+
+import com.duan.controller.SendMail;
 import com.duan.custom.common.JTableRed;
+import com.duan.custom.common.JTextFieldDark;
 import com.duan.custom.message.MessageOptionPane;
 import com.duan.dao.AdminDAO;
 import com.duan.dao.RentBookDAO;
@@ -37,6 +42,8 @@ import java.awt.Toolkit;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.CardLayout;
 import java.awt.Dimension;
 
@@ -63,6 +70,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.TitledBorder;
+import javax.swing.border.LineBorder;
 
 public class RentBookJFrame extends JFrame {
 
@@ -100,6 +108,7 @@ public class RentBookJFrame extends JFrame {
 	private int indexSelect = -1;
 	private JComboBox cboStatus;
 	private JButton btnRefresh;
+	private JButton btnGiMailBo;
 	
 	public static void main(String[] args) 
 	{
@@ -238,7 +247,7 @@ public class RentBookJFrame extends JFrame {
 		pnlController.add(btnDelete);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(new TitledBorder(null, "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		scrollPane.setBorder(new TitledBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)), "B\u1EA3ng d\u1EEF li\u1EC7u", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		
 		pnlSelect = new JPanel();
 		
@@ -248,7 +257,7 @@ public class RentBookJFrame extends JFrame {
 		lblTmKim = new JLabel("Tìm kiếm:");
 		lblTmKim.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		
-		txtSearch = new JTextField();
+		txtSearch = new JTextFieldDark();
 		txtSearch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent arg0) 
@@ -279,6 +288,15 @@ public class RentBookJFrame extends JFrame {
 			}
 		});
 		cboStatus.setModel(new DefaultComboBoxModel(new String[] {"Toàn bộ", "Đang thuê", "Đã trả", "Quá hạn"}));
+		
+		btnGiMailBo = new JButton("Gửi mail báo quá hạn");
+		btnGiMailBo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) 
+			{
+				sendMailReportExpiration();
+			}
+		});
+		btnGiMailBo.setIcon(new ImageIcon(RentBookJFrame.class.getResource("/com/duan/icon/icons8_expired_16px.png")));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
@@ -289,7 +307,9 @@ public class RentBookJFrame extends JFrame {
 							.addComponent(lblTnhTrng, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(cboStatus, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 281, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnGiMailBo)
+							.addPreferredGap(ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
 							.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 58, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE))
@@ -308,7 +328,8 @@ public class RentBookJFrame extends JFrame {
 								.addComponent(lblTnhTrng, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 								.addComponent(lblTmKim, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
 								.addComponent(txtSearch, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-								.addComponent(cboStatus, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+								.addComponent(cboStatus, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnGiMailBo, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
 						.addComponent(pnlController, GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE))
@@ -597,6 +618,7 @@ public class RentBookJFrame extends JFrame {
 	public void showRentBookDetail()
 	{
 		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
+		rentBookDetailJDialog = new RentBookDetailJDialog();
 		rentBookDetailJDialog.setLocationRelativeTo(this);
 		rentBookDetailJDialog.setDetailModel(rentbook_id);
 		rentBookDetailJDialog.showDetail();
@@ -606,6 +628,8 @@ public class RentBookJFrame extends JFrame {
 	
 	public void showInsertRentBook()
 	{
+		insertRentBookJDialog = new RentBookEditorJDialog();
+		insertRentBookJDialog.setLocationRelativeTo(this);
 		insertRentBookJDialog.setRentBookJFrame(this);
 		insertRentBookJDialog.setVisible(true);
 	}
@@ -615,11 +639,34 @@ public class RentBookJFrame extends JFrame {
 		int rentbook_id = DataHelper.getInt(tblRentBook.getValueAt(indexSelect, 0).toString());
 		RentBook model = RentBookDAO.findById(rentbook_id);
 		
+		editorRentbookJDialog = new RentBookEditorJDialog();
+		editorRentbookJDialog.setLocationRelativeTo(this);
 		editorRentbookJDialog.setEditModel(model);
 		editorRentbookJDialog.setEditMode(true);
 		editorRentbookJDialog.setRentBookJFrame(this);
 		
 		editorRentbookJDialog.setVisible(true);
+	}
+	
+	public void sendMailReportExpiration()
+	{
+		try 
+		{
+			int countSent = SendMail.sendReportExpirationMail();
+			if (countSent > 0)
+			{
+				MessageOptionPane.showAlertDialog(contentPane, "Đã gửi thành công " + countSent + " mail báo quá hạn!", MessageOptionPane.ICON_NAME_SUCCESS);
+			}
+			else
+			{
+				MessageOptionPane.showAlertDialog(contentPane, "Không có đơn thuê quá hạn nào để gửi!", MessageOptionPane.ICON_NAME_INFORMATION);
+			}
+		} 
+		catch (SQLException | MessagingException e) 
+		{
+			MessageOptionPane.showMessageDialog(contentPane, "Đã có lỗi sảy ra trong khi thực hiện:\n" + e.getMessage(), MessageOptionPane.ICON_NAME_ERROR);
+			e.printStackTrace();
+		}
 	}
 	
 	public void refresh()
