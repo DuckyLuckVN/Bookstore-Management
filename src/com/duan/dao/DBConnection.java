@@ -50,12 +50,12 @@ public class DBConnection
 	}
 	
 	
-	//Trả về giá trị connection của biến conn
-	public static Connection getConnection()
+	//Trả về giá trị connection của biến conn 
+	public static Connection getConnection() 
 	{
 		return conn;
 	}
-	
+	 
 	public static void main(String[] args) {
 		System.out.println(getConnection());
 	}
