@@ -23,9 +23,9 @@ public class DBConnection
 	}
 	
 	/**
-	 * @param url url cấu hình JDBC
-	 * @param user Username SQL
-	 * @param password Password SQL
+	 * @param url url cấu hình JDBC 
+	 * @param user Username SQL 
+	 * @param password Password SQL 
 	 * Thực hiện tạo giá trị connection cho biến conn
 	 */
 	public static void setConnection(String url, String user, String password) throws SQLException
