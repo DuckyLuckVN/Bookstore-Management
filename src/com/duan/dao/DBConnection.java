@@ -10,9 +10,9 @@ public class DBConnection
 	
 	private static String url = "jdbc:sqlserver://localhost; DataBaseName=BookStore";
 	private static String user = "sa";
-	private static String password = "123";
+	private static String password = "123"; 
 	
-	
+	 
 	static
 	{
 		try {
