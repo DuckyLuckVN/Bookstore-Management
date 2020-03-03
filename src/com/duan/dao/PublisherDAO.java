@@ -9,12 +9,12 @@ import java.util.Date;
 import javax.naming.spi.DirStateFactory.Result;
 
 import com.duan.helper.JDBCHelper;
-import com.duan.model.Author;
+import com.duan.model.Author; 
 import com.duan.model.Publisher;
-
+ 
 public class PublisherDAO 
 {
-	public static ArrayList<Publisher> getAll() throws SQLException
+	public static ArrayList<Publisher> getAll() throws SQLException 
 	{
 		ArrayList<Publisher> list = new ArrayList<Publisher>();
 		ResultSet rs = JDBCHelper.executeQuery("SELECT * FROM PUBLISHER");
