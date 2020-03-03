@@ -17,7 +17,7 @@ public class DBConnection
 		try 
 		{
 			conn = DriverManager.getConnection(url, user, password);
-		} 
+		}  
 		catch (SQLException e) 
 		{
 			//new MessageJDialog("Đã có lỗi sảy ra!", e.getMessage(), "Đã Hiểu", MessageJDialog.TYPE_ICON_ERROR).setVisible(true);
