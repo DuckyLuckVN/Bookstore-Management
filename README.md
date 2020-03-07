@@ -1,1 +1,5 @@
-# FPOLY_DU_AN_1
+# Bookstore managerment
+Admin account default:
+
+username: haogd
+password: 123456789
